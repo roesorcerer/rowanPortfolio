@@ -1,0 +1,25 @@
+{
+  "name": "rowanblog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/app.js -e js,hbs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "express": "^4.19.2",
+    "express-handlebars": "^7.1.2",
+    "flexslider": "^2.7.2",
+    "font-awesome": "^4.7.0",
+    "hbs": "^4.2.0",
+    "lightbox": "^0.5.0",
+    "nodemon": "^3.1.0",
+    "smoothscroll": "^0.4.0",
+    "text-rotater": "^1.0.4"
+  }
+}
