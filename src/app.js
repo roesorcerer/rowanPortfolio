@@ -26,12 +26,12 @@ app.engine('hbs', engine({
 
 // Setting up Handlebars view engine
 app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, '../views/pages'));
+app.set('views', viewsPath);
 
 // Home page route - setting to render HBS index and adding objects
 app.get('/', (req, res) => {
-  res.render('home', {
-    layout: 'main',
+  console.log('Rendering home page with layout main');
+  res.render('pages/home', {
     title: "Home",
     name: "Rowan Stratton"
   });
@@ -44,6 +44,11 @@ app.get('/about', (req, res) => {
     title: "About Me", // Any other local variables you want to pass to the template
     name: "Rowan Stratton"
   });
+});
+
+// About page route
+app.get('/home', (req, res) => {
+    res.render('home');
 });
 
 // Port listener and confirmation message on console

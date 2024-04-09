@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400');
 /*========================================================================*/
 
 
@@ -14,7 +15,7 @@
     width:100%;
     height:100%;
     overflow:visible;
-    background: #fff url('../img/preloader.gif') no-repeat center center;
+    background: #fff url('../images/preloader.gif') no-repeat center center;
 }
 
 
@@ -112,7 +113,7 @@ a:active,a:hover {
 	outline: 0;
 }
 /* ==========================================================================Typography========================================================================== */
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400);
+
 h1 {
 	font-size:2em;
 	margin:0.67em 0;
@@ -363,13 +364,14 @@ table {
 	color:transparent;
 	background:transparent;
 }
+/*The menu button before. */
 .menu-button::before {
 	position:absolute;
 	top:0.5em;
 	right:0.5em;
 	bottom:0.5em;
 	left:0.5em;
-	background: linear-gradient(#E04343 20%,rgba(0, 0, 0, 0) 20%,rgba(0, 0, 0, 0) 40%,#E04343 40%,#E04343 60%,rgba(0, 0, 0, 0) 60%,rgba(0, 0, 0, 0) 80%,#E04343 80%);
+	background: linear-gradient(#ffffffab 20%,rgba(0, 0, 0, 0) 20%,rgba(0, 0, 0, 0) 40%,#ffffffab 40%,#ffffffab 60%,rgba(0, 0, 0, 0) 60%,rgba(0, 0, 0, 0) 80%,#ffffffab 80%);
 	content:'';
 }
 .menu-button:hover {
@@ -378,7 +380,7 @@ table {
 /* Menu */
 .menu-wrap {
 	z-index:999;
-	background: rgba(255, 255, 255, 1);
+	background: rgba(0, 0, 0, 0.335);
 	-webkit-transition:width 0.4s,height 0.4s,-webkit-transform 0.4s;
 	transition:width 0.4s,height 0.4s,transform 0.4s;
 	-webkit-transition-timing-function:cubic-bezier(0.7,0,0.3,1);
@@ -400,7 +402,7 @@ table {
 	margin:0 15px;
 	text-align:center;
 	font-size:1.2em;
-	color: #353535;
+	color: #ffffffab;
 }
 .icon-list a span {
 	display:block;
@@ -453,11 +455,35 @@ table {
 }
 /* ==========================================================================Hero========================================================================== */
 .hero {
-	background: url('../img/header-bg.jpg') right bottom no-repeat;
-	background-size: contain;
-	padding:110px 0 100px 0;
-	height:auto;
-	background-color: #FBFBFB;
+    padding: 110px 0 100px 0;
+    height: auto;
+    background-color: #0000001b;
+    position: relative;
+	overflow: hidden; 
+  	border-radius: 20px; 
+}
+
+.hero .hero-background {
+    background: url('/images/kitten-green.jpg') right center no-repeat;
+    background-size: 50% auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at center, transparent 30%, #000000 70%);
+  z-index: 1; /* Placing it above the background image but below the content */
+  border-radius: 20px; /* Same border-radius as the hero element */
 }
 .hero h1 {
 	font-size: 120px;
@@ -485,6 +511,11 @@ table {
 	letter-spacing:1px;
 	color:#fff;
 	font-size: 15px;
+}
+.homemade-apple-regular {
+  font-family: "Homemade Apple", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
 /* Boucing Arrow Animation */
 @keyframes arrowbounce {
@@ -1235,4 +1266,11 @@ ul.slides li {
 	.subscribe {
 	    padding-bottom: 40px;
 	}
+}
+/* ==========================================================================Text Rotator========================================================================== */
+.text-rotating {
+    background-color: transparent;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif; /* Change this to your desired font */
+    color: yellow; /* This is already set but included for completeness */
 }

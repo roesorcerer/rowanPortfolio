@@ -2,8 +2,8 @@
 Waypoints
 *******************************************************************************************************************************/ 
 
+// Add the missing import statement
 $(document).ready(function() {
-
 	$('.wp1').waypoint(function() {
 		$('.wp1').addClass('animated fadeInLeft');
 	}, {
@@ -34,27 +34,22 @@ $(document).ready(function() {
 	}, {
 		offset: '75%'
 	});
-
 });
 
 /******************************************************************************************************************************
 Nav Button
 *******************************************************************************************************************************/ 
 
-$(window).load(function() {
-
+$(window).on('load', function() {
 	$('.nav_slide_button').click(function() {
 		$('.pull').slideToggle();
 	});
-
 });
 
 
-$(function() {
-
-	$('a[href*=#]:not([href=#])').click(function() {
+$(document).ready(function() {
+	$('a[href*="#"]:not([href="#"])').click(function() {
 		if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
-
 			var target = $(this.hash);
 			target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
 			if (target.length) {
@@ -66,21 +61,9 @@ $(function() {
 		}
 	});
 
-});
-
-/******************************************************************************************************************************
-Nav Transform
-*******************************************************************************************************************************/ 
-
-document.querySelector("#nav-toggle").addEventListener("click", function() {
-	this.classList.toggle("active");
-});
-
-/******************************************************************************************************************************
-Flexsliders
-*******************************************************************************************************************************/ 
-
-$(window).load(function() {
+	document.querySelector("#nav-toggle").addEventListener("click", function() {
+		this.classList.toggle("active");
+	});
 
 	$('#blogSlider').flexslider({
 		animation: "slide",
@@ -114,8 +97,8 @@ $(window).load(function() {
 			$.waypoints('refresh');
 		}
 	});
-	
-		$('#clientSlider').flexslider({
+
+	$('#clientSlider').flexslider({
 		animation: "slide",
 		directionNav: false,
 		controlNav: true,
@@ -125,6 +108,5 @@ $(window).load(function() {
 			$.waypoints('refresh');
 		}
 	});
-
 });
 
