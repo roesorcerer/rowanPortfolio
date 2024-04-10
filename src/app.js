@@ -49,9 +49,13 @@ app.get("/about", (req, res) => {
   });
 });
 
-// About page route
-app.get("/home", (req, res) => {
-  res.render("home");
+// service page route
+app.get("/services", (req, res) => {
+  res.render("pages/services", {
+    layout: "main", // Assuming you want to use the 'main' layout
+    title: "Services", // Any other local variables you want to pass to the template
+    name: "Rowan Stratton",
+  });
 });
 
 // Port listener and confirmation message on console

@@ -2,49 +2,73 @@
         SERVICE SECTION 
         =========================== -->
 <section class="features text-center section-padding" id="service">
-    <div class="container">
-        <!-- Headline -->
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="arrow">I do amazing things for clients</h1>
+  <div class="container">
+    <!-- Headline -->
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Current Projects</h1>
+        <h1 class="arrow"> Projects built on the road to learning </h1>
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div class="row">
+          <!-- Service Box 1 -->
+          <div class="col-md-12 wp2 item">
+                <div class="service-box">
+                <div class="service-info">
+            <!-- Icon -->        
+            <div class="icon">
+              <i class="fa fa-desktop"></i>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="services">
-                    <!-- Service Box 1 -->
-                    <div class="col-md-4 wp2 item">
-                        <div class="icon">
-                            <i class="fa fa-camera"></i><!-- Icon -->
-                        </div>
-                        <h2>Photographer</h2><!-- Title -->
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a lorem quis neque interdum
-                            consequat ut sed sem. Duis quis tempor nunc. Interdum et malesuada fames ac ante ipsum
-                            primis in faucibus.</p><!-- Description -->
-                    </div>
-                    <!-- Service Box 2 -->
-                    <div class="col-md-4 wp2 item delay-05s">
-                        <div class="icon">
-                            <i class="fa fa-desktop"></i><!-- Icon -->
-                        </div>
-                        <h2>Web Designer</h2><!-- Title -->
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a lorem quis neque interdum
-                            consequat ut sed sem. Duis quis tempor nunc. Interdum et malesuada fames ac ante ipsum
-                            primis in faucibus.</p><!-- Description -->
-                    </div>
-                    <!-- Service Box 3 -->
-                    <div class="col-md-4 wp2 item delay-1s">
-                        <div class="icon">
-                            <i class="fa fa-cubes"></i><!-- Icon -->
-                        </div>
-                        <h2>3D Artist</h2><!-- Title -->
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a lorem quis neque interdum
-                            consequat ut sed sem. Duis quis tempor nunc. Interdum et malesuada fames ac ante ipsum
-                            primis in faucibus.</p><!-- Description -->
-                    </div>
-                </div>
-                <div class="clearfix"></div>
-            </div>
+            <!-- Title -->
+            <h2>Web Developer</h2>
+            <!-- Description -->
+            <p>These are my current web development projects. Each focuses on a different framework to give me a little 
+                expierence in various areas. I do limited projects as I am still learning and growing in this field, but if
+                you have a project you think I would be a good fit for, please reach out to me.</p>            
+                </div>     
+        
+            <div class="service-pagination">
+              <!-- Pagination controls -->
+              <div class="pagination-controls">
+                <button onclick="changeSlide(-1, 3)">Prev</button> <!-- Pass total number of slides -->
+                <button onclick="changeSlide(1, 3)">Next</button> <!-- Pass total number of slides -->
+              </div>
+              <!-- Pagination images -->
+              <div class="pagination-content">
+                <img src="/images/portfolio/portfolio-01-large.jpg" class="slide active" data-index="0" style="width: 75%; height: auto;">
+                <img src="/images/portfolio/portfolio-02-large.jpg" class="slide" data-index="1" style="width: 75%; height: auto; display: none;">
+                <img src="/images/portfolio/portfolio-01-large.jpg" class="slide" data-index="2" style="width: 75%; height: auto; display: none;">
+                <!-- Add more as needed -->
+              </div>
+            </div>            
         </div>
     </div>
+      
+        <!-- Service Box 2 -->
+        <div class="col-md-4 wp2 item delay-05s">
+            <div class="icon">
+              <i class="fa fa-code"></i><!-- Icon -->
+            </div>
+            <h2>Software Engineer</h2><!-- Title -->
+            <p>Building software solutions that are meant for people. My motivation is bridging the gap between confusing and 
+                bloated technoligies and making them asseciable to the everyday person. My designs thrive in the realm of using
+                software as a tool to enrich the lives of those who use it. </p><!-- Description -->
+            </p><!-- Description -->
+          </div>
+    </div>
+    
+          <!-- Service Box 3 -->
+          <div class="col-md-4 wp2 item delay-1s">
+            <div class="icon">
+              <i class="fa fa-cubes"></i><!-- Icon -->
+            </div>
+            <h2>Digital Art</h2><!-- Title -->
+            <p>Making my designs visually appealing is a big facet of what I do. Designing software enables me to enage with my 
+                anylitic side but also my creative side. I love to make things that are not only functional but also beautiful.</p>
+            </p><!-- Description -->
+          </div>        
+        <div class="clearfix"></div>
+      </div>   
 </section>

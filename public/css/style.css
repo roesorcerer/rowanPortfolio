@@ -514,6 +514,12 @@ table {
   align-items: flex-end; /* Align children (the button) to the right */
   justify-content: center; /* Vertically center the content in the container */
 }
+
+.hero-text {
+  padding-top: 200px;
+  z-index: 1;
+  text-align: left;
+}
 /* Container for the image with rounded corners and gradient */
 .hero-image {
   position: absolute;
@@ -671,14 +677,75 @@ h1.arrow {
   text-transform: uppercase;
   color: #353535;
   letter-spacing: 4px;
-  background: url("../img/h1-bg.png") no-repeat center bottom;
+  background: url("/images/h1-bg.png") no-repeat center bottom;
   padding-bottom: 30px;
   font-weight: bold;
 }
 h1.arrow span {
   color: #e04343;
 }
+
+/* ==========================================================================Service Section Pagenation========================================================================== */
+.service-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start; /* Align items at the start of the flex container */
+  margin-bottom: 20px; /* Margin between each service box */
+}
+
+.service-info {
+  flex: 1; /* Allocates half of the space to service info */
+  padding-right: 20px; /* Right padding for spacing between text and images */
+}
+
+.service-pagination {
+  margin-top: 20px; /* Pushes the entire pagination section down by 20px */
+  flex: 1; /* Allocates half of the space to pagination */
+  display: flex;
+  flex-direction: column; /* Vertical layout */
+  justify-content: space-between; /* Space between pagination controls */
+  align-items: center; /* Center align horizontally */
+  text-align: center; /* Centers pagination controls horizontally */
+}
+
+.pagination-controls {
+  margin-bottom: 10px; /* Space between controls and image gallery */
+  text-align: center; /* Centers the buttons */
+  padding-top: 10px; /* Space between images and controls */
+  order: 2; /* Ensures controls are at the bottom */
+}
+.pagination-content {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Center images horizontally */
+  flex-wrap: wrap;
+  order: 1; /* Ensures images are above controls */
+}
+
+.pagination-content img {
+  max-width: 100%; /* Maximum width of images is 100% of their container */
+  height: auto; /* Maintain aspect ratio */
+  display: none; /* Hide all images initially */
+}
+
+.pagination-content img.active {
+  display: block; /* Only display the active image */
+}
+
+/* Adjustments for arrow animations */
+@keyframes arrowbounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 /* ==========================================================================About========================================================================== */
+
 .about-image {
   height: 400px;
   -webkit-background-size: cover;
@@ -728,7 +795,7 @@ h1.arrow span {
   margin-top: 80px;
   margin-bottom: 40px;
 }
-.services .icon {
+.services .item .icon {
   position: relative;
   width: 175px;
   height: 175px;
@@ -749,11 +816,11 @@ h1.arrow span {
   background: #e04343;
   border: 1px solid #e04343;
 }
-.services .item [class*="fa"] {
+.services .item .icon [class*="fa"] {
   -webkit-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
 }
-.services .item:hover [class*="fa"] {
+.services .item:hover .icon [class*="fa"] {
   -webkit-transform: scale(1.2);
   transform: scale(1.2);
   -webkit-transition: all 0.3s ease-out;
