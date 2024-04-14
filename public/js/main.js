@@ -71,6 +71,7 @@ Pagenation
 var currentSlide = 0;
 function changeSlide(direction, totalSlides) {
   var slides = document.querySelectorAll(".pagination-content .slide");
+  console.log("Current Slide before change: ", currentSlide); // Debugging line
   slides[currentSlide].style.display = "none"; // Hide current slide
   slides[currentSlide].classList.remove("active"); // Remove the active class
 

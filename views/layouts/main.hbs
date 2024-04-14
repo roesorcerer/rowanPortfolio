@@ -40,14 +40,15 @@
     <script src="/js/classie.js"></script>
     <!-- Text Rotator -->
     <script src="/js/text-rotator.js"></script>
-        <script>
-            new TextRotater("text-rotater", {
-                background: "transparent",
-                color: "yellow",
-                duration: 2500,
-                direction: "top" /* or "left" if your script supports it */
-            }).init();
-        </script>
+    <script>
+    $(document).ready(function() {
+        $(".rotate").textrotator({
+            animation: "fade",
+            separator: ",",
+            speed: 2000
+        });
+    });
+    </script>
     <!-- Then include your custom script -->
     <script type="module" src="/js/script.js"></script>
     <script src="/js/main.js"></script>

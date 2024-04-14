@@ -685,13 +685,17 @@ h1.arrow span {
   color: #e04343;
 }
 
-/* ==========================================================================Service Section Pagenation========================================================================== */
+/* ==========================================================================Service Section Pagination ========================================================================== */
 .service-box {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start; /* Align items at the start of the flex container */
   margin-bottom: 20px; /* Margin between each service box */
+  margin-top: 40px; /* Margin above the first service box */
+  padding: 20px;
+  min-width: 500px; /* Ensures the box doesn't shrink below 320px */
+  min-height: 100px; /* Ensures the box doesn't shrink below 100px */
 }
 
 .service-info {
@@ -700,37 +704,43 @@ h1.arrow span {
 }
 
 .service-pagination {
-  margin-top: 20px; /* Pushes the entire pagination section down by 20px */
-  flex: 1; /* Allocates half of the space to pagination */
+  width: 50%; /* Use the full width of the container */
   display: flex;
-  flex-direction: column; /* Vertical layout */
-  justify-content: space-between; /* Space between pagination controls */
+  flex-direction: column; /* Stack elements vertically */
   align-items: center; /* Center align horizontally */
-  text-align: center; /* Centers pagination controls horizontally */
+  margin-top: 40px; /* Gives space above the pagination section */
 }
 
 .pagination-controls {
-  margin-bottom: 10px; /* Space between controls and image gallery */
+  margin-top: 20px; /* Provides space above the control buttons */
   text-align: center; /* Centers the buttons */
-  padding-top: 10px; /* Space between images and controls */
-  order: 2; /* Ensures controls are at the bottom */
+  width: 75%; /* Full width to center the buttons with text-align */
 }
+
 .pagination-content {
-  width: 100%;
-  display: flex;
-  justify-content: center; /* Center images horizontally */
-  flex-wrap: wrap;
-  order: 1; /* Ensures images are above controls */
+  width: 50%; /* Ensures the container takes the full width available */
+  text-align: center; /* Centers content horizontally */
 }
 
-.pagination-content img {
-  max-width: 100%; /* Maximum width of images is 100% of their container */
+.slide {
+  display: none; /* Hide all slides initially */
+  flex-direction: column; /* Stack image and description vertically */
+  align-items: center; /* Center align content vertically within the slide */
+}
+
+.slide.active {
+  display: flex; /* Display the active slide */
+}
+
+.slide img {
+  width: 100%; /* Image width as a percentage of its container */
   height: auto; /* Maintain aspect ratio */
-  display: none; /* Hide all images initially */
+  margin-bottom: 10px; /* Space between image and text */
 }
 
-.pagination-content img.active {
-  display: block; /* Only display the active image */
+.description {
+  color: #060606; /* Text color for the description */
+  font-size: 16px; /* Text size for the description */
 }
 
 /* Adjustments for arrow animations */
@@ -795,7 +805,7 @@ h1.arrow span {
   margin-top: 80px;
   margin-bottom: 40px;
 }
-.services .item .icon {
+#service .services .item .icon {
   position: relative;
   width: 175px;
   height: 175px;
@@ -812,25 +822,25 @@ h1.arrow span {
   border: 1px solid #e04343;
   color: #e04343;
 }
-.services .item:hover .icon {
+#service .services .item:hover .icon {
   background: #e04343;
   border: 1px solid #e04343;
 }
-.services .item .icon [class*="fa"] {
+#service .services .item .icon [class*="fa"] {
   -webkit-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
 }
-.services .item:hover .icon [class*="fa"] {
+#service .services .item:hover .icon [class*="fa"] {
   -webkit-transform: scale(1.2);
   transform: scale(1.2);
   -webkit-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
   color: #fff;
 }
-.features-wrapper {
+#service .features-wrapper {
   margin: 70px 0 0;
 }
-i.respons {
+#service i.respons {
   position: relative;
   width: 35px;
   height: 35px;
