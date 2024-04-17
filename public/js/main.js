@@ -69,27 +69,74 @@ Menu
 Pagenation 
 *******************************************************************************************************************************/
 var currentSlide = 0;
-function changeSlide(direction, totalSlides) {
-  var slides = document.querySelectorAll(".pagination-content .slide");
-  console.log("Current Slide before change: ", currentSlide); // Debugging line
-  slides[currentSlide].style.display = "none"; // Hide current slide
-  slides[currentSlide].classList.remove("active"); // Remove the active class
-
-  currentSlide += direction; // Update the current slide based on direction (-1 for Prev, +1 for Next)
-
-  // Wrap around the slides correctly
-  if (currentSlide >= totalSlides) {
-    currentSlide = 0; // Go to the first slide if next from last
-  } else if (currentSlide < 0) {
-    currentSlide = totalSlides - 1; // Go to the last slide if prev from first
+function changeSlide(direction, totalSlides, containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) {
+    console.error("Container not found: #" + containerId);
+    return;
   }
 
-  slides[currentSlide].style.display = "block"; // Show the new current slide
-  slides[currentSlide].classList.add("active"); // Add the active class
+  var slides = container.querySelectorAll(".slide");
+  var activeSlide = container.querySelector(".slide.active");
+  var currentSlideIndex = Array.prototype.indexOf.call(slides, activeSlide);
+
+  if (currentSlideIndex === -1) {
+    console.error("No active slide found in container: #" + containerId);
+    return; // Exit the function if no active slide
+  }
+
+  slides[currentSlideIndex].classList.remove("active");
+  slides[currentSlideIndex].style.display = "none";
+
+  currentSlideIndex += direction;
+
+  // Ensure currentSlideIndex wraps around properly
+  if (currentSlideIndex >= totalSlides) {
+    currentSlideIndex = 0;
+  } else if (currentSlideIndex < 0) {
+    currentSlideIndex = totalSlides - 1;
+  }
+
+  slides[currentSlideIndex].classList.add("active");
+  slides[currentSlideIndex].style.display = "block";
 }
 
 // Initialization of the slider
 document.addEventListener("DOMContentLoaded", function () {
-  // Assume there are 3 slides; adjust the number as per your actual slide count
-  changeSlide(0, 3);
+  changeSlide(0, 3, "pagination-content"); // Initialize the first slider
+  changeSlide(0, 3, "new-pagination-content"); // Initialize the second slider
+  changeSlide(0, 3, "new-pagination-content-2"); // Initialize the third slider
+});
+
+/******************************************************************************************************************************
+Accordion Style
+*******************************************************************************************************************************/
+
+document.addEventListener("DOMContentLoaded", () => {
+  const accordionHeaders = document.querySelectorAll(".accordion-header");
+  accordionHeaders.forEach((header) => {
+    header.addEventListener("click", () => {
+      // This variable will check if the item is already open
+      const isOpen = header.nextElementSibling.classList.contains("show");
+
+      // Optionally close all open accordion items
+      document
+        .querySelectorAll(".accordion-content.show")
+        .forEach((openItem) => {
+          if (openItem !== header.nextElementSibling) {
+            openItem.classList.remove("show");
+            openItem.style.maxHeight = null;
+          }
+        });
+
+      const contentPanel = header.nextElementSibling;
+      if (isOpen) {
+        contentPanel.classList.remove("show");
+        contentPanel.style.maxHeight = null;
+      } else {
+        contentPanel.classList.add("show");
+        contentPanel.style.maxHeight = contentPanel.scrollHeight + "px";
+      }
+    });
+  });
 });

@@ -800,7 +800,38 @@ h1.arrow span {
 .color-bg h1.arrow {
   color: #fff;
 }
+/* ==========================================================================Accordion========================================================================== */
+.accordion-header {
+  background: #e04343;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background-color: rgb(23, 17, 17);
+  color: #444;
+  border: 1px solid #e04343;
+}
+
+.accordion-content.show {
+  max-height: 500px; /* Adjust max-height according to content size */
+}
+
 /* ==========================================================================Services========================================================================== */
+#service {
+  background-color: #090909; /* Change this color as needed */
+  padding: 100px 0; /* Top and Bottom padding */
+  color: #333; /* Default text color for service section */
+}
 .services {
   margin-top: 80px;
   margin-bottom: 40px;
