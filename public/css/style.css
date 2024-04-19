@@ -36,10 +36,12 @@ a:active {
   outline: none !important;
 }
 p {
-  color: #8c9398;
+  color: #cfd8dc;
   word-spacing: 1px;
   line-height: 25px;
-  font-size: 14px;
+  font-size: 16px;
+  font-family: "Georgia", serif;
+  text-align: center;
 }
 h2 {
   font-size: 15px;
@@ -66,6 +68,32 @@ h6::after {
   display: block;
   width: 65px;
   margin-top: 20px;
+}
+body,
+h1,
+h2,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(100% - 30px);
+  padding: 0 15px;
+  margin: auto;
+}
+.col-md-12 {
+  display: flex; /* Enables flexbox */
+  flex-direction: column; /* Stacks children vertically */
+  justify-content: center; /* Centers content vertically */
+  align-items: flex-start; /* Centers content horizontally */
+  min-height: 60vh; /* Optional: Makes it take at least the height of the viewport */
+  width: 100%; /* Ensures it takes the full width of its parent */
+  padding: 40px 20px; /* Provides padding around the content */
+  flex: 1; /* Take available space */
+  max-width: 100%; /* Prevent from exceeding the viewport width */
+  padding: 0 15px; /* Standard padding */
 }
 /* ==========================================================================HTML5 display definitions========================================================================== */
 article,
@@ -505,8 +533,8 @@ table {
 }
 /* ==========================================================================Hero========================================================================== */
 .hero {
-  padding: 110px 0 100px 0;
-  height: auto;
+  padding: 40px 0;
+  height: 100vh; /* Full viewport height */
   background-color: #0e0e0e;
   position: relative;
   overflow: hidden;
@@ -515,10 +543,16 @@ table {
   justify-content: center; /* Vertically center the content in the container */
 }
 
+/* Text within the hero section */
 .hero-text {
-  padding-top: 200px;
-  z-index: 1;
-  text-align: left;
+  padding-top: 40px; /* Adjust padding as needed */
+  position: absolute; /* Position absolutely to place exactly where needed */
+  left: 5%; /* Place text 5% from the left edge of the hero container */
+  top: 50%; /* Start 50% down from the top, adjust as necessary */
+  transform: translateY(-50%); /* Center vertically */
+  max-width: 540px; /* Max width of the text block */
+  z-index: 2; /* Ensure it's above the background image */
+  text-align: left; /* Align text to the left */
 }
 /* Container for the image with rounded corners and gradient */
 .hero-image {
@@ -527,10 +561,12 @@ table {
   right: 0;
   bottom: 0;
   left: 0;
-  background: url("/images/kitten-green.jpg") right content-box no-repeat;
+  background: url("/images/kitten-green.jpg") no-repeat right center / cover;
   background-size: contain;
   border-radius: 60px; /* Adjust as needed for rounded corners */
-  z-index: 0;
+  z-index: 1;
+  margin-top: 20px;
+  margin-right: 20px;
 }
 
 /* Gradient overlay specific to the image container */
@@ -546,7 +582,8 @@ table {
     transparent 30%,
     #0e0e0e 50%
   );
-  border-radius: 60px; /* Ensure the overlay also has rounded corners */
+  border-radius: 50px; /* Ensure the overlay also has rounded corners */
+  z-index: 1;
   pointer-events: none; /* Allows clicks to pass through to elements below */
 }
 .hero h1 {
@@ -576,12 +613,15 @@ table {
   color: #fff;
   font-size: 15px;
 }
-.homemade-apple-regular {
-  font-family: "Homemade Apple", cursive;
-  font-weight: 400;
-  font-style: normal;
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 5em; /* Smaller font size for h1 on small screens */
+    line-height: 1.2; /* Adjust line height to fit the smaller screen */
+  }
+  .hero h3 {
+    font-size: 1.5em; /* Smaller font size for h3 on small screens */
+  }
 }
-
 /* Boucing Arrow Animation */
 @keyframes arrowbounce {
   from {
@@ -642,12 +682,12 @@ table {
   margin-right: 20px; /* Adjust the margin to position from the right */
 }
 .scrollto {
-  padding: 150px 0px 0px 0px;
+  padding: 10px;
   display: inline-flex;
   color: #fff;
   text-decoration: none;
   width: 200px;
-  margin: 0 auto;
+  margin: 10px auto;
   border-bottom: none;
   cursor: pointer; /* Makes the whole area clickable */
   align-items: center; /* Centers items vertically within the button */
@@ -675,11 +715,18 @@ table {
 h1.arrow {
   font-size: 16px;
   text-transform: uppercase;
-  color: #353535;
+  color: #e0e0e0;
   letter-spacing: 4px;
   background: url("/images/h1-bg.png") no-repeat center bottom;
+  padding-top: 20px;
   padding-bottom: 30px;
   font-weight: bold;
+  width: 100%; /* Ensures the background spans the full container width */
+  text-align: center; /* Centers the text horizontally */
+  font-family: "Merienda", cursive;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
 }
 h1.arrow span {
   color: #e04343;
@@ -755,7 +802,17 @@ h1.arrow span {
 }
 
 /* ==========================================================================About========================================================================== */
-
+#about {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #36454f;
+  color: #e0e0e0;
+  padding: 20px;
+  box-sizing: border-box;
+}
 .about-image {
   height: 400px;
   -webkit-background-size: cover;
@@ -764,7 +821,7 @@ h1.arrow span {
   background-size: cover;
 }
 .color-bg {
-  background: #e04343;
+  background: #36454f; /* Background color for about page. Possibly rotate between this and black? */
 }
 
 .color-bg a {
@@ -786,31 +843,100 @@ h1.arrow span {
   color: #e04343;
   border-color: rgba(0, 0, 0, 0);
 }
+
 .about-text {
-  padding: 20px 50px 25px 50px;
+  width: 100%; /* Makes the width respond to the padding of the container */
+  padding: 20px 50px 25px 50px; /* Adds padding inside the text box */
+  margin-top: 20px; /* Moves the text box down slightly */
+  background: rgba(
+    54,
+    69,
+    79,
+    0.8
+  ); /* Optional: Adds a semi-transparent background for better readability */
+  border-radius: 10px; /* Optional: Rounds the corners of the text box */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow to the text box */
+  align-items: center;
+}
+
+.headline-about p {
+  font-size: 24px; /* Size of the font */
+  color: #e0e0e0; /* Light grey color for text */
+  letter-spacing: 4px; /* Spacing between letters */
+  font-weight: 400; /* Bold font weight, you can also use 'bold' */
+  text-align: center; /* Center alignment of text */
+  font-family: "Merienda", cursive; /* Font family */
+  display: block; /* Block display to take the full width */
+  margin-top: 20px; /* Padding at the top */
+  margin-bottom: 10px; /* Padding at the bottom */
+}
+
+.headline-about p span {
+  color: #e04343; /* Red color for any <span> tags within the title */
+}
+.headline-about .page-divider {
+  display: block;
+  width: 100%; /* Allows the background-size to take effect correctly */
+  max-width: 300px; /* Sets a max-width for the divider image */
+  height: 50px; /* Height of the divider, you can adjust as needed */
+  margin: 0 auto 10px; /* Center the divider and add margin below it */
+  background: url("/images/page-divider.png") no-repeat center center; /* Adjusts the background to be centered */
+  background-size: contain; /* Ensures the image fits within the div without stretching */
 }
 .about-text h1 {
   text-transform: uppercase;
   font-size: 24px;
-  color: #8c8c8c;
+  color: #e0e0e0;
 }
+
 .color-bg h1.arrow span {
   color: #ffe800;
 }
 .color-bg h1.arrow {
   color: #fff;
 }
+#about .about-text h2 {
+  font-size: 24px; /* Adjust size as needed */
+  color: #f7f3f3 !important; /* This will be your desired color */
+  text-transform: uppercase;
+  font-weight: bold; /* Maintain bold if desired */
+  font-family: "Bungee Spice", sans-serif; /* Using Bungee Spice font */
+}
+#about .about-text h2::after {
+  border-color: #f7f3f3; /* Make the underline match the text color if desired */
+}
 /* ==========================================================================Accordion========================================================================== */
 .accordion-header {
-  background: #e04343;
-  color: white;
+  background: #49585f;
+  color: e0e0e0;
   cursor: pointer;
-  padding: 10px;
+  padding: 15px;
   width: 100%;
   text-align: left;
   border: none;
   outline: none;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 18px; /* Larger font for better readability */
+  border-top: 3px solid #49585f; /* Subtle top border using the background color */
+  border-bottom: 3px solid #36454f; /* Subtle bottom border to blend with the main background */
+  border-radius: 8px; /* Rounded corners for a softer look */
+}
+
+.accordion-title {
+  font-size: 24px; /* Size of the font */
+  text-transform: uppercase; /* Uppercase letters for consistency */
+  color: #e0e0e0; /* Light grey color for text */
+  letter-spacing: 4px; /* Spacing between letters */
+  padding-top: 10px; /* Padding at the top */
+  padding-bottom: 10px; /* Padding at the bottom */
+  font-weight: 400; /* Bold font weight, you can also use 'bold' */
+  text-align: center; /* Center alignment of text */
+  font-family: "Jersey 10", sans-serif; /* Font family */
+  display: block; /* Block display to take the full width */
+}
+
+.accordion-title span {
+  color: #e04343; /* Red color for any <span> tags within the title */
 }
 
 .accordion-content {
@@ -818,8 +944,10 @@ h1.arrow span {
   overflow: hidden;
   transition: max-height 0.3s ease-out;
   background-color: rgb(23, 17, 17);
-  color: #444;
+  color: #ffffff; /* Pure white for contrast and readability */
   border: 1px solid #e04343;
+
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .accordion-content.show {

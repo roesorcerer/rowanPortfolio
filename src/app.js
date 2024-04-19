@@ -49,11 +49,38 @@ app.get("/about", (req, res) => {
   });
 });
 
-// service page route
+// services page route
 app.get("/services", (req, res) => {
   res.render("pages/services", {
     layout: "main", // Assuming you want to use the 'main' layout
-    title: "Services", // Any other local variables you want to pass to the template
+    title: "What I have done", // Any other local variables you want to pass to the template
+    name: "Rowan Stratton",
+  });
+});
+
+// portfolio page route
+app.get("/portfolio", (req, res) => {
+  res.render("pages/portfolio", {
+    layout: "main", // Assuming you want to use the 'main' layout
+    title: "Portfolio", // Any other local variables you want to pass to the template
+    name: "Rowan Stratton",
+  });
+});
+
+// blog page route
+app.get("/blog", (req, res) => {
+  res.render("pages/blog", {
+    layout: "main", // Assuming you want to use the 'main' layout
+    title: "Blog with my thoughts", // Any other local variables you want to pass to the template
+    name: "Rowan Stratton",
+  });
+});
+
+// contact page route
+app.get("/contact", (req, res) => {
+  res.render("pages/contact", {
+    layout: "main", // Assuming you want to use the 'main' layout
+    title: "Contact Me", // Any other local variables you want to pass to the template
     name: "Rowan Stratton",
   });
 });
