@@ -1,0 +1,9 @@
+// tsconfig.json
+
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true
+  }
+}

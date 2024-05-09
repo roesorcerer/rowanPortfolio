@@ -4,14 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "ng": "ng",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/app.js",
-    "build-css": "tailwindcss -i ./public/css/style.css -o ./public/css/tailwind.css --minify"
+    "build-css": "tailwindcss -i ./src/assets/css/style.css -o ./src/assets/css/tailwind.css --minify",
+    "dev": "ng serve --proxy-config proxy.conf.json --open",
+    "dev-node": "tsx watch src/server",
+    "watch": "ng build --watch --configuration development"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "private": true,
   "dependencies": {
+    "@angular/animations": "^15.1.0",
+    "@angular/common": "^15.1.0",
+    "@angular/compiler": "^15.1.0",
+    "@angular/core": "^15.1.0",
+    "@angular/forms": "^15.1.0",
+    "@angular/platform-browser": "^15.1.0",
+    "@angular/platform-browser-dynamic": "^15.1.0",
+    "@angular/router": "^15.1.0",
     "@tailwindcss/typography": "^0.5.13",
     "bootstrap": "^5.3.3",
     "express": "^4.19.2",
@@ -22,12 +35,29 @@
     "jquery": "^3.7.1",
     "lightbox": "^0.5.0",
     "nodemon": "^3.1.0",
+    "remult": "^0.26.10",
+    "rxjs": "~7.8.0",
     "smoothscroll": "^0.4.0",
-    "text-rotater": "^1.0.4"
+    "text-rotater": "^1.0.4",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.12.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^15.2.11",
+    "@angular/cli": "~15.1.6",
+    "@angular/compiler-cli": "^15.1.0",
+    "@types/express": "^4.17.21",
+    "@types/jasmine": "~4.3.0",
     "autoprefixer": "^10.4.19",
+    "jasmine-core": "~4.5.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.0.0",
     "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3"
+    "tailwindcss": "^3.4.3",
+    "tsx": "^4.9.3",
+    "typescript": "~4.9.4"
   }
 }
