@@ -1,0 +1,67 @@
+.header {
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+}
+
+.logo img {
+  height: 40px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #007bff;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+}
+
+/* Ensure the offcanvas menu covers the entire viewport */
+.offcanvas-end {
+  width: 250px; /* Adjust as needed */
+}
+
+/* Custom styles for the navbar */
+.navbar-brand {
+  font-weight: bold;
+}
+
+/* Custom styles for the links */
+.nav-link {
+  color: #fff;
+}
+
+.nav-link:hover {
+  color: #ddd;
+}

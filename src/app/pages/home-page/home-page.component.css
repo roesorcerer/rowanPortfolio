@@ -1,0 +1,9 @@
+.home-page {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+  min-width: 300px;
+  margin: auto;
+  padding-top: 70px;
+}
