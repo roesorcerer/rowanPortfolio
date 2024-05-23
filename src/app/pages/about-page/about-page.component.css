@@ -1,0 +1,31 @@
+.about {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+  min-width: 300px;
+  margin: auto;
+  padding-top: 70px;
+}
+.about-header {
+  color: blue;
+  font-family: "Danfo", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "ELSH" 0;
+}
+
+.img-fluid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 600px;
+  height: 300px;
+  margin: auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-style: solid;
+  border-width: 5px;
+  border-radius: 5px;
+}
