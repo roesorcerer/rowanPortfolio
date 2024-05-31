@@ -1,0 +1,6 @@
+.abilities-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Make the container take up full height */
+}

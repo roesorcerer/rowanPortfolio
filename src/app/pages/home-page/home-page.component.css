@@ -1,6 +1,6 @@
 .home-page {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   max-width: 100%;
   min-width: 300px;
@@ -71,6 +71,21 @@
   height: 100%;
   overflow: hidden;
   z-index: -1;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* Adjust color and transparency as needed */
+  z-index: 1;
 }
 
 .bg-video {

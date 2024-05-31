@@ -9,9 +9,9 @@ import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';  // Assume you have a FooterComponent
 import { HomePageComponent } from './pages/home-page/home-page.component';  // Assume you have a HomeComponent
 import { AboutPageComponent } from './pages/about-page/about-page.component';
-import { ContactPageComponent } from './pages/contact-page/contact-page/contact-page.component';
-import { PortfolioPageComponent } from './pages/portfolio-page/portfolio-page/portfolio-page.component';
-import { BlogPageComponent } from './pages/blog-page/blog-page/blog-page.component';
+import { ContactPageComponent } from './pages/contact-page/contact-page.component';
+import { PortfolioPageComponent } from './pages/portfolio-page/portfolio-page.component';
+import { BlogPageComponent } from './pages/blog-page/blog-page.component';
 import { ServicesPageComponent } from './pages/services-page/services-page.component';  // Assume you have an AboutComponent
 
 const routes: Routes = [
