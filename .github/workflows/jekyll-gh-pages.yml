@@ -39,8 +39,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: dist/rowanblog
+          path: dist/rowanblog
 
   # Deployment job
   deploy:
