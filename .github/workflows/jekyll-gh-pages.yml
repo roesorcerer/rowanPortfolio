@@ -28,19 +28,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - name: Install dependencies
         run: npm install
+
       - name: Build Angular project
-        run: npm run build -- --output-path=dist/rowanblog --configuration=production
+        run: npm run build -- --output-path=rowanPortfolio/dist/rowanblog --configuration=production
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: dist/rowanblog
+          path: rowanPortfolio/dist/rowanblog
 
   # Deployment job
   deploy:
@@ -52,13 +56,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: build-artifact
-          path: ./dist/rowanblog
+          path: rowanPortfolio/dist/rowanblog
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-          publish_dir: ./dist/rowanblog
+          publish_dir: ./rowanPortfolio/dist/rowanblog
