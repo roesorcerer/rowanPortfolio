@@ -76,18 +76,16 @@ jobs:
           git config user.name "roesorcerer"
           git config user.email "roesorcerer@users.noreply.github.com"
 
-      - name: Debug token
-        run: echo "${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}"
-
-      - name: Check if gh-pages branch exists
+      - name: Ensure gh-pages branch exists
         run: |
+          git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}@github.com/roesorcerer/rowanPortfolio.git
           if git show-ref --quiet refs/heads/gh-pages; then
             echo "gh-pages branch exists";
           else
             git checkout --orphan gh-pages
             git reset --hard
             git commit --allow-empty -m "Initializing gh-pages branch"
-            git push https://x-access-token:${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}@github.com/roesorcerer/rowanPortfolio.git gh-pages
+            git push origin gh-pages
             git checkout -
           fi
 
@@ -100,7 +98,7 @@ jobs:
           ACTIONS_DEPLOY_ACCESS_TOKEN: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
         run: |
           git commit -m "deploy: ${{ github.sha }}" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}@github.com/roesorcerer/rowanPortfolio.git gh-pages --force
+          git push origin gh-pages --force
 
       - name: Confirm deployment
         run: echo "Deployment complete"
