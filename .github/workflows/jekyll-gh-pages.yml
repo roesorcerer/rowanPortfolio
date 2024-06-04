@@ -84,7 +84,7 @@ jobs:
             git checkout --orphan gh-pages
             git reset --hard
             git commit --allow-empty -m "Initializing gh-pages branch"
-            git push origin gh-pages
+            git push https://x-access-token:${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}@github.com/roesorcerer/rowanPortfolio.git gh-pages
             git checkout -
           fi
 
@@ -93,9 +93,11 @@ jobs:
           git add -A
 
       - name: Create and push commit
+        env:
+          ACTIONS_DEPLOY_ACCESS_TOKEN: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
         run: |
           git commit -m "deploy: ${{ github.sha }}" || echo "No changes to commit"
-          git push origin gh-pages --force
+          git push https://x-access-token:${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}@github.com/roesorcerer/rowanPortfolio.git gh-pages --force
 
       - name: Confirm deployment
         run: echo "Deployment complete"
