@@ -81,4 +81,12 @@ jobs:
       - name: Ensure gh-pages branch exists
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}@github.com/roesorcerer/rowanPortfolio.git
-          if git show-ref --quiet refs/
+          git fetch --all
+          if git show-ref --quiet refs/heads/gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git reset --hard
+            git commit --allow-empty -m "Initialize gh-pages branch"
+            git push origin gh-pages
+          fi
