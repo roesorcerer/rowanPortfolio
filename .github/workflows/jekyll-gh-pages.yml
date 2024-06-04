@@ -77,6 +77,11 @@ jobs:
           personal_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
           publish_dir: ./dist/rowanblog
 
+      - name: Configure Git user
+        run: |
+          git config user.name "roesorcerer"
+          git config user.email "roesorcerer@users.noreply.github.com"
+
       - name: Force add files to Git
         run: |
           git add -A
