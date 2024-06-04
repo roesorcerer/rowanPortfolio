@@ -51,9 +51,9 @@ jobs:
           name: build-artifact
           path: ./dist/rowanblog
 
-      - name: List files for debugging
+      - name: List files after download
         run: |
-          echo "Listing files in the artifact:"
+          echo "Files after download:"
           ls -R ./dist/rowanblog
 
       - name: Check current branch
@@ -61,11 +61,30 @@ jobs:
           echo "Current branch:"
           git branch
 
+      - name: Check current directory
+        run: |
+          echo "Current directory:"
+          pwd
+
+      - name: List files before deployment
+        run: |
+          echo "Files before deployment:"
+          ls -R ./dist/rowanblog
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
           publish_dir: ./dist/rowanblog
+
+      - name: Force add files to Git
+        run: |
+          git add -A
+
+      - name: Create and push commit
+        run: |
+          git commit -m "deploy: ${{ github.sha }}" || echo "No changes to commit"
+          git push origin gh-pages --force
 
       - name: Confirm deployment
         run: echo "Deployment complete"
