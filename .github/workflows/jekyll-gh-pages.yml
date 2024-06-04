@@ -37,5 +37,6 @@ jobs:
         with:
           branch: gh-pages
           folder: dist/rowanblog
+          token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
           clean: true
           clean-exclude: []
