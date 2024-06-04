@@ -76,6 +76,9 @@ jobs:
           git config user.name "roesorcerer"
           git config user.email "roesorcerer@users.noreply.github.com"
 
+      - name: Debug token
+        run: echo "${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}"
+
       - name: Check if gh-pages branch exists
         run: |
           if git show-ref --quiet refs/heads/gh-pages; then
