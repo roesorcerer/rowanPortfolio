@@ -1,4 +1,3 @@
-# Sample workflow for building and deploying an Angular site to GitHub Pages
 name: Deploy Angular with GitHub Pages dependencies preinstalled
 
 on:
@@ -53,10 +52,20 @@ jobs:
           path: ./dist/rowanblog
 
       - name: List files for debugging
-        run: ls -R ./dist/rowanblog
+        run: |
+          echo "Listing files in the artifact:"
+          ls -R ./dist/rowanblog
+
+      - name: Check current branch
+        run: |
+          echo "Current branch:"
+          git branch
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
           publish_dir: ./dist/rowanblog
+
+      - name: Confirm deployment
+        run: echo "Deployment complete"
