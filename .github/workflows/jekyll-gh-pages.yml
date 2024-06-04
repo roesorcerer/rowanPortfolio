@@ -32,73 +32,10 @@ jobs:
       - name: Build Angular project
         run: npm run build -- --output-path=dist/rowanblog --configuration=production
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
-          name: build-artifact
-          path: dist/rowanblog
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifact
-          path: ./dist/rowanblog
-
-      - name: List files after download
-        run: |
-          echo "Files after download:"
-          ls -R ./dist/rowanblog
-
-      - name: Check current branch
-        run: |
-          echo "Current branch:"
-          git branch
-
-      - name: Check current directory
-        run: |
-          echo "Current directory:"
-          pwd
-
-      - name: List files before deployment
-        run: |
-          echo "Files before deployment:"
-          ls -R ./dist/rowanblog
-
-      - name: Configure Git user
-        run: |
-          git config user.name "roesorcerer"
-          git config user.email "roesorcerer@users.noreply.github.com"
-
-      - name: Ensure gh-pages branch exists
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}@github.com/roesorcerer/rowanPortfolio.git
-          if git show-ref --quiet refs/heads/gh-pages; then
-            echo "gh-pages branch exists";
-          else
-            git checkout --orphan gh-pages
-            git reset --hard
-            git commit --allow-empty -m "Initializing gh-pages branch"
-            git push origin gh-pages
-            git checkout -
-          fi
-
-      - name: Force add files to Git
-        run: |
-          git add -A
-
-      - name: Create and push commit
-        env:
-          ACTIONS_DEPLOY_ACCESS_TOKEN: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-        run: |
-          git commit -m "deploy: ${{ github.sha }}" || echo "No changes to commit"
-          git push origin gh-pages --force
-
-      - name: Confirm deployment
-        run: echo "Deployment complete"
+          branch: gh-pages
+          folder: dist/rowanblog
+          clean: true
+          clean-exclude: []
