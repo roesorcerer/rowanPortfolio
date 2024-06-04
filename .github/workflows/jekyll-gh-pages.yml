@@ -71,16 +71,22 @@ jobs:
           echo "Files before deployment:"
           ls -R ./dist/rowanblog
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          personal_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-          publish_dir: ./dist/rowanblog
-
       - name: Configure Git user
         run: |
           git config user.name "roesorcerer"
           git config user.email "roesorcerer@users.noreply.github.com"
+
+      - name: Check if gh-pages branch exists
+        run: |
+          if git show-ref --quiet refs/heads/gh-pages; then
+            echo "gh-pages branch exists";
+          else
+            git checkout --orphan gh-pages
+            git reset --hard
+            git commit --allow-empty -m "Initializing gh-pages branch"
+            git push origin gh-pages
+            git checkout -
+          fi
 
       - name: Force add files to Git
         run: |
