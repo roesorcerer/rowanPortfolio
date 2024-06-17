@@ -13,6 +13,9 @@ import { ContactPageComponent } from './pages/contact-page/contact-page.componen
 import { PortfolioPageComponent } from './pages/portfolio-page/portfolio-page.component';
 import { BlogPageComponent } from './pages/blog-page/blog-page.component';
 import { ServicesPageComponent } from './pages/services-page/services-page.component';  // Assume you have an AboutComponent
+import { Post1Component } from './pages/blog-page/posts/post1.component';
+import { CarouselComponent } from './pages/portfolio-page/carousel/carousel.component';
+import { MarketingComponent } from './pages/portfolio-page/marketing/marketing.component';
 
 const routes: Routes = [
   { path: '', component: HomePageComponent },
@@ -21,6 +24,11 @@ const routes: Routes = [
   { path: 'portfolio', component: PortfolioPageComponent },
   { path: 'blog', component: BlogPageComponent },
   { path: 'services', component: ServicesPageComponent },
+  { path: 'blog/:id', component: Post1Component},
+  { path: 'portfolio/:id', component: CarouselComponent},
+  { path: 'portfolio/:id', component: MarketingComponent},
+  { path: '', redirectTo: '/blog', pathMatch: 'full' },  // Redirect to blog as the default route
+  { path: '**', redirectTo: '/blog' }  // Redirect any unknown paths to blog
 
   // Add more routes as needed
 ];
@@ -36,6 +44,9 @@ const routes: Routes = [
     PortfolioPageComponent,
     BlogPageComponent,
     ServicesPageComponent,
+    Post1Component,
+    CarouselComponent,
+    MarketingComponent
   ],
   imports: [
     BrowserModule,
