@@ -7,15 +7,18 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class BlogService {
-  private postsUrl = 'pages/blog-page/posts/posts.json';  // URL to JSON file or API endpoint
+  private postsUrl = 'assets/posts.json';  // URL to JSON file or API endpoint
 
   constructor(private http: HttpClient) { }
 
   getPosts(): Observable<any[]> {
+    console.log('Fetching posts from:', this.postsUrl);
     return this.http.get<any[]>(this.postsUrl);
   }
 
   getPost(id: number): Observable<any> {
-    return this.http.get<any>(`${this.postsUrl}/${id}`);
+    return this.getPosts().pipe(
+      map(posts => posts.find(post => post.id === id))
+    );
   }
 }

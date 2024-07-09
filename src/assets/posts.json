@@ -14,5 +14,21 @@
     "author": "Jacob",
     "excerpt": "This is another blog post excerpt.",
     "content": "This is some additional paragraph placeholder content. It has been written to fill the available space and show how a longer snippet of text affects the surrounding content."
+  },
+  {
+    "id": 3,
+    "title": "Another blog post",
+    "date": "December 23, 2020",
+    "author": "Jacob",
+    "excerpt": "This is another blog post excerpt.",
+    "content": "This is some additional paragraph placeholder content. It has been written to fill the available space and show how a longer snippet of text affects the surrounding content."
+  },
+  {
+    "id": 4,
+    "title": "Another blog post",
+    "date": "December 23, 2020",
+    "author": "Jacob",
+    "excerpt": "This is another blog post excerpt.",
+    "content": "This is some additional paragraph placeholder content. It has been written to fill the available space and show how a longer snippet of text affects the surrounding content."
   }
 ]
