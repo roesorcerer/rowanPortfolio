@@ -5,7 +5,7 @@
     "date": "June 5, 2024",
     "author": "Rowan",
     "excerpt": "About my learning journey",
-    "content": "This blog post shows a few different types of content that’s supported and styled with Bootstrap. Basic typography, lists, tables, images, code, and more are all supported as expected."
+    "content": "post1.md"
   },
   {
     "id": 2,
@@ -30,5 +30,13 @@
     "author": "Jacob",
     "excerpt": "This is another blog post excerpt.",
     "content": "This is some additional paragraph placeholder content. It has been written to fill the available space and show how a longer snippet of text affects the surrounding content."
+  },
+  {
+    "id": 5,
+    "title": "Leaving Home for Grad School: A Journey of Passion, Sacrifice, and Unwavering Love",
+    "date": "August 10, 2024",
+    "author": "Rowan",
+    "excerpt": "This is another blog post excerpt.",
+    "content": "grad-school-journey.md"
   }
 ]

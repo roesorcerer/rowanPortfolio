@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
+import { MarkdownModule } from 'ngx-markdown';
+import { SecurityContext } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './layout/header/header.component';
@@ -52,7 +54,9 @@ const routes: Routes = [
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    RouterModule.forRoot(routes)  // Configure routes
+    RouterModule.forRoot(routes),  // Configure routes
+    MarkdownModule.forRoot({ sanitize: SecurityContext.NONE }),  // Configure markdown
+    MarkdownModule.forChild()  // Configure markdown
   ],
   providers: [],
   bootstrap: [AppComponent]
