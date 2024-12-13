@@ -7,7 +7,8 @@ import { CoffeeShopNew } from "../sections/CoffeeShopNew.tsx"
 import {Leva, useControls } from 'leva';
 import {useMediaQuery} from 'react-responsive';
 import { calculateSizes } from "../constants/index.ts"
-import Target from "../sections/Target.tsx"
+import { CoffeeCup } from "../sections/CoffeeCup.tsx"
+import { CatBookShelf } from "../sections/CatBookself.tsx"
 
 const Hero = () => {
 
@@ -29,6 +30,8 @@ const Hero = () => {
         max: 10
       },
 
+    
+
       rotationX: {
         value: 3.3,
         min: -10,
@@ -44,6 +47,23 @@ const Hero = () => {
         min: -10,
         max: 10
       },
+
+      cameraX: {
+        value: 1.3,
+        min: -10,
+        max: 10
+      },
+      cameranY: {
+        value: 1.3,
+        min: -10,
+        max: 10
+      },
+      cameraZ: {
+        value: 7.1,
+        min: -10,
+        max: 10
+      },
+
       scale: {
         value: 2.4,
         min: 0.1,
@@ -80,15 +100,20 @@ const Hero = () => {
     <Suspense fallback={<CanvasLoader/>}>
     <directionalLight position={[0, 0, 20]} intensity = {0.25} />
 
-    <PerspectiveCamera makeDefault position={[0, 0, 5]}/>
-    <CoffeeShopNew scale={sizes.shopScale} position={[x.positionX, x.positionY, x.positionZ]} rotation={[x.rotationX, x.rotationY, x.rotationZ]}/>
+    <PerspectiveCamera makeDefault position={[x.cameraX, x.cameranY, x.cameraZ]}/>
+    <CoffeeShopNew scale={sizes.shopScale} position={[sizes.shopPositionX, sizes.shopPositionY, sizes.shopPositionZ]} rotation={[sizes.shopRotationX, sizes.shopRotationY, sizes.shopRotationZ]}/>
 
 {/**This is where you stopped 12/11 */} 
 
     <group>
-      <Target position={sizes.targetPosition}/>
+      <CoffeeCup scale={sizes.coffeeCupScale} position={[sizes.coffeCupPositionX, sizes.coffeeCupPositionY, sizes.coffeeCupPositionZ]} rotation = {[sizes.coffeCupRotationX, sizes.coffeCupRotationY, sizes.coffeCupRotationZ]}/>
     </group>
     
+
+    <group>
+      <CatBookShelf scale={sizes.catShelfScale} position={[x.positionX, x.positionY, x.positionZ]} rotation={[x.rotationX, x.rotationY, x.rotationZ]}/>
+    </group>
+
     <ambientLight intensity={1} />
     </Suspense>
 </Canvas>

@@ -248,8 +248,44 @@ export const navLinks = [
   
   export const calculateSizes = (isSmall: any, isMobile: any, isTablet: any) => {
     return {
-      shopScale: isSmall ? 1.5 : isMobile ? 1.5 : 2.4,
-      shopPosition: isMobile ? [0.5, -4.5, 0] : [0.25, -5.5, 0],
+      
+      /*Scale Individual Elements */ 
+      shopScale: isSmall ? 1.5 : isMobile ? 1.5 : isTablet ? 1.8 : 2.4,
+      coffeeCupScale: isSmall ? 2.5: isMobile ? 2.5 : isTablet ? 4.5 : 5,
+      catShelfScale: isSmall ? NaN : isMobile ? 0.2 : isTablet ? 0.3 : 0.4,
+
+
+      /**Position of the Shop */
+      shopPositionX:  isSmall ? -0.9 : isMobile ? -0.9 : isTablet ? -0.7 : -0.3,
+      shopPositionY: isSmall ? -0.9 : isMobile ? -1.2 : isTablet ? -2.2 : -3.5,
+      shopPositionZ: isSmall ? -5.7 : isMobile ? -5.7 : isTablet ? -5.1 : -5.5,
+
+      /**Rotation of Shop */
+      shopRotationX: isSmall ? 3.5 : isMobile ? 3.5 : isTablet ? 3.5 : 3.3 ,
+      shopRotationY: isSmall ? 2.1 : isMobile ? 2.1 : isTablet ? 2.2 : 2.1,
+      shopRotationZ: isSmall ? 3.1 : isMobile ? 3.1 : isTablet ? 3.1 : 3.1,
+
+      /*Position of Coffee Cup */
+      coffeCupPositionX:  isSmall ? 0.9 : isMobile ? -4.4 : isTablet ? -5.3 : -6.1,
+      coffeeCupPositionY: isSmall ? -3 : isMobile ? 2.4 : isTablet ? 2.2 : 0.9,
+      coffeeCupPositionZ: isSmall ? 0.9 : isMobile ? -6.9 : isTablet ? -6.9 : -5.7,
+
+      /*Rotation of Coffee Cup */
+      coffeCupRotationX: isSmall ? 0.9 : isMobile ? -2.5 : isTablet ? -2.5 : 3.7 ,
+      coffeCupRotationY: isSmall ? 0.9 : isMobile ? 3.1 : isTablet ? 3.1 : 3.1,
+      coffeCupRotationZ: isSmall ? 0.9 : isMobile ? 2.9 : isTablet ? 2.9 : 2.9,
+
+      /*Position of Cat Shelf */
+      catShelfPositionX:  isSmall ? 0.9 : isMobile ? -4.4 : isTablet ? -5.3 : 5.1,
+      catShelfPositionY: isSmall ? -3 : isMobile ? 2.4 : isTablet ? 2.2 : -3.5,
+      catShelfPositionZ: isSmall ? 0.9 : isMobile ? -6.9 : isTablet ? -6.9 : -3.3,
+
+      /*Rotation of Cat Shelf */
+      catShelfRotationX: isSmall ? 0.9 : isMobile ? -2.5 : isTablet ? -2.5 : 3.3 ,
+      catShelfRotationY: isSmall ? 0.9 : isMobile ? 3.1 : isTablet ? 3.1 : 1.7,
+      catShelfRotationZ: isSmall ? 0.9 : isMobile ? 2.9 : isTablet ? 2.9 : 2.9,
+      
+      
       cubePosition: isSmall ? [4, -5, 0] : isMobile ? [5, -5, 0] : isTablet ? [5, -5, 0] : [9, -5.5, 0],
       reactLogoPosition: isSmall ? [3, 4, 0] : isMobile ? [5, 4, 0] : isTablet ? [5, 4, 0] : [12, 3, 0],
       ringPosition: isSmall ? [-5, 7, 0] : isMobile ? [-10, 10, 0] : isTablet ? [-12, 10, 0] : [-24, 10, 0],
