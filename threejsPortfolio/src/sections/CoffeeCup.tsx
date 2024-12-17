@@ -11,6 +11,10 @@ import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 import cup from '../public/models/coffee_cup.glb';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
+
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -22,10 +26,20 @@ type GLTFResult = GLTF & {
 }
 
 export function CoffeeCup(props: JSX.IntrinsicElements['group']) {
+  const targetRef = useRef();
   const { nodes, materials } = useGLTF(cup) as GLTFResult
+   /* useGSAP( () => {
+        gsap.to(targetRef.current.position, {
+        y: targetRef.current.position.y + 0.5,
+        duration: 1.5,
+        repeat: -1,
+        yoyo: true,
+    
+  });*/
+
   return (
-    <group {...props} dispose={null}>
-      <group name="Sketchfab_Scene">
+    <group {...props} dispose={null} >
+      <group name="Sketchfab_Scene" >
         <group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]} scale={0.099}>
           <group name="Collada_visual_scene_group" rotation={[Math.PI / 2, 0, 0]}>
             <group name="Coffee_Cup">
@@ -35,7 +49,9 @@ export function CoffeeCup(props: JSX.IntrinsicElements['group']) {
                 receiveShadow
                 geometry={nodes.defaultMaterial.geometry}
                 material={materials.DefaultMaterial}
+                ref={targetRef.current}
               />
+              
             </group>
           </group>
         </group>

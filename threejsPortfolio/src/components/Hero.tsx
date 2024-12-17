@@ -9,7 +9,7 @@ import {useMediaQuery} from 'react-responsive';
 import { calculateSizes } from "../constants/index.ts"
 import { CoffeeCup } from "../sections/CoffeeCup.tsx"
 import { CatBookShelf } from "../sections/CatBookself.tsx"
-
+import  { default as  Button }  from '../sections/Button.tsx'
 const Hero = () => {
 
   const x = useControls('threejsPortfolio', 
@@ -101,15 +101,14 @@ const Hero = () => {
     <directionalLight position={[0, 0, 20]} intensity = {0.25} />
 
     <PerspectiveCamera makeDefault position={[x.cameraX, x.cameranY, x.cameraZ]}/>
+    
+    {/**Component for the entire coffee shop - to make it prettier later */}
     <CoffeeShopNew scale={sizes.shopScale} position={[sizes.shopPositionX, sizes.shopPositionY, sizes.shopPositionZ]} rotation={[sizes.shopRotationX, sizes.shopRotationY, sizes.shopRotationZ]}/>
 
-{/**This is where you stopped 12/11 */} 
-
+    {/**Items around coffee shop to make dynamic later */}
     <group>
       <CoffeeCup scale={sizes.coffeeCupScale} position={[sizes.coffeCupPositionX, sizes.coffeeCupPositionY, sizes.coffeeCupPositionZ]} rotation = {[sizes.coffeCupRotationX, sizes.coffeCupRotationY, sizes.coffeCupRotationZ]}/>
     </group>
-    
-
     <group>
       <CatBookShelf scale={sizes.catShelfScale} position={[x.positionX, x.positionY, x.positionZ]} rotation={[x.rotationX, x.rotationY, x.rotationZ]}/>
     </group>
@@ -118,7 +117,13 @@ const Hero = () => {
     </Suspense>
 </Canvas>
         </div>
-
+{/** Start of next section end of 3d images  */}
+{/** Button for working together  */}
+    <div className="absolute bottom-7 left-0 w-full z-10 c-space">
+      <a href="#contact" className="w-fit">
+      <Button name="Let's work together" isBeam containerClass="sm:w-full sm:min-w-96"/>
+      </a>
+    </div>
 
     </section>
   )
