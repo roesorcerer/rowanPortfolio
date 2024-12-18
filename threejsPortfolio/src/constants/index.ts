@@ -70,27 +70,27 @@ export const navLinks = [
         border: '0.2px solid #36201D',
         boxShadow: '0px 0px 60px 0px #AA3C304D',
       },
-      spotlight: '/assets/spotlight1.png',
+      spotlight: './src/public/assets/pinkpowder.jpg',
       tags: [
         {
           id: 1,
           name: 'React.js',
-          path: '/assets/react.svg',
+          path: './src/public/assets/react.svg',
         },
         {
           id: 2,
           name: 'TailwindCSS',
-          path: 'assets/tailwindcss.png',
+          path: './src/public/assets/tailwindcss.png',
         },
         {
           id: 3,
           name: 'TypeScript',
-          path: '/assets/typescript.png',
+          path: './src/public/assets/typescript.png',
         },
         {
           id: 4,
           name: 'Framer Motion',
-          path: '/assets/framer.png',
+          path: './src/public/assets/framer.png',
         },
       ],
     },
