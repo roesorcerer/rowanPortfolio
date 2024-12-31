@@ -3,7 +3,7 @@ import { myProjects } from '../constants'
 import { Canvas } from '@react-three/fiber';
 import { Center, OrbitControls } from '@react-three/drei';
 import CanvasLoader from '../sections/CanvasLoader';
-import CuteRobot from '../sections/CuteRobot';
+import DemoComputer from '../sections/DemoComputer';
 
 const projectCount = myProjects.length;
 
@@ -24,9 +24,9 @@ const Projects = () => {
 
   return (
     <section className='c-space my-20'>
-        <p className="head-text">My Work</p>
+        <p className="head-text">Featured Projects</p>
 
-        <div className="grid lg:grid-cols-2 grid-cols-1 mt-12 gap-5 w-full">
+        <div className="grid lg:grid-cols-2 grid-cols-2 mt-12 gap-5 w-full">
             <div className="flex flex-col gap-5 relative sm:p-10 px-5 shadow-2xl shadow-black-200">
                 <div className='absolute top-0 right-0'>
                     <img src={currentProject.spotlight} alt="spotlight" className=" bg-bottom object-scale-down w-full h-30 rounded-xl" />
@@ -43,7 +43,7 @@ const Projects = () => {
                 </div>
 
                 <div className="flex items-center justify-between flex-wrap gap-5">
-                  <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
                     {currentProject.tags.map((tag, index) => (
                       <div key={index} className="tech-logo">
                         <img src={tag.path} alt={tag.name} />
@@ -67,15 +67,16 @@ const Projects = () => {
                   </button>
                 </div>
 
+                </div>
 
                     <div className='border border-black-300 bg-black-200 rounded-lg h-96 md:h-full'>
                       <Canvas>
-                        <ambientLight intensity={1} />
+                        <ambientLight intensity={Math.PI /2 } />
                         <directionalLight position={[10, 10, 5]} />
                         <Center>
                           <Suspense fallback={<CanvasLoader/>}>
-                            <group scale ={2} position={[0, -3, 0]} rotation={[0, -0.1, 0]}>
-                              < CuteRobot scale={0} position={[0, 0, 0]} rotation={[0, 0, 0]}/>
+                            <group scale ={1.5} position={[0,-2, 0]} rotation={[0, -0.1, 0]}>
+                              < DemoComputer texture={currentProject.texture}/>{/**Update to a different model once to figure out blender thanks JavaScriptMastery :) */}
                             </group>
                           </Suspense>
                         </Center>
@@ -83,7 +84,6 @@ const Projects = () => {
                       </Canvas>
                     </div>
 
-                </div>
         </div>
     </section>
   )

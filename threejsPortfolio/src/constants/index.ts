@@ -1,3 +1,6 @@
+// src/constants/index.ts
+import { Project } from '../types/constants';
+
 export const navLinks = [
     {
       id: 1,
@@ -56,14 +59,83 @@ export const navLinks = [
     },
   ];
   
+  interface projectRef {
+    texture : string,
+  }
+
+  //About Section Constants 
+  export const gitLinks: Project[] = [
+    {
+        title: "My Portfolio",
+        desc: "Personal portfolio website",
+        tags: [
+            {
+                id: 1,
+                name: "React",
+                path: "./src/public/assets/techlogos/react.svg", 
+                githubLink: "https://github.com/roesorcerer/ItascaCountyExplore"
+            },
+            {
+                id: 2,
+                name: "TypeScript",
+                path: "./src/public/assets/techlogos/typescript.png", 
+                githubLink: "https://github.com/roesorcerer/itascaprideNextJS"
+            },
+            {
+              id: 3,
+              name: "Flutter",
+              path: "./src/public/assets/techlogos/icon_flutter.png", 
+              githubLink: "https://github.com/roesorcerer/itascaprideNextJS"
+          },
+          {
+            id: 4,
+            name: "Python",
+            path: "./src/public/assets/techlogos/python-logo.svg", 
+            githubLink: "https://github.umn.edu/STRAT238/IntrotoCS"
+        },
+        {
+          id: 5,
+          name: "Javascript",
+          path: "./src/public/assets/techlogos/javascript-logo.png", 
+          githubLink: "https://github.umn.edu/STRAT238/IntrotoCS"
+      },
+      {
+        id: 6,
+        name: "C#",
+        path: "./src/public/assets/techlogos/c-sharp-logo.png", 
+        githubLink: "https://github.com/roesorcerer/AnimeRatingsWeb"
+    },
+    {
+      id: 7,
+      name: "Vue",
+      path: "./src/public/assets/techlogos/vue-logo.png", 
+      githubLink: "https://github.com/roesorcerer/RowanBlog/tree/version2/rowan-blog"
+  },
+  {
+    id: 8,
+    name: "Java",
+    path: "./src/public/assets/techlogos/java-logo.png", 
+    githubLink: "https://github.com/roesorcerer/Mobile2App-Inventory-App"
+},
+{
+  id: 9,
+  name: "OpenGL",
+  path: "./src/public/assets/techlogos/Opengl-logo.svg.png", 
+  githubLink: "https://github.com/roesorcerer/CS-330-CompGraphics/tree/week7"
+},
+            
+        ]
+    }
+];
+
   export const myProjects = [
     {
-      title: 'Podcastr - AI Podcast Platform',
-      desc: 'Podcastr is a revolutionary Software-as-a-Service platform that transforms the way podcasts are created. With advanced AI-powered features like text-to-multiple-voices functionality, it allows creators to generate diverse voiceovers from a single text input.',
+      title: 'Pepper Bot - Exploring How Pitch Fluxations alter our emotional state',
+      desc: 'With the help of the friendly Pepper Robot, our research team explored if changes in vocal tone may cause changes in skin conductivity values by assessing tonic data through an EDA sensor. The evaluation preformed allowed us to measure response from observed changes in readings. ',
       subdesc:
-        'Built as a unique Software-as-a-Service app with Next.js 14, Tailwind CSS, TypeScript, Framer Motion and Convex, Podcastr is designed for optimal performance and scalability.',
+        'Pepper Bot`s actions were controlled through a development environment Choregraphe and Python was the language used within this IDE. All data collected was analyzed using Python with the help of Flirt packages.',
       href: 'https://www.youtube.com/watch?v=zfAb95tJvZQ',
-      texture: '/textures/project/project1.mp4',
+      texture: './src/public/textures/project/project1.mp4',
       logo: '/assets/project-logo1.png',
       logoStyle: {
         backgroundColor: '#2A1816',
@@ -74,12 +146,12 @@ export const navLinks = [
       tags: [
         {
           id: 1,
-          name: 'React.js',
-          path: './src/public/assets/react.svg',
+          name: 'Python',
+          path: './src/public/assets/techlogos/python-logo.svg',
         },
         {
           id: 2,
-          name: 'TailwindCSS',
+          name: 'Pepper Bot',
           path: './src/public/assets/tailwindcss.png',
         },
         {
@@ -100,7 +172,7 @@ export const navLinks = [
       subdesc:
         'With LiveDoc, users can experience the future of collaboration, where multiple contributors work together in real time without any lag, by using Next.js and Liveblocks newest features.',
       href: 'https://www.youtube.com/watch?v=y5vE8y_f_OM',
-      texture: '/textures/project/project2.mp4',
+      texture: './src/public/textures/project/project2.mp4',
       logo: '/assets/project-logo2.png',
       logoStyle: {
         backgroundColor: '#13202F',
@@ -137,7 +209,7 @@ export const navLinks = [
       subdesc:
         'With a focus on efficiency, CarePulse integrantes complex forms and SMS notifications, by using Next.js, Appwrite, Twillio and Sentry that enhance operational workflows.',
       href: 'https://www.youtube.com/watch?v=lEflo_sc82g',
-      texture: '/textures/project/project3.mp4',
+      texture: './src/public/textures/project/project3.mp4',
       logo: '/assets/project-logo3.png',
       logoStyle: {
         backgroundColor: '#60f5a1',
@@ -176,7 +248,7 @@ export const navLinks = [
       subdesc:
         'Built with Next.js 14 Appwrite, Dwolla and Plaid, Horizon ensures a smooth and secure banking experience, tailored to meet the needs of modern consumers.',
       href: 'https://www.youtube.com/watch?v=PuOVqP_cjkE',
-      texture: '/textures/project/project4.mp4',
+      texture: './src/public/textures/project/project4.mp4',
       logo: '/assets/project-logo4.png',
       logoStyle: {
         backgroundColor: '#0E1F38',
@@ -213,7 +285,7 @@ export const navLinks = [
       subdesc:
         'Built with Next.js 14, Cloudinary AI, Clerk, and Stripe, Imaginify combines cutting-edge technology with a user-centric approach. It can be turned into a side income or even a full-fledged business.',
       href: 'https://www.youtube.com/watch?v=Ahwoks_dawU',
-      texture: '/textures/project/project5.mp4',
+      texture: './src/public/textures/project/project5.mp4',
       logo: '/assets/project-logo5.png',
       logoStyle: {
         backgroundColor: '#1C1A43',
