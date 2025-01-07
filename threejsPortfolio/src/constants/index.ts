@@ -24,38 +24,83 @@ export const navLinks = [
     },
   ];
   
-  export const clientReviews = [
+  interface TeacherInfo {
+    teacher: string;
+    teacherWeb: string;
+  }
+  type Position = string | TeacherInfo[];
+  interface ClassInfo {
+    id: number;
+    name: string;
+    position: Position;
+    img: string;
+    description: string;
+    link?: string; // Optional field since not all entries have it
+    responsibilities: string[];
+  }
+  type Classes = ClassInfo[];
+
+  export const classesTaught : Classes  = [
+
     {
       id: 1,
-      name: 'Emily Johnson',
-      position: 'Marketing Director at GreenLeaf',
-      img: 'assets/review1.png',
-      review:
-        'Working with Adrian was a fantastic experience. He transformed our outdated website into a modern, user-friendly platform. His attention to detail and commitment to quality are unmatched. Highly recommend him for any web dev projects.',
-    },
+      name: 'Object Oriented Programming and Design',
+      position: [
+        {
+          teacher:'Taught by: Eleazar Leal',
+          teacherWeb: 'https://www.semanticscholar.org/author/Eleazar-Leal/12105092',
+        }
+        ],
+      img: './src/public/assets/techlogos/oop.png',
+      link: 'https://umd.catalog.prod.coursedog.com/courses/8268281',
+      description:
+        'Object Oriented Programming concepts. In this class we covered design principals relevant to designing programs. The information covered also includes concepts relevant to abstraction, interfaces, and data structures. This will prepare students to have an understanding on OOP concepts through language models.',
+      responsibilities: [
+          'Led weekly lab sessions',
+          'Provided office hours support',
+          'Graded assignments & exams',
+          'Mentored student projects'
+        ]
+      },
     {
       id: 2,
-      name: 'Mark Rogers',
-      position: 'Founder of TechGear Shop',
-      img: 'assets/review2.png',
-      review:
-        'Adrian’s expertise in web development is truly impressive. He delivered a robust and scalable solution for our e-commerce site, and our online sales have significantly increased since the launch. He’s a true professional! Fantastic work.',
-    },
+      name: 'Intro to Programming in Python',
+      position: [
+        {
+          teacher:'Taught by: Steven Holtz',
+          teacherWeb: 'https://www.d.umn.edu/~sholtz/',
+        }
+        ],
+      img: './src/public/assets/techlogos/python-computer.png',
+      link: 'https://umd.catalog.prod.coursedog.com/courses/8204131',
+      description:
+        'Covering an introduction to programming concepts in Python. From standard best practices within the language to data requests. Within this class we cover the basics of Python.',
+      responsibilities: [
+          'Led weekly lab sessions',
+          'Provided office hours support',
+          'Graded assignments & exams',
+          'Mentored student projects'
+        ]
+      },
     {
       id: 3,
-      name: 'John Dohsas',
-      position: 'Project Manager at UrbanTech ',
-      img: 'assets/review3.png',
-      review:
-        'I can’t say enough good things about Adrian. He was able to take our complex project requirements and turn them into a seamless, functional website. His problem-solving abilities are outstanding.',
-    },
-    {
-      id: 4,
-      name: 'Ether Smith',
-      position: 'CEO of BrightStar Enterprises',
-      img: 'assets/review4.png',
-      review:
-        'Adrian was a pleasure to work with. He understood our requirements perfectly and delivered a website that exceeded our expectations. His skills in both frontend backend dev are top-notch.',
+      name: 'Intro to Computer Science',
+      position: [
+        {
+          teacher:'Taught by: Dr. Thomas Buck',
+          teacherWeb: 'https://www.tbuck.us/',
+        }
+        ],
+      img: 'https://img.icons8.com/?size=100&id=RjabH8KjH5W7&format=png&color=000000',
+      link: 'https://umd.catalog.prod.coursedog.com/courses/8268251',
+      description:
+        'An introduction to programming concepts in computer science in python. Teaching students the basics of programming and development.',
+      responsibilities: [
+          'Led weekly lab sessions',
+          'Provided office hours support',
+          'Graded assignments & exams',
+          'Mentored student projects'
+        ]
     },
   ];
   
@@ -134,13 +179,13 @@ export const navLinks = [
       desc: 'With the help of the friendly Pepper Robot, our research team explored if changes in vocal tone may cause changes in skin conductivity values by assessing tonic data through an EDA sensor. The evaluation preformed allowed us to measure response from observed changes in readings. ',
       subdesc:
         'Pepper Bot`s actions were controlled through a development environment Choregraphe and Python was the language used within this IDE. All data collected was analyzed using Python with the help of Flirt packages.',
-      href: 'https://www.youtube.com/watch?v=zfAb95tJvZQ',
-      texture: './src/public/textures/project/project1.mp4',
-      logo: '/assets/project-logo1.png',
+      href: 'https://www.canva.com/design/DAGbiM-HAVI/WZ-CaJB6td5N95ZZ12_WLA/watch?utm_content=DAGbiM-HAVI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h94ed3c8e26',
+      texture: './src/public/textures/project/voice-mod-pepper.mp4',
+      logo: 'https://img.icons8.com/?size=100&id=ym8y5bBPBfO0&format=png&color=000000',
       logoStyle: {
-        backgroundColor: '#2A1816',
-        border: '0.2px solid #36201D',
-        boxShadow: '0px 0px 60px 0px #AA3C304D',
+        backgroundColor: '#C1A1B2',
+        border: '0.2px solid #A3738C',
+        boxShadow: '0px 0px 60px 0px #6F5764',
       },
       spotlight: './src/public/assets/pinkpowder.jpg',
       tags: [
@@ -151,23 +196,23 @@ export const navLinks = [
         },
         {
           id: 2,
-          name: 'Pepper Bot',
-          path: './src/public/assets/tailwindcss.png',
+          name: 'Chorepgraphe Software',
+          path: './src/public/assets/choregraphe-logo.svg',
         },
         {
           id: 3,
-          name: 'TypeScript',
-          path: './src/public/assets/typescript.png',
+          name: 'Flirt Package',
+          path: './src/public/assets/flirt-logo.png',
         },
         {
           id: 4,
-          name: 'Framer Motion',
-          path: './src/public/assets/framer.png',
+          name: 'Data Analysis',
+          path: 'https://img.icons8.com/?size=100&id=j1VehapaDMSP&format=png&color=000000',
         },
       ],
     },
     {
-      title: 'LiveDoc - Real-Time Google Docs Clone',
+      title: 'Spam Detection SVM algorithm with dynamic feature selection',
       desc: 'LiveDoc is a powerful collaborative app that elevates the capabilities of real-time document editing. As an enhanced version of Google Docs, It supports millions of collaborators simultaneously, ensuring that every change is captured instantly and accurately.',
       subdesc:
         'With LiveDoc, users can experience the future of collaboration, where multiple contributors work together in real time without any lag, by using Next.js and Liveblocks newest features.',

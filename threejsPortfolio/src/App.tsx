@@ -5,7 +5,9 @@ import { Mesh } from "three";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
-import Project from "./components/Projects"
+import Project from "./components/Projects";
+import Teaching from "./components/Teaching";
+import Contact from "./components/Contact";
 
 const App = () => {
   return (
@@ -14,6 +16,8 @@ const App = () => {
       <Hero />
       <About />
       <Project />
+      <Teaching />
+      <Contact />
     </main>
   );
 };

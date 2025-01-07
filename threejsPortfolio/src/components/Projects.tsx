@@ -52,18 +52,18 @@ const Projects = () => {
                 </div>
                 
                 <a className='flex items-center gap-2 cursor-pointer text-white-600' href={currentProject.href} target='_blank' rel="noreferrer">
-                  <p>Check Live Site</p>
-                  <img src="assets/arrow-up.png" className='w-3 h-3' alt="arrow" />
+                  <p>See More Info</p>
+                  <img src="./src/public/assets/coffee-cup-to-go.png" className='w-3 h-3' alt="arrow" />
                 </a>
                 </div>
 
 
                 <div className='flex justify-between items-center mt-7'>
                   <button className='arrow-btn' onClick={() => handleNavigation('previous')}>
-                    <img src="/assets/left-arrow.png" alt="left arrow" className="w-4 h-4" />
+                    <img src="https://img.icons8.com/?size=100&id=aJ5oE5rWM1Mv&format=png&color=000000" alt="left arrow" className="w-4 h-4" />
                   </button>
                   <button className='arrow-btn' onClick={() => handleNavigation('next')}>
-                  <img src="/assets/right-arrow.png" alt="right arrow" className="w-4 h-4" />
+                  <img src="https://img.icons8.com/?size=100&id=DEaVg54CVcX4&format=png&color=000000" alt="right arrow" className="w-4 h-4" />
                   </button>
                 </div>
 
