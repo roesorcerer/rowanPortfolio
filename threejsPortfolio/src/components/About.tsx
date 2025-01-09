@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { CatCapachinno } from '../sections/CatCappichino'
+//import { CatCapachinno } from '../sections/CatCappichino'
 import Button from '../sections/Button'
 import { gitLinks } from '../constants'
 import { Project, Tag } from '../types/constants'
 
 
 const About: React.FC = () => {
-    const projectCount = gitLinks.length;
-    const [selectedProjectIndex, setSelectedProjectIndex ] = useState<number>(0);
+    //const projectCount = gitLinks.length;
+    const [selectedProjectIndex,  ] = useState<number>(0);
     const [hasCopied, setHasCopied] = useState(false);
 
 

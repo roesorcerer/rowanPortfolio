@@ -6,7 +6,7 @@ const ContactMeWindow = (props: Props) => {
   return (
     <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
   
-  <rect x="50" y="20" width="1100" height="760" rx="3" fill="rgba(216, 181, 192, 0.15)" />
+  <rect x="50" y="20" width="1100" height="760" rx="3" fill="rgba(88, 145, 164, 0.15)" />
   
   
   <rect x="50" y="20" width="1100" height="40" rx="3" fill="rgba(216, 181, 192, 0.25)" />

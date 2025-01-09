@@ -1,6 +1,6 @@
-import { OrbitControls, PerspectiveCamera, useFaceControls } from "@react-three/drei"
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
-import CoffeeShop from "../sections/CoffeeShop.tsx"
+//import CoffeeShop from "../sections/CoffeeShop.tsx"
 import { Suspense } from "react"
 import CanvasLoader from "../sections/CanvasLoader"
 import { CoffeeShopNew } from "../sections/CoffeeShopNew.tsx"
