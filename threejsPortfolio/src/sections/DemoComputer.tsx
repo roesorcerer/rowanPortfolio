@@ -6,10 +6,10 @@ import { useRef, useEffect } from 'react';
 import { useGLTF, useAnimations, useVideoTexture } from '@react-three/drei';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { ExtendedColors, Overwrite, NodeProps, NonFunctionKeys, Vector3, Euler, Matrix4, Quaternion, Layers } from '@react-three/fiber';
-import { EventHandlers } from '@react-three/fiber/dist/declarations/src/core/events';
+//import { ExtendedColors, Overwrite, NodeProps, NonFunctionKeys, Vector3, Euler, Matrix4, Quaternion, Layers } from '@react-three/fiber';
+//import { EventHandlers } from '@react-three/fiber/dist/declarations/src/core/events';
 import { JSX } from 'react/jsx-runtime';
-import { Group } from 'three';
+//import { Group } from 'three';
 
 const DemoComputer = (props: any): JSX.Element => {
   const group = useRef();
