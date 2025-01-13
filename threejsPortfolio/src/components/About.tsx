@@ -3,7 +3,12 @@ import { useState } from 'react'
 import Button from '../sections/Button'
 import { gitLinks } from '../constants'
 import { Project, Tag } from '../types/constants'
-
+import  AxolotlScene  from '../sections/Axolotl';
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei"
+import { Canvas } from "@react-three/fiber"
+//import CoffeeShop from "../sections/CoffeeShop.tsx"
+import { Suspense } from "react"
+import CanvasLoader from "../sections/CanvasLoader"
 
 const About: React.FC = () => {
     //const projectCount = gitLinks.length;
@@ -84,24 +89,38 @@ const About: React.FC = () => {
                 </div>
 
                 {/**3d image embedded with work preference(remote) */}
-                <div className="col-span-1 xl:row-span-4">
-                    <div className="grid-container">
-                        <div className=" w-full sm:h-fit flex object-contain justify-center items-center" />
 
-                        <div className="sketchfab-embed-wrapper">
-                            <iframe title="Cute Mocha Cat :3"
-                                height={326}
-                                width={326}
-                                src="https://sketchfab.com/models/4b8158f94d9843e89ff1230a7c5107ca/embed?autospin=1&autostart=1&preload=1&transparent=1"> </iframe>  </div>
+                        {/* 3D Model - Axolotl */}
+                        <div className="col-span-1 xl:row-span-4">
+                            <div className="grid-container">
+                                <div className="w-full h-96">
+                                    <Canvas
+                                        camera={{ position: [5, 5, 20], fov: 25 }}
+                                        style={{ width: '100%', height: '100%' }}
+                                        gl={{ alpha: true }}
+                                    >
 
-                        <p className="grid-headtext">
-                            I work remotely focusing on education to bolster my working experience.
-                        </p>
-                        <p className="grid-subtext">I'm based in Minnesota and go to school at the University of Minnesota Duluth </p>
-                        <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
-
-                    </div>
-                </div>
+                                        <Suspense fallback={<CanvasLoader />}>
+                                            <OrbitControls 
+                                                enableZoom={true}
+                                                enablePan={true}
+                                                enableRotate={true}
+                                                minDistance={5}  // Add min zoom distance
+                                                maxDistance={10} 
+                                            />
+                                            <ambientLight intensity={0.8} />
+                                            <directionalLight position={[5, 5, 5]} />
+                                            <AxolotlScene scale={[40, 40, 40]}/>
+                                        </Suspense>
+                                    </Canvas>
+                                </div>
+                                <p className="grid-headtext">
+                                    I work remotely focusing on education to bolster my working experience.
+                                </p>
+                                <p className="grid-subtext">I'm based in Minnesota and go to school at the University of Minnesota Duluth</p>
+                                <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
+                            </div>
+                        </div>
 
                 {/**Why do I like to code */}
                 <div className="xl:col-span-2 xl:row-span-3">
