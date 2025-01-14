@@ -7,10 +7,12 @@ Title: (FREE) Isometric Cafe
 */
 
 import * as THREE from 'three';
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { GLTF } from 'three-stdlib';
-import coffee from '../public/models/scene.glb';
+
+
+const MODEL_URL = 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61imUAX0Y5L7C2KUPRWxSabGDeygQvIZ1OjBH6q';
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -260,7 +262,24 @@ type GLTFResult = GLTF & {
 }
 
 export function CoffeeShopNew(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF(coffee) as GLTFResult
+  const [modelError, setModelError] = useState<string | null>(null);
+  const { nodes, materials } = useGLTF(MODEL_URL) as GLTFResult
+  
+  useEffect(() => {
+    const handleError = (error: ErrorEvent) => {
+      console.error('Error loading model:', error);
+      setModelError('Failed to load 3D model');
+    };
+
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  // If there's an error loading the model
+  if (modelError) {
+    return <group {...props}><mesh><boxGeometry args={[1, 1, 1]} /><meshStandardMaterial color="red" /></mesh></group>;
+  }
+  
   return (
     <group {...props} dispose={null}>
       <group name="Isometric_cafe_202" position={[0, 0.064, 0]}>
@@ -2275,4 +2294,4 @@ export function CoffeeShopNew(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload(coffee);
+useGLTF.preload(MODEL_URL);

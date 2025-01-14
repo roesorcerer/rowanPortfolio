@@ -7,14 +7,13 @@ Title: Coffee Cup
 */
 
 import * as THREE from 'three'
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
-import cup from '../public/models/coffee_cup.glb';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
-
+const cup = 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iSDgOfNCxWMgwi4haH17qIATON6Q5E2myPSJR';
 
 type GLTFResult = GLTF & {
   nodes: {

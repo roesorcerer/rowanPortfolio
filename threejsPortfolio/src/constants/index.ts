@@ -366,10 +366,15 @@ export const navLinks = [
   export const calculateSizes = (isSmall: any, isMobile: any, isTablet: any) => {
     return {
       
+      /**Camera Position */
+      cameraPositionX: isSmall ? 1.0 : isMobile ? 1.1 : isTablet ? 1.2 : 1.3,
+      cameraPositionY: isSmall ? 1.0 : isMobile ? 1.1 : isTablet ? 1.2 : 1.3,
+      cameraPositionZ: isSmall ? 8 : isMobile ? 9 : isTablet ? 9.5 : 10,
+
       /*Scale Individual Elements */ 
       shopScale: isSmall ? 1.5 : isMobile ? 1.5 : isTablet ? 1.8 : 2.4,
       coffeeCupScale: isSmall ? 2.5: isMobile ? 2.5 : isTablet ? 4.5 : 5,
-      catShelfScale: isSmall ? NaN : isMobile ? 0.2 : isTablet ? 0.3 : 0.4,
+      catShelfScale: isSmall ? 0.1 : isMobile ? 0.15 : isTablet ? 0.18 : 0.2,
 
 
       /**Position of the Shop */
@@ -393,14 +398,14 @@ export const navLinks = [
       coffeCupRotationZ: isSmall ? 0.9 : isMobile ? 2.9 : isTablet ? 2.9 : 2.9,
 
       /*Position of Cat Shelf */
-      catShelfPositionX:  isSmall ? 0.9 : isMobile ? -4.4 : isTablet ? -5.3 : 5.1,
-      catShelfPositionY: isSmall ? -3 : isMobile ? 2.4 : isTablet ? 2.2 : -3.5,
-      catShelfPositionZ: isSmall ? 0.9 : isMobile ? -6.9 : isTablet ? -6.9 : -3.3,
+      catShelfPositionX: isSmall ? -3.5 : isMobile ? -4.0 : isTablet ? -4.5 : -5.0,
+      catShelfPositionY: isSmall ? -4.9 : isMobile ? -3.0 : isTablet ? -2.8 : -4.5, 
+      catShelfPositionZ: isSmall ? -4.0 : isMobile ? -4.5 : isTablet ? -5.0 : -5.5,
 
       /*Rotation of Cat Shelf */
-      catShelfRotationX: isSmall ? 0.9 : isMobile ? -2.5 : isTablet ? -2.5 : 3.3 ,
-      catShelfRotationY: isSmall ? 0.9 : isMobile ? 3.1 : isTablet ? 3.1 : 1.7,
-      catShelfRotationZ: isSmall ? 0.9 : isMobile ? 2.9 : isTablet ? 2.9 : 2.9,
+      catShelfRotationX: isSmall ? 0.1 : isMobile ? 0.15 : isTablet ? 0.2 : 0.25,
+      catShelfRotationY: isSmall ? -4.2 : isMobile ? -4.3 : isTablet ? -4.4 : -4.5,
+      catShelfRotationZ: isSmall ? -6.0 : isMobile ? -6.1 : isTablet ? -6.2 : -6.3,
       
       
       cubePosition: isSmall ? [4, -5, 0] : isMobile ? [5, -5, 0] : isTablet ? [5, -5, 0] : [9, -5.5, 0],

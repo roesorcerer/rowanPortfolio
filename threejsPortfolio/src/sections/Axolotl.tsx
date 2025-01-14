@@ -3,7 +3,9 @@ import React, { useRef, useMemo, useContext, createContext, ReactNode } from 're
 import { useGLTF, Merged } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 import { Object3DProps } from '@react-three/fiber'
-import axolotl from '../public/models/cute_axolotl.glb';
+
+
+const axolotl = 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61idX7XKNyKkfSaLWMhFUb0gOzCrBTIZ51XnlH7';
 
 type GLTFResult = GLTF & {
   nodes: {

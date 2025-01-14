@@ -48,32 +48,12 @@ const Hero = () => {
         max: 10
       },
 
-      cameraX: {
-        value: 1.3,
-        min: -10,
-        max: 10
-      },
-      cameranY: {
-        value: 1.3,
-        min: -10,
-        max: 10
-      },
-      cameraZ: {
-        value: 7.1,
-        min: -10,
-        max: 10
-      },
 
-      scale: {
-        value: 2.4,
-        min: 0.1,
-        max: 10,
-      },
-      scaleMobile: {
-        value: 1,
-        min: 0.1,
-        max: 10,
-      },
+
+
+
+
+
     }
   )
 
@@ -100,7 +80,7 @@ const Hero = () => {
     <Suspense fallback={<CanvasLoader/>}>
     <directionalLight position={[0, 0, 20]} intensity = {0.25} />
 
-    <PerspectiveCamera makeDefault position={[x.cameraX, x.cameranY, x.cameraZ]}/>
+    <PerspectiveCamera makeDefault position={[sizes.cameraPositionX, sizes.cameraPositionY, sizes.cameraPositionZ]}/>
     
     {/**Component for the entire coffee shop - to make it prettier later */}
     <CoffeeShopNew scale={sizes.shopScale} position={[sizes.shopPositionX, sizes.shopPositionY, sizes.shopPositionZ]} rotation={[sizes.shopRotationX, sizes.shopRotationY, sizes.shopRotationZ]}/>
@@ -110,7 +90,7 @@ const Hero = () => {
       <CoffeeCup scale={sizes.coffeeCupScale} position={[sizes.coffeCupPositionX, sizes.coffeeCupPositionY, sizes.coffeeCupPositionZ]} rotation = {[sizes.coffeCupRotationX, sizes.coffeCupRotationY, sizes.coffeCupRotationZ]}/>
     </group>
     <group>
-      <CatBookShelf scale={sizes.catShelfScale} position={[x.positionX, x.positionY, x.positionZ]} rotation={[x.rotationX, x.rotationY, x.rotationZ]}/>
+      <CatBookShelf scale={sizes.catShelfScale} position={[sizes.catShelfPositionX, sizes.catShelfPositionY, sizes.catShelfPositionZ]} rotation={[sizes.catShelfRotationX, sizes.catShelfRotationY, sizes.catShelfRotationZ]}/>
     </group>
 
     <ambientLight intensity={1} />
