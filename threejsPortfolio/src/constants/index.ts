@@ -117,55 +117,55 @@ export const navLinks = [
             {
                 id: 1,
                 name: "React",
-                path: "./src/public/assets/techlogos/react.svg", 
+                path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iVioL8FIYuln28aphbBRvNekG1wsL70DTm4fz", 
                 githubLink: "https://github.com/roesorcerer/ItascaCountyExplore"
             },
             {
                 id: 2,
                 name: "TypeScript",
-                path: "./src/public/assets/techlogos/typescript.png", 
+                path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61i3It7YJmRKduiL4GjrMaS7WNyEn9lFcOmJo1I", 
                 githubLink: "https://github.com/roesorcerer/itascaprideNextJS"
             },
             {
               id: 3,
               name: "Flutter",
-              path: "./src/public/assets/techlogos/icon_flutter.png", 
+              path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iwdX39YDceaNAfKUkhiIoPl7L2F93dZHyT16b", 
               githubLink: "https://github.com/roesorcerer/itascaprideNextJS"
           },
           {
             id: 4,
             name: "Python",
-            path: "./src/public/assets/techlogos/python-logo.svg", 
+            path: ".https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iJQJbOrtbeWdTkrZvpuG4cEHimAMfwV1OlhtF", 
             githubLink: "https://github.umn.edu/STRAT238/IntrotoCS"
         },
         {
           id: 5,
           name: "Javascript",
-          path: "./src/public/assets/techlogos/javascript-logo.png", 
+          path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iPNek7bHWbdyspk1c3jFhKQ0qDTnPv4RLU5IZ", 
           githubLink: "https://github.umn.edu/STRAT238/IntrotoCS"
       },
       {
         id: 6,
         name: "C#",
-        path: "./src/public/assets/techlogos/c-sharp-logo.png", 
+        path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61ilR2duYrn10V5ZyuBp8Y9zDKfIbUw2POGxXFJ", 
         githubLink: "https://github.com/roesorcerer/AnimeRatingsWeb"
     },
     {
       id: 7,
       name: "Vue",
-      path: "./src/public/assets/techlogos/vue-logo.png", 
+      path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61i357HMSRKduiL4GjrMaS7WNyEn9lFcOmJo1IB", 
       githubLink: "https://github.com/roesorcerer/RowanBlog/tree/version2/rowan-blog"
   },
   {
     id: 8,
     name: "Java",
-    path: "./src/public/assets/techlogos/java-logo.png", 
+    path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iSbVwSQxWMgwi4haH17qIATON6Q5E2myPSJRz", 
     githubLink: "https://github.com/roesorcerer/Mobile2App-Inventory-App"
 },
 {
   id: 9,
   name: "OpenGL",
-  path: "./src/public/assets/techlogos/Opengl-logo.svg.png", 
+  path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iaFdvSjbjOAT5FG6SC2YNeRWt1JLox3pzDuhP", 
   githubLink: "https://github.com/roesorcerer/CS-330-CompGraphics/tree/week7"
 },
             
@@ -180,29 +180,29 @@ export const navLinks = [
       subdesc:
         'Pepper Bot`s actions were controlled through a development environment Choregraphe and Python was the language used within this IDE. All data collected was analyzed using Python with the help of Flirt packages.',
       href: 'https://www.canva.com/design/DAGbiM-HAVI/WZ-CaJB6td5N95ZZ12_WLA/watch?utm_content=DAGbiM-HAVI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h94ed3c8e26',
-      texture: './src/public/textures/project/voice-mod-pepper.mp4',
+      texture: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iLTYlh4NVr61iBEq8NPvKn3YUD5kGmTcM2ylF',
       logo: 'https://img.icons8.com/?size=100&id=ym8y5bBPBfO0&format=png&color=000000',
       logoStyle: {
         backgroundColor: '#C1A1B2',
         border: '0.2px solid #A3738C',
         boxShadow: '0px 0px 60px 0px #6F5764',
       },
-      spotlight: './src/public/assets/pinkpowder.jpg',
+      spotlight: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iBf7jz1YheC9GHOXZN7uL45W0zxIqnFyiUgVc',
       tags: [
         {
           id: 1,
           name: 'Python',
-          path: './src/public/assets/techlogos/python-logo.svg',
+          path: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iJQJbOrtbeWdTkrZvpuG4cEHimAMfwV1OlhtF',
         },
         {
           id: 2,
           name: 'Chorepgraphe Software',
-          path: './src/public/assets/choregraphe-logo.svg',
+          path: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iQszwflXFqcOkeuXZl9JDMNby7BFpoU03isPh',
         },
         {
           id: 3,
           name: 'Flirt Package',
-          path: './src/public/assets/flirt-logo.png',
+          path: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iYWkmi1Lx6aPVdtUClEik9wDyjfIS7rg3NTGe',
         },
         {
           id: 4,

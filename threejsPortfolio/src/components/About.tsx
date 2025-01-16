@@ -125,9 +125,10 @@ const About: React.FC = () => {
                 {/**Why do I like to code */}
                 <div className="xl:col-span-2 xl:row-span-3">
                     <div className="grid-container">
+                        <p className="grid-headtext">Studying how integrating user motivated game elements improve application design, motivation, and wellness.</p>
                         <img src="https://utfs.io/f/LHwfoeNVr61i1boCnB0NaX5s7P2ClbYRvo9kzFAwHBuZ6mV4" alt="grid-3" className="w-full sm:h-[266px] h-fit object-contain" />
-                        <p className="grid-headtext">I like making things and problem solving</p>
-                        <p className="grid-subtext">Through development and coding I am able to flex the bounds of my creativity and applying creative solutions. From embedded programming through a Rasberry Pi, to game development I spend my time honing my craft.  </p>
+                        <p className="grid-subtext">My focus within my studies covers how developed software can improve based on the the desire of individuals. Gaming is a giant industry that I am proud to be passionate about, and as people we are driven by an inherent drive to play regardless or age or background. With the help of the community that I develop for, I study how users benefit from having a strong voice in their applications and giving them a chance to play to improve with gamification.  </p>
+                        <img src="https://utfs.io/f/LHwfoeNVr61i1boCnB0NaX5s7P2ClbYRvo9kzFAwHBuZ6mV4" alt="grid-3" className="w-full sm:h-[266px] h-fit object-contain" />
                     </div>
                 </div>
 
