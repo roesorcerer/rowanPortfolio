@@ -8,7 +8,7 @@ import About from "./components/About";
 import Project from "./components/Projects";
 import Teaching from "./components/Teaching";
 import Contact from "./components/Contact";
-
+import CodeLevel from "./components/CodeLevel";
 const App = () => {
   return (
     <main className="max-w-7xl mx-auto relative">
@@ -18,6 +18,7 @@ const App = () => {
       <Project />
       <Teaching />
       <Contact />
+      <CodeLevel />
     </main>
   );
 };

@@ -12,51 +12,6 @@ import { CatBookShelf } from "../sections/CatBookself.tsx"
 import  { default as  Button }  from '../sections/Button.tsx'
 const Hero = () => {
 
-  const x = useControls('threejsPortfolio', 
-    {
-      positionX: {
-        value: 0.3,
-        min: -10,
-        max: 10
-      },
-      positionY: {
-        value: -3.5,
-        min: -10,
-        max: 10
-      },
-      positionZ: {
-        value: -5.5,
-        min: -10,
-        max: 10
-      },
-
-    
-
-      rotationX: {
-        value: 3.3,
-        min: -10,
-        max: 10
-      },
-      rotationY: {
-        value: 2.1,
-        min: -10,
-        max: 10
-      },
-      rotationZ: {
-        value: 3.1,
-        min: -10,
-        max: 10
-      },
-
-
-
-
-
-
-
-    }
-  )
-
   const isMobile = useMediaQuery( { maxWidth: 768});
 
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1024});
@@ -74,7 +29,7 @@ const Hero = () => {
         </div>
         <div className="w-full h-full absolute inset-0">
 {/**Start of the ThreeJS stuffs */}
-    <Leva />
+    {/*<Leva /> Might need later */}
 <Canvas className="w-full h-full mt-12">
     <OrbitControls enableZoom={false} />
     <Suspense fallback={<CanvasLoader/>}>
