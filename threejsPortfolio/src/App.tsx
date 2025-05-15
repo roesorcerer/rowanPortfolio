@@ -9,6 +9,8 @@ import Project from "./components/Projects";
 import Teaching from "./components/Teaching";
 import Contact from "./components/Contact";
 import CodeLevel from "./components/CodeLevel";
+import ResearchInfo from "./sections/ResearchInfo";
+
 const App = () => {
   return (
     <main className="max-w-7xl mx-auto relative">
@@ -17,6 +19,7 @@ const App = () => {
       <About />
       <Project />
       <Teaching />
+      <ResearchInfo />
       <Contact />
       <CodeLevel />
     </main>
