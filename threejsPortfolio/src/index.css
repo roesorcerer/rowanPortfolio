@@ -145,6 +145,19 @@ body {
     @apply w-2.5 h-2.5 object-contain invert brightness-0;
   }
 
+    /* raating section */
+    .level-container {
+      @apply grid md:grid-cols-2 grid-cols-1 gap-5 mt-12;
+    }
+  
+    .level-review {
+      @apply rounded-lg md:p-10 p-5 col-span-1 bg-black-300 bg-opacity-50;
+    }
+  
+    .level-content {
+      @apply flex lg:flex-row flex-col justify-between lg:items-center items-start gap-5 mt-7;
+    }
+
   /*  footer */
   .social-icon {
     @apply w-12 h-12 rounded-full flex justify-center items-center bg-black-300 border border-black-200;

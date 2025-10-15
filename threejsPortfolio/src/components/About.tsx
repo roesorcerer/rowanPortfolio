@@ -25,7 +25,6 @@ const About: React.FC = () => {
         setTimeout(() => {
             setHasCopied(false);
         }, 2000);
-
     };
         
         function handleTechClick(tag: Tag): void {

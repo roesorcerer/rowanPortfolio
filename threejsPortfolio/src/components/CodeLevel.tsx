@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RatingComponent from 'react-rating';
+import { codingLevel } from '../constants';
  // Ensure you have installed react-rating
  const Rating = RatingComponent as any;
 // Define a type for a rating entry
@@ -52,10 +53,24 @@ const TechRatingComponent: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Rate My Proficiency</h2>
-
-      {/* Rating Form */}
+    <section className="c-space my-20">
+      <h3 className='head-text'>My coding level - Profissency at different technologies(Rate if you worked with me!)</h3>
+    
+    <div className='level-container'>
+      {codingLevel.map((item) => (
+        <div key={`review-${item.id}`} className="level-review">
+            <div className="flex flex-col">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex gap-3">
+                  <img src={item.img} alt="level" className="w-12 h-12 rounded-full" />
+                  <div className="flex flex-col">
+                    <a
+                      href=''
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-white-800 hover:underline"
+                      >
+                         {/* Rating Form */}
       <form onSubmit={handleSubmit}>
         {technologies.map(tech => (
           <div key={tech} style={{ marginBottom: '1rem' }}>
@@ -71,41 +86,19 @@ const TechRatingComponent: React.FC = () => {
         ))}
         <button type="submit">Submit Ratings</button>
       </form>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+      ))}
+   
 
-      {/* Pending Ratings Section */}
-      <h3>Pending Ratings for Approval</h3>
-      {pendingRatings.length === 0 ? (
-        <p>No pending ratings.</p>
-      ) : (
-        <ul>
-          {pendingRatings.map(entry => (
-            <li key={entry.technology}>
-              {entry.technology}: {entry.rating} star{entry.rating > 1 ? 's' : ''}
-              <button
-                onClick={() => handleApprove(entry.technology)}
-                style={{ marginLeft: '1rem' }}
-              >
-                Approve
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* Approved Ratings Section */}
-      <h3>Approved Ratings</h3>
-      {approvedRatings.length === 0 ? (
-        <p>No approved ratings yet.</p>
-      ) : (
-        <ul>
-          {approvedRatings.map(entry => (
-            <li key={entry.technology}>
-              {entry.technology}: {entry.rating} star{entry.rating > 1 ? 's' : ''}
-            </li>
-          ))}
-        </ul>
-      )}
+     
+    
     </div>
+    </section>
   );
 };
 
