@@ -948,6 +948,7 @@ const CodeLevel: React.FC = () => {
         </div>
       </div>
     </div>
+  //  </section>
   );
 };
 

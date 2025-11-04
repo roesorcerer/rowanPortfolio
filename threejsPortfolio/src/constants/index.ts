@@ -103,6 +103,70 @@ export const navLinks = [
         ]
     },
   ];
+
+  export const codingLevel : Classes  = [
+
+    {
+      id: 1,
+      name: 'Object Oriented Programming and Design',
+      position: [
+        {
+          teacher:'Taught by: Eleazar Leal',
+          teacherWeb: 'https://www.semanticscholar.org/author/Eleazar-Leal/12105092',
+        }
+        ],
+      img: './src/public/assets/techlogos/oop.png',
+      link: 'https://umd.catalog.prod.coursedog.com/courses/8268281',
+      description:
+        'Object Oriented Programming concepts. In this class we covered design principals relevant to designing programs. The information covered also includes concepts relevant to abstraction, interfaces, and data structures. This will prepare students to have an understanding on OOP concepts through language models.',
+      responsibilities: [
+          'Led weekly lab sessions',
+          'Provided office hours support',
+          'Graded assignments & exams',
+          'Mentored student projects'
+        ]
+      },
+    {
+      id: 2,
+      name: 'Intro to Programming in Python',
+      position: [
+        {
+          teacher:'Taught by: Steven Holtz',
+          teacherWeb: 'https://www.d.umn.edu/~sholtz/',
+        }
+        ],
+      img: './src/public/assets/techlogos/python-computer.png',
+      link: 'https://umd.catalog.prod.coursedog.com/courses/8204131',
+      description:
+        'Covering an introduction to programming concepts in Python. From standard best practices within the language to data requests. Within this class we cover the basics of Python.',
+      responsibilities: [
+          'Led weekly lab sessions',
+          'Provided office hours support',
+          'Graded assignments & exams',
+          'Mentored student projects'
+        ]
+      },
+    {
+      id: 3,
+      name: 'Intro to Computer Science',
+      position: [
+        {
+          teacher:'Taught by: Dr. Thomas Buck',
+          teacherWeb: 'https://www.tbuck.us/',
+        }
+        ],
+      img: 'https://img.icons8.com/?size=100&id=RjabH8KjH5W7&format=png&color=000000',
+      link: 'https://umd.catalog.prod.coursedog.com/courses/8268251',
+      description:
+        'An introduction to programming concepts in computer science in python. Teaching students the basics of programming and development.',
+      responsibilities: [
+          'Led weekly lab sessions',
+          'Provided office hours support',
+          'Graded assignments & exams',
+          'Mentored student projects'
+        ]
+    },
+  ];
   
   interface projectRef {
     texture : string,
