@@ -14,11 +14,16 @@ export const navLinks = [
     },
     {
       id: 3,
-      name: 'Work',
-      href: '#work',
+      name: 'Teaching',
+      href: '#teaching',
     },
     {
       id: 4,
+      name: 'Research',
+      href: '#research',
+    },
+    {
+      id: 5,
       name: 'Contact',
       href: '#contact',
     },

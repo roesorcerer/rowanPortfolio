@@ -2,7 +2,7 @@ import { classesTaught } from "../constants"
 
 const Teaching = () => {
     return (
-      <section className="c-space my-20">
+      <section className="c-space my-20" id="teaching">
           <h3 className="head-text">Classes at University of Minnesota Duluth I assisted teaching</h3>
   
           <div className="client-container">
