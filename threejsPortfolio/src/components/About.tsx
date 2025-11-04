@@ -126,8 +126,10 @@ const About: React.FC = () => {
                     <div className="grid-container">
                         <p className="grid-headtext">Studying how integrating user motivated game elements improve application design, motivation, and wellness.</p>
                         <img src="https://utfs.io/f/LHwfoeNVr61i1boCnB0NaX5s7P2ClbYRvo9kzFAwHBuZ6mV4" alt="grid-3" className="w-full sm:h-[266px] h-fit object-contain" />
-                        <p className="grid-subtext">My focus within my studies covers how developed software can improve based on the the desire of individuals. Gaming is a giant industry that I am proud to be passionate about, and as people we are driven by an inherent drive to play regardless or age or background. With the help of the community that I develop for, I study how users benefit from having a strong voice in their applications and giving them a chance to play to improve with gamification.  </p>
-                        <img src="https://utfs.io/f/LHwfoeNVr61i1boCnB0NaX5s7P2ClbYRvo9kzFAwHBuZ6mV4" alt="grid-3" className="w-full sm:h-[266px] h-fit object-contain" />
+                        <p className="grid-subtext">My current research focuses on how "gamification" can benefit from immersive affordances and personalized experiences. This includes exploring how co-design processes and research methods can positively influence the creation of Wellness Tools. </p>
+                        <p className="grid-subtext">By understanding user motivations and behaviors, I aim to create more engaging and effective applications that promote well-being and personal growth.</p>
+                        <Button name="Learn More about Research" isBeam containerClass="w-full mt-10"  />
+
                     </div>
                 </div>
 
@@ -139,7 +141,11 @@ const About: React.FC = () => {
                         <div className="space-y-2">
                             <p className="grid-subtext text-center">Contact Me</p>
                             <div className="copy-container" onClick={handleCopy}>
-                                <img src={hasCopied ? 'assets/cat-move.gif' : 'assets/cat-footprint.png'} alt="copy" />
+                                <img 
+                                    src={hasCopied ? 'https://media.tenor.com/GdayJLTw8hcAAAAj/dab-dance.gif' : '/assets/cat-footprint.png'} 
+                                    alt="copy" 
+                                    className={hasCopied ? "w-12 h-12" : "w-6 h-6"}
+                                />
                                 <p className="lg:text-2xl md:text-xl font-medium text-gray_gradient text-white">rowanstratton1@gmail.com</p>
                             </div>
                         </div>

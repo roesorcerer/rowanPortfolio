@@ -51,7 +51,7 @@ export const navLinks = [
           teacherWeb: 'https://www.semanticscholar.org/author/Eleazar-Leal/12105092',
         }
         ],
-      img: './src/public/assets/techlogos/oop.png',
+      img: '/assets/techlogos/oop.png',
       link: 'https://umd.catalog.prod.coursedog.com/courses/8268281',
       description:
         'Object Oriented Programming concepts. In this class we covered design principals relevant to designing programs. The information covered also includes concepts relevant to abstraction, interfaces, and data structures. This will prepare students to have an understanding on OOP concepts through language models.',
@@ -71,7 +71,7 @@ export const navLinks = [
           teacherWeb: 'https://www.d.umn.edu/~sholtz/',
         }
         ],
-      img: './src/public/assets/techlogos/python-computer.png',
+      img: '/assets/techlogos/python-computer.png',
       link: 'https://umd.catalog.prod.coursedog.com/courses/8204131',
       description:
         'Covering an introduction to programming concepts in Python. From standard best practices within the language to data requests. Within this class we cover the basics of Python.',
@@ -115,7 +115,7 @@ export const navLinks = [
           teacherWeb: 'https://www.semanticscholar.org/author/Eleazar-Leal/12105092',
         }
         ],
-      img: './src/public/assets/techlogos/oop.png',
+      img: '/assets/techlogos/oop.png',
       link: 'https://umd.catalog.prod.coursedog.com/courses/8268281',
       description:
         'Object Oriented Programming concepts. In this class we covered design principals relevant to designing programs. The information covered also includes concepts relevant to abstraction, interfaces, and data structures. This will prepare students to have an understanding on OOP concepts through language models.',
@@ -135,7 +135,7 @@ export const navLinks = [
           teacherWeb: 'https://www.d.umn.edu/~sholtz/',
         }
         ],
-      img: './src/public/assets/techlogos/python-computer.png',
+      img: '/assets/techlogos/python-computer.png',
       link: 'https://umd.catalog.prod.coursedog.com/courses/8204131',
       description:
         'Covering an introduction to programming concepts in Python. From standard best practices within the language to data requests. Within this class we cover the basics of Python.',
@@ -199,7 +199,7 @@ export const navLinks = [
           {
             id: 4,
             name: "Python",
-            path: ".https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iJQJbOrtbeWdTkrZvpuG4cEHimAMfwV1OlhtF", 
+            path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iJQJbOrtbeWdTkrZvpuG4cEHimAMfwV1OlhtF", 
             githubLink: "https://github.umn.edu/STRAT238/IntrotoCS"
         },
         {
@@ -352,12 +352,12 @@ export const navLinks = [
       ],
     },
     {
-      title: 'Anime Rating Website',
-      desc: 'Horizon is a comprehensive online banking platform that offers users a centralized finance management dashboard. It allows users to connect multiple bank accounts, monitor real-time transactions, and seamlessly transfer money to other users.',
+      title: 'Time Management App - Food Forward',
+      desc: 'An application to help manage time for employees for a local organization that delivers prepared fresh meals. As a customized solution our team created them an application that could support their time management needs. ',
       subdesc:
-        'Built with Next.js 14 Appwrite, Dwolla and Plaid, Horizon ensures a smooth and secure banking experience, tailored to meet the needs of modern consumers.',
-      href: 'https://www.youtube.com/watch?v=PuOVqP_cjkE',
-      texture: './src/public/textures/project/project4.mp4',
+        'Built with React Native and Firebase. The application had SQLite implemented for offline use and data sync when back online. The app was built to be cross platform for Andriod.',
+      href: 'https://drive.google.com/file/d/1v_dLpB-TDDMEpa9TLjCGcVs2cyTXDPkQ/view?usp=sharing',
+      texture: '/textures/project/project4.mp4',
       logo: '/assets/project-logo4.png',
       logoStyle: {
         backgroundColor: '#0E1F38',
@@ -394,7 +394,7 @@ export const navLinks = [
       subdesc:
         'Built with Next.js 14, Cloudinary AI, Clerk, and Stripe, Imaginify combines cutting-edge technology with a user-centric approach. It can be turned into a side income or even a full-fledged business.',
       href: 'https://www.youtube.com/watch?v=Ahwoks_dawU',
-      texture: './src/public/textures/project/project5.mp4',
+      texture: '/textures/project/project5.mp4',
       logo: '/assets/project-logo5.png',
       logoStyle: {
         backgroundColor: '#1C1A43',
