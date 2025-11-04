@@ -25,20 +25,65 @@ type GLTFResult = GLTF & {
 }
 
 export function CoffeeCup(props: JSX.IntrinsicElements['group']) {
-  const targetRef = useRef();
-  const { nodes, materials } = useGLTF(cup) as GLTFResult
-   /* useGSAP( () => {
-        gsap.to(targetRef.current.position, {
-        y: targetRef.current.position.y + 0.5,
-        duration: 1.5,
+  const cupRef = useRef<THREE.Group>(null);
+  const { nodes, materials } = useGLTF(cup) as GLTFResult;
+
+  // Floating animation
+  useGSAP(() => {
+    if (cupRef.current) {
+      gsap.to(cupRef.current.position, {
+        y: cupRef.current.position.y + 0.2,
+        duration: 2,
         repeat: -1,
         yoyo: true,
-    
-  });*/
+        ease: "sine.inOut"
+      });
+
+      // Gentle rotation
+      gsap.to(cupRef.current.rotation, {
+        y: Math.PI * 0.1,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+  }, []);
+
+  // Hover animation
+  const handlePointerOver = () => {
+    if (cupRef.current) {
+      gsap.to(cupRef.current.scale, {
+        x: 1.2,
+        y: 1.2,
+        z: 1.2,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
+  };
+
+  const handlePointerOut = () => {
+    if (cupRef.current) {
+      gsap.to(cupRef.current.scale, {
+        x: 1,
+        y: 1,
+        z: 1,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
+  };
 
   return (
-    <group {...props} dispose={null} >
-      <group name="Sketchfab_Scene" >
+    <group 
+      {...props} 
+      dispose={null} 
+      ref={cupRef}
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
+    >
+      <group name="Sketchfab_Scene">
         <group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]} scale={0.099}>
           <group name="Collada_visual_scene_group" rotation={[Math.PI / 2, 0, 0]}>
             <group name="Coffee_Cup">
@@ -48,9 +93,7 @@ export function CoffeeCup(props: JSX.IntrinsicElements['group']) {
                 receiveShadow
                 geometry={nodes.defaultMaterial.geometry}
                 material={materials.DefaultMaterial}
-                ref={targetRef.current}
               />
-              
             </group>
           </group>
         </group>

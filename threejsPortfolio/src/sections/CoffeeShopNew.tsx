@@ -10,7 +10,8 @@ import * as THREE from 'three';
 import React, { useRef, useState, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { GLTF } from 'three-stdlib';
-
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 const MODEL_URL = 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61imUAX0Y5L7C2KUPRWxSabGDeygQvIZ1OjBH6q';
 
@@ -261,10 +262,58 @@ type GLTFResult = GLTF & {
   }
 }
 
-export function CoffeeShopNew(props: JSX.IntrinsicElements['group']) {
+export function CoffeeShopNew({ children, ...props }: JSX.IntrinsicElements['group']) {
   const [modelError, setModelError] = useState<string | null>(null);
-  const { nodes, materials } = useGLTF(MODEL_URL) as GLTFResult
+  const group = useRef<THREE.Group>(null);
+  const { nodes, materials } = useGLTF(MODEL_URL) as GLTFResult;
+  const shopRef = useRef<THREE.Group>(null);
+  const lightsRef = useRef<THREE.Group>(null);
   
+  // Animation for the shop entrance
+  useGSAP(() => {
+    if (group.current) {
+      // Initial position off-screen
+      group.current.position.y = -10;
+      
+      // Animate entrance
+      gsap.to(group.current.position, {
+        y: 0,
+        duration: 2,
+        ease: "power2.out"
+      });
+    }
+  }, []);
+
+  // Ambient animation for the shop
+  useGSAP(() => {
+    if (group.current) {
+      // Subtle floating animation
+      gsap.to(group.current.rotation, {
+        y: Math.PI * 0.05,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+  }, []);
+
+  // Animate the lights
+  useGSAP(() => {
+    if (lightsRef.current) {
+      // Pulse the lights
+      gsap.to(lightsRef.current.scale, {
+        x: 1.1,
+        y: 1.1,
+        z: 1.1,
+        duration: 1.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+  }, []);
+
   useEffect(() => {
     const handleError = (error: ErrorEvent) => {
       console.error('Error loading model:', error);
@@ -275,13 +324,12 @@ export function CoffeeShopNew(props: JSX.IntrinsicElements['group']) {
     return () => window.removeEventListener('error', handleError);
   }, []);
 
-  // If there's an error loading the model
   if (modelError) {
     return <group {...props}><mesh><boxGeometry args={[1, 1, 1]} /><meshStandardMaterial color="red" /></mesh></group>;
   }
   
   return (
-    <group {...props} dispose={null}>
+    <group ref={group} {...props} dispose={null}>
       <group name="Isometric_cafe_202" position={[0, 0.064, 0]}>
         <mesh
           name="Object_4"
@@ -2289,7 +2337,22 @@ export function CoffeeShopNew(props: JSX.IntrinsicElements['group']) {
           position={[0.307, 0.755, -0.698]}
           rotation={[-Math.PI, 1.405, -Math.PI]}
         />
+
+        {/* Add animated lights group */}
+        <group ref={lightsRef}>
+          <mesh
+            name="Object_7"
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_7.geometry}
+            material={materials.Emmision}
+          />
+          {/* Add more light meshes here */}
+        </group>
       </group>
+      
+      {/* Render children */}
+      {children}
     </group>
   )
 }

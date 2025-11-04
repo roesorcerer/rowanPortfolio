@@ -68,13 +68,13 @@ const About: React.FC = () => {
               <button
                 key={tag.id}
                 onClick={() => handleTechClick(tag)}
-                className="tech-button p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 flex flex-col items-center">
+                className="tech-button p-2 rounded-lg hover:bg-black-300 transition-colors duration-200 flex flex-col items-center">
                 <img 
                   src={tag.path} 
                   alt={tag.name}
                   className="w-12 h-12 object-contain" 
                 />
-                <span className="text-sm mt-1">{tag.name}</span>
+                <span className="text-sm mt-1 text-white">{tag.name}</span>
               </button>
             ))}
             
@@ -118,7 +118,9 @@ const About: React.FC = () => {
                                     I work remotely focusing on education to bolster my working experience.
                                 </p>
                                 <p className="grid-subtext">I'm based in Minnesota and go to school at the University of Minnesota Duluth</p>
-                                <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
+                                <a href="#contact" className="w-full">
+                                    <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
+                                </a>
                             </div>
                         </div>
 
@@ -126,9 +128,9 @@ const About: React.FC = () => {
                 <div className="xl:col-span-2 xl:row-span-3">
                     <div className="grid-container">
                         <p className="grid-headtext">Studying how integrating user motivated game elements improve application design, motivation, and wellness.</p>
-                        <img src="https://utfs.io/f/LHwfoeNVr61i1boCnB0NaX5s7P2ClbYRvo9kzFAwHBuZ6mV4" alt="grid-3" className="w-full sm:h-[266px] h-fit object-contain" />
+                        <img src="https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iOPXL0s68TyqfbItMuXm9wz38kSN0P7HZiKod" alt="grid-3" className="w-full sm:h-[266px] h-fit object-contain" />
                         <p className="grid-subtext">My focus within my studies covers how developed software can improve based on the the desire of individuals. Gaming is a giant industry that I am proud to be passionate about, and as people we are driven by an inherent drive to play regardless or age or background. With the help of the community that I develop for, I study how users benefit from having a strong voice in their applications and giving them a chance to play to improve with gamification.  </p>
-                        <img src="https://utfs.io/f/LHwfoeNVr61i1boCnB0NaX5s7P2ClbYRvo9kzFAwHBuZ6mV4" alt="grid-3" className="w-full sm:h-[266px] h-fit object-contain" />
+                        <img src="https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iK4fg0jkTPilE7mHwCftnjXauBOJcUIZNT3r0" alt="grid-3" className="w-full sm:h-[266px] h-fit object-contain" />
                     </div>
                 </div>
 
@@ -140,7 +142,14 @@ const About: React.FC = () => {
                         <div className="space-y-2">
                             <p className="grid-subtext text-center">Contact Me</p>
                             <div className="copy-container" onClick={handleCopy}>
-                                <img src={hasCopied ? 'assets/cat-move.gif' : 'assets/cat-footprint.png'} alt="copy" />
+                                <img 
+                                    src={hasCopied 
+                                        ? 'https://img.icons8.com/?size=100&id=63262&format=png&color=40C057' 
+                                        : 'https://img.icons8.com/?size=100&id=86206&format=png&color=FFFFFF'
+                                    } 
+                                    alt={hasCopied ? 'copied' : 'copy'} 
+                                    className="w-8 h-8"
+                                />
                                 <p className="lg:text-2xl md:text-xl font-medium text-gray_gradient text-white">rowanstratton1@gmail.com</p>
                             </div>
                         </div>

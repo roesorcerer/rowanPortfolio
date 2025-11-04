@@ -135,7 +135,7 @@ export const navLinks = [
           {
             id: 4,
             name: "Python",
-            path: ".https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iJQJbOrtbeWdTkrZvpuG4cEHimAMfwV1OlhtF", 
+            path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iJQJbOrtbeWdTkrZvpuG4cEHimAMfwV1OlhtF", 
             githubLink: "https://github.umn.edu/STRAT238/IntrotoCS"
         },
         {
@@ -174,6 +174,44 @@ export const navLinks = [
 ];
 
   export const myProjects = [
+    {
+      title: "The Archive – A Gamified Narrative for Stress Management",
+      desc:
+        "The Archive is an interactive, narrative-based application designed to help college students manage stress through immersive storytelling and reflective play. Set in a shifting library that represents the mind, players explore memories, emotions, and coping strategies while uncovering hidden truths about themselves. Each choice alters the narrative world, dynamically adjusting tone and environment to mirror the user’s internal state.",
+      subdesc:
+        "Developed in React Native with a Django backend, The Archive merges game design frameworks with psychological insight. The app features branching storylines, emotional tracking through gameplay variables (courage, exploration, fear), and adaptive story rewards to reinforce self-reflection. Narrative and interface elements were co-designed with students to promote well-being through meaningful play rather than repetitive task completion.",
+      href: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61i7MHvD966wnguSzj1s5NyERYUvOrebPM9iToG", 
+      texture: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61i7MHvD966wnguSzj1s5NyERYUvOrebPM9iToG",
+      logo: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61i5dvtZjCTv0rGdgiubU9DewQ2W3RJFhMnKo5X",
+      logoStyle: {
+        backgroundColor: "#B5C8D4",
+        border: "0.2px solid #6C8FA6",
+        boxShadow: "0px 0px 60px 0px #5A7386"
+      },
+      spotlight: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iK47uow8TPilE7mHwCftnjXauBOJcUIZNT3r0",
+      tags: [
+        {
+          id: 1,
+          name: "React Native",
+          path: "https://img.icons8.com/?size=100&id=123603&format=png&color=000000"
+        },
+        {
+          id: 2,
+          name: "Django",
+          path: "https://img.icons8.com/?size=100&id=13441&format=png&color=000000"
+        },
+        {
+          id: 3,
+          name: "Gamification Research",
+          path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61i4AwRBzMInS8W5NUChdBoxuw4a13ZAXkGvMeK"
+        },
+        {
+          id: 4,
+          name: "Narrative Design",
+          path: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61i2qRJnA6PtQw9HR2zCuWlPVYGZmLqU87p1oOj"
+        }
+      ]
+    },
     {
       title: 'Pepper Bot - Exploring How Pitch Fluxations alter our emotional state',
       desc: 'With the help of the friendly Pepper Robot, our research team explored if changes in vocal tone may cause changes in skin conductivity values by assessing tonic data through an EDA sensor. The evaluation preformed allowed us to measure response from observed changes in readings. ',
@@ -287,80 +325,51 @@ export const navLinks = [
         },
       ],
     },
+  
     {
-      title: 'Anime Rating Website',
-      desc: 'Horizon is a comprehensive online banking platform that offers users a centralized finance management dashboard. It allows users to connect multiple bank accounts, monitor real-time transactions, and seamlessly transfer money to other users.',
-      subdesc:
-        'Built with Next.js 14 Appwrite, Dwolla and Plaid, Horizon ensures a smooth and secure banking experience, tailored to meet the needs of modern consumers.',
-      href: 'https://www.youtube.com/watch?v=PuOVqP_cjkE',
-      texture: './src/public/textures/project/project4.mp4',
-      logo: '/assets/project-logo4.png',
-      logoStyle: {
-        backgroundColor: '#0E1F38',
-        border: '0.2px solid #0E2D58',
-        boxShadow: '0px 0px 60px 0px #2F67B64D',
+      
+        title: 'Food Forward Timekeeping',
+        desc: 'Food Forward Timekeeping is a compassionate, task-oriented application that helps teams track work hours, manage tasks, and promote healthy work habits through a trauma-informed design philosophy.',
+        subdesc:
+          'Built with React Native (Expo), TypeScript, Firebase, and SQLite, the app combines gentle UI elements with practical timekeeping tools. Users can clock in and out, log tasks, and take mindful breaks, while managers can generate reports and view weekly progress — all within a calm, user-centered experience.',
+        href: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iTRvo6aWjKxWAV7XLeFnqNra8gts0ivB6Hhyd',
+        texture: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iTRvo6aWjKxWAV7XLeFnqNra8gts0ivB6Hhyd',
+        logo: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iWLRFXZ4KIul0ig9brsNyHLo7xeYkATvq84BE',
+        logoStyle: {
+          backgroundColor: '#1C1A43',
+          border: '0.2px solid #252262',
+          boxShadow: '0px 0px 60px 0px #635BFF4D',
+        },
+        spotlight: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61ixRWWs7wJgUdiHGFDN1aYuSmtXLZy96kjbhVp',
+        tags: [
+          {
+            id: 1,
+            name: 'React Native',
+            path: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iVioL8FIYuln28aphbBRvNekG1wsL70DTm4fz',
+          },
+          {
+            id: 2,
+            name: 'Expo',
+            path: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iNOpg7IjJfgx6DTLz0VUks12cQaCbFyI459RP',
+          },
+          {
+            id: 3,
+            name: 'TypeScript',
+            path: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61ihJwdh7AeO1qwAJbS2in9KxsdPHvz53BGjfZu',
+          },
+          {
+            id: 4,
+            name: 'Firebase',
+            path: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61i6lAd8CncXmg8fEOqJa9TGd4Q0FBShL2kvriW',
+          },
+          {
+            id: 5,
+            name: 'SQLite',
+            path: 'https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61iWYlF2gA4KIul0ig9brsNyHLo7xeYkATvq84B',
+          },
+        ],
       },
-      spotlight: '/assets/spotlight4.png',
-      tags: [
-        {
-          id: 1,
-          name: 'React.js',
-          path: '/assets/react.svg',
-        },
-        {
-          id: 2,
-          name: 'TailwindCSS',
-          path: 'assets/tailwindcss.png',
-        },
-        {
-          id: 3,
-          name: 'TypeScript',
-          path: '/assets/typescript.png',
-        },
-        {
-          id: 4,
-          name: 'Framer Motion',
-          path: '/assets/framer.png',
-        },
-      ],
-    },
-    {
-      title: 'Imaginify - AI Photo Manipulation App',
-      desc: 'Imaginify is a groundbreaking Software-as-a-Service application that empowers users to create stunning photo manipulations using AI technology. With features like AI-driven image editing, a payments system, and a credits-based model.',
-      subdesc:
-        'Built with Next.js 14, Cloudinary AI, Clerk, and Stripe, Imaginify combines cutting-edge technology with a user-centric approach. It can be turned into a side income or even a full-fledged business.',
-      href: 'https://www.youtube.com/watch?v=Ahwoks_dawU',
-      texture: './src/public/textures/project/project5.mp4',
-      logo: '/assets/project-logo5.png',
-      logoStyle: {
-        backgroundColor: '#1C1A43',
-        border: '0.2px solid #252262',
-        boxShadow: '0px 0px 60px 0px #635BFF4D',
-      },
-      spotlight: '/assets/spotlight5.png',
-      tags: [
-        {
-          id: 1,
-          name: 'React.js',
-          path: '/assets/react.svg',
-        },
-        {
-          id: 2,
-          name: 'TailwindCSS',
-          path: 'assets/tailwindcss.png',
-        },
-        {
-          id: 3,
-          name: 'TypeScript',
-          path: '/assets/typescript.png',
-        },
-        {
-          id: 4,
-          name: 'Framer Motion',
-          path: '/assets/framer.png',
-        },
-      ],
-    },
+      
   ];
   
   export const calculateSizes = (isSmall: any, isMobile: any, isTablet: any) => {
