@@ -67,13 +67,13 @@ const About: React.FC = () => {
               <button
                 key={tag.id}
                 onClick={() => handleTechClick(tag)}
-                className="tech-button p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 flex flex-col items-center">
+                className="tech-button p-2 rounded-lg hover:bg-black-300 transition-colors duration-200 flex flex-col items-center">
                 <img 
                   src={tag.path} 
                   alt={tag.name}
                   className="w-12 h-12 object-contain" 
                 />
-                <span className="text-sm mt-1">{tag.name}</span>
+                <span className="text-sm mt-1 text-white">{tag.name}</span>
               </button>
             ))}
             
@@ -117,7 +117,9 @@ const About: React.FC = () => {
                                     I work remotely focusing on education to bolster my working experience.
                                 </p>
                                 <p className="grid-subtext">I'm based in Minnesota and go to school at the University of Minnesota Duluth</p>
-                                <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
+                                <a href="#contact" className="w-full">
+                                    <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
+                                </a>
                             </div>
                         </div>
 
@@ -129,7 +131,6 @@ const About: React.FC = () => {
                         <p className="grid-subtext">My current research focuses on how "gamification" can benefit from immersive affordances and personalized experiences. This includes exploring how co-design processes and research methods can positively influence the creation of Wellness Tools. </p>
                         <p className="grid-subtext">By understanding user motivations and behaviors, I aim to create more engaging and effective applications that promote well-being and personal growth.</p>
                         <Button name="Learn More about Research" isBeam containerClass="w-full mt-10"  />
-
                     </div>
                 </div>
 

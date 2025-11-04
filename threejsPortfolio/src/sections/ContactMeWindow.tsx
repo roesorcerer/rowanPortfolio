@@ -4,34 +4,39 @@ type Props = {}
 
 const ContactMeWindow = (props: Props) => {
   return (
-    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-  
-  <rect x="50" y="20" width="1100" height="760" rx="3" fill="rgba(88, 145, 164, 0.15)" />
-  
-  
-  <rect x="50" y="20" width="1100" height="40" rx="3" fill="rgba(216, 181, 192, 0.25)" />
-  
-  
-  <text x="70" y="45" fill="rgba(255, 235, 238, 0.8)" font-family="Arial" font-size="16">Contact Me</text>
-  
-  
-  <g transform="translate(1080, 20)">
-    
-    <rect x="0" y="0" width="70" height="40" fill="rgba(216, 181, 192, 0.25)" />
-    <path d="M30 15 L50 27 M30 27 L50 15" stroke="rgba(255, 235, 238, 0.8)" stroke-width="1.5" />
-    
-    
-    <rect x="-35" y="0" width="35" height="40" fill="rgba(216, 181, 192, 0.25)" />
-    <rect x="-25" y="15" width="15" height="10" stroke="rgba(255, 235, 238, 0.8)" fill="none" stroke-width="1.5" />
-    
-    
-    <rect x="-70" y="0" width="35" height="40" fill="rgba(216, 181, 192, 0.25)" />
-    <line x1="-60" y1="25" x2="-45" y2="25" stroke="rgba(255, 235, 238, 0.8)" stroke-width="1.5" />
-  </g>
-  
-  
-  <rect x="50" y="60" width="1100" height="720" fill="rgba(216, 181, 192, 0.1)" />
-</svg>
+    <svg 
+      viewBox="0 0 1200 1100" 
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-full h-full"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      {/* Main Window Body */}
+      <rect x="30" y="10" width="1140" height="1080" rx="8" fill="rgba(88, 145, 164, 0.15)" stroke="rgba(216, 181, 192, 0.3)" strokeWidth="2" />
+      
+      {/* Title Bar */}
+      <rect x="30" y="10" width="1140" height="50" rx="8" fill="rgba(216, 181, 192, 0.25)" />
+      
+      {/* Window Title */}
+      <text x="60" y="43" fill="rgba(255, 235, 238, 0.9)" fontFamily="Arial, sans-serif" fontSize="20" fontWeight="500">Contact Me</text>
+      
+      {/* Window Controls */}
+      <g transform="translate(1100, 10)">
+        {/* Close button */}
+        <rect x="0" y="0" width="70" height="50" fill="rgba(216, 181, 192, 0.25)" />
+        <path d="M30 20 L50 35 M30 35 L50 20" stroke="rgba(255, 235, 238, 0.8)" strokeWidth="2" strokeLinecap="round" />
+        
+        {/* Maximize button */}
+        <rect x="-40" y="0" width="40" height="50" fill="rgba(216, 181, 192, 0.25)" />
+        <rect x="-28" y="20" width="16" height="15" stroke="rgba(255, 235, 238, 0.8)" fill="none" strokeWidth="2" />
+        
+        {/* Minimize button */}
+        <rect x="-80" y="0" width="40" height="50" fill="rgba(216, 181, 192, 0.25)" />
+        <line x1="-68" y1="30" x2="-52" y2="30" stroke="rgba(255, 235, 238, 0.8)" strokeWidth="2" strokeLinecap="round" />
+      </g>
+      
+      {/* Content Area */}
+      <rect x="30" y="60" width="1140" height="1030" fill="rgba(216, 181, 192, 0.08)" />
+    </svg>
   )
 }
 
