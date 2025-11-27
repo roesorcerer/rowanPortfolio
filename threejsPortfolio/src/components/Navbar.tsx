@@ -1,6 +1,6 @@
 import { useState } from "react";
-import logo1 from "../public/assets/menuopen.png";
-import logo2 from "../public/assets/menuclose.png";
+import logo1 from "../assets/menuopen.png";
+import logo2 from "../assets/menuclose.png";
 import {navLinks} from "../constants/index.ts"
 
 {/**Nav Items for Nav Bar pulling from Index from Contastants using map */}

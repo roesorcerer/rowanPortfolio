@@ -100,6 +100,7 @@ const Skills: React.FC = () => {
         </div>
       </div>
     </section>
+    </section>
   );
 };
 

@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 // Update the path to your animation file
-const CHARACTER_URL = '/src/public/models/animations/Walking (1).gltf';
+const CHARACTER_URL = '/models/animations/Walking (1).gltf';
 
 type GLTFResult = GLTF & {
   nodes: {
