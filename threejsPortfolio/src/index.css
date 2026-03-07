@@ -57,7 +57,21 @@ body {
 
   /* hero section */
   .hero_tag {
-    @apply text-center xl:text-6xl md:text-5xl sm:text-4xl text-3xl font-generalsans font-black !leading-normal;
+    @apply text-center xl:text-4xl md:text-3xl sm:text-2xl text-xl font-generalsans font-black !leading-tight;
+  }
+
+  .hero-shell {
+    background:
+      radial-gradient(70rem 35rem at 50% -15%, rgba(245, 158, 11, 0.12), transparent 60%),
+      radial-gradient(45rem 30rem at 12% 22%, rgba(56, 189, 248, 0.09), transparent 68%),
+      #010103;
+  }
+
+  .hero-header-card {
+    border: 1px solid rgba(190, 193, 207, 0.14);
+    background: linear-gradient(145deg, rgba(15, 18, 28, 0.42), rgba(6, 10, 18, 0.18));
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
   }
 
   /* about section */

@@ -20,3 +20,18 @@ export interface Project {
 
     tags: Tag[];
 }
+
+export interface ResearchPaper {
+    title: string;
+    authors: string[];
+    venue: string;
+    year: number;
+    abstract: string;
+    type: 'Published' | 'Thesis' | 'In Progress';
+    link?: string;
+    doi?: string;
+    tags: string[];
+    icon: string;
+    iconStyle: LogoStyle;
+    spotlight?: string;
+}

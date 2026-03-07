@@ -1,0 +1,215 @@
+{
+  "owner": {
+    "name": "Rowan Stratton",
+    "pronouns": "they/them",
+    "email": "rowanstratton1@gmail.com",
+    "phone": "(612) 750-5735",
+    "roles": ["Research Software Engineer", "HCI Researcher", "Teaching Assistant"],
+    "location": "Coleraine, MN",
+    "website": "rowanstratton.com",
+    "summary": "Research Software Engineer specializing in human-centered interactive systems and serious games for stress resilience. I design and execute mixed-method research (quantitative surveys, qualitative focus groups, research probes) and translate findings into scalable full-stack systems. Architect of a large-scale narrative behavioral platform. Published four peer-reviewed HCI papers exploring emotional modeling, dynamic difficulty adjustment, and playful stress intervention design."
+  },
+  "education": [
+    {
+      "degree": "M.S. Computer Science",
+      "institution": "University of Minnesota Duluth",
+      "start_date": "Aug 2024",
+      "end_date": "Present",
+      "focus": "Human-Centered Interactive Systems, Serious Games"
+    },
+    {
+      "degree": "B.S. Computer Science",
+      "institution": "SNHU",
+      "start_date": "Jan 2020",
+      "end_date": "Oct 2023"
+    }
+  ],
+  "technical_expertise": {
+    "languages": ["Python", "JavaScript (ES6+)", "TypeScript", "C#", "SQL"],
+    "backend": ["Django (DRF)", "Node.js", "Express", "Microservices"],
+    "frontend_mobile": ["React", "React Native", "Expo", "Tailwind CSS", "Next.js"],
+    "data_devops": ["PostgreSQL", "SQLite", "Docker", "Nginx", "Git/GitHub", "CI/CD", "AWS"],
+    "tools_platforms": ["EAS", "Zustand", "NativeWind", "Gunicorn"]
+  },
+  "research_focus": {
+    "domains": [
+      "Human-Computer Interaction (HCI)",
+      "Serious Games",
+      "Narrative Design",
+      "Cognitive Reframing",
+      "Digital Mental Health"
+    ],
+    "methods": [
+      "Mixed-Methods Research",
+      "Participatory Co-Design",
+      "Usability Testing",
+      "Interactive Storytelling",
+      "Quantitative Surveys",
+      "Qualitative Focus Groups",
+      "Research Probes"
+    ],
+    "specialties": [
+      "Emotional Modeling",
+      "Dynamic Difficulty Adjustment",
+      "Eudaimonic Design",
+      "Gamification for Stress Resilience",
+      "Narrative Scaffolding"
+    ]
+  },
+  "publications": [
+    {
+      "title": "Vantage: Using Dynamic Difficulty Adjustment to Pace Emotional Intensity in Serious Games",
+      "year": 2024,
+      "type": "Peer-Reviewed Conference"
+    },
+    {
+      "title": "Reclaiming Play in Digital Mental Health: A Scoping Review of Play-Oriented Gamification for Stress in College Students",
+      "year": 2024,
+      "type": "Scoping Review"
+    },
+    {
+      "title": "When the Story Stalls: Designing Narrative Scaffolds for Eudaimonic Reflection",
+      "year": 2024,
+      "type": "Peer-Reviewed Conference"
+    },
+    {
+      "title": "Evoke: A Framework for Measuring Emotional Arousal to Robotic Voice Modulation Using Electrodermal Activity",
+      "year": 2024,
+      "type": "Peer-Reviewed Conference"
+    }
+  ],
+  "experience": [
+    {
+      "title": "Graduate Researcher & Lead Dev",
+      "company": "University of Minnesota Duluth",
+      "location": "Duluth, MN",
+      "start_date": "May 2025",
+      "end_date": "Present",
+      "key_accomplishments": [
+        "Led end-to-end research-to-build pipeline: designed quantitative surveys, facilitated qualitative focus groups, and translated findings into system requirements for a gamified mental wellness application",
+        "Owned technical architecture across stack: designed Django/DRF APIs and PostgreSQL schemas to support narrative progression and longitudinal research data collection",
+        "Served as technical lead for a 3-undergraduate team: scoped work, assigned tasks, ran weekly check-ins, reviewed PRs, and unblocked implementation across backend + React Native",
+        "Mentored an undergraduate researcher on an independent study exploring eudaimonic design vs gamified design; supported study framing, synthesis, and writing workflow",
+        "Built and shipped Android app features in React Native (Expo/EAS) using Zustand for state management and NativeWind for UI; supported rapid iteration for study readiness",
+        "Standardized containerized deployment (Docker, Nginx, Gunicorn) to enable reproducible environments across collaborators and research trials"
+      ],
+      "technologies": ["Django/DRF", "React Native", "Expo/EAS", "PostgreSQL", "Docker", "Nginx", "Gunicorn", "Zustand", "NativeWind", "TypeScript"],
+      "impact": "Designed and led full-stack system supporting 3-person team and longitudinal research with real-world deployment"
+    },
+    {
+      "title": "Teaching Assistant – Computer Science",
+      "company": "University of Minnesota Duluth",
+      "location": "Duluth, MN",
+      "start_date": "Aug 2024",
+      "end_date": "May 2025",
+      "key_accomplishments": [
+        "Led programming labs covering Python, Java, algorithms, and software engineering principles",
+        "Developed instructional materials and mentored students in debugging and object-oriented design",
+        "Evaluated assignments and reinforced best practices in testing and architecture"
+      ],
+      "technologies": ["Python", "Java"],
+      "impact": "Supported student learning across core CS concepts and software engineering practices"
+    },
+    {
+      "title": "Freelance Software Developer",
+      "company": "Remote",
+      "location": "Remote",
+      "start_date": "Jul 2019",
+      "end_date": "Present",
+      "key_accomplishments": [
+        "Built and deployed Itasca Trails, a geolocation-based web application verifying on-site GPS presence",
+        "Developed Discord bots to automate moderation and community engagement workflows",
+        "Designed RESTful APIs and deployed scalable cloud infrastructure using AWS and Docker"
+      ],
+      "technologies": ["Node.js", "Express", "AWS", "Docker", "RESTful APIs", "Geolocation"],
+      "impact": "Shipped multiple production systems with scalable cloud infrastructure"
+    }
+  ],
+  "highlights": [
+    {
+      "id": "narrative-wellness",
+      "title": "Gamified Mental Wellness Platform",
+      "type": "Research + App",
+      "one_liner": "Large-scale narrative behavioral application combining story-driven progression with research on emotional regulation and stress resilience.",
+      "stack": ["React Native", "Expo", "TypeScript", "Django/DRF", "PostgreSQL", "Docker", "Zustand", "NativeWind"],
+      "what_i_did": [
+        "Led end-to-end research pipeline from focus groups to system requirements",
+        "Designed Django APIs and database schemas for narrative progression tracking",
+        "Built Android app features with React Native and EAS for rapid iteration",
+        "Mentored 3 undergraduates; managed technical architecture and deployment",
+        "Standardized Docker/Nginx deployment for reproducible research environments"
+      ],
+      "research_focus": [
+        "Emotional intensity pacing through dynamic difficulty",
+        "Narrative scaffolds for eudaimonic reflection",
+        "Longitudinal behavioral data collection"
+      ],
+      "fun_facts": [
+        "Combines narrative design with rigorous HCI research on stress intervention",
+        "Supports real-world study with reproducible infrastructure",
+        "Led technical mentorship of undergraduate team on research-driven development"
+      ],
+      "links": { "demo": "", "repo": "", "writeup": "" }
+    },
+    {
+      "id": "itasca-trails",
+      "title": "Itasca Trails",
+      "type": "Web App",
+      "one_liner": "Geolocation-based verification system ensuring on-site GPS presence.",
+      "stack": ["Node.js", "Express", "AWS", "Docker"],
+      "what_i_did": [
+        "Built and deployed full-stack geolocation verification system",
+        "Designed scalable cloud infrastructure on AWS",
+        "Containerized deployment with Docker for reliability"
+      ],
+      "fun_facts": [
+        "Production system handling geolocation tracking",
+        "Emphasis on reliability and transparent deployment practices"
+      ],
+      "links": { "demo": "", "repo": "", "writeup": "" }
+    },
+    {
+      "id": "discord-automation",
+      "title": "Discord Bot Automation Suite",
+      "type": "Automation + Services",
+      "one_liner": "Custom Discord bots automating moderation and community engagement workflows.",
+      "stack": ["Node.js", "Discord.js"],
+      "what_i_did": [
+        "Designed and built moderation automation tools",
+        "Created community engagement workflows",
+        "Deployed production Discord bots"
+      ],
+      "fun_facts": [
+        "Full-featured automation reducing manual community management",
+        "Demonstrates API integration and event-driven architecture"
+      ],
+      "links": { "demo": "", "repo": "", "writeup": "" }
+    }
+  ],
+  "faq": [
+    {
+      "q": "What kind of roles are you looking for?",
+      "a": "Research Engineer, Software Engineer (HCI/gameful systems), or full-stack roles with strong product + human-centered focus. I'm particularly interested in positions combining rigorous research methodology with shipping real systems."
+    },
+    {
+      "q": "What's your approach to research and development?",
+      "a": "I follow a research-to-build pipeline: start with mixed-methods research (surveys, focus groups, user studies), translate findings into clear system requirements, then deliver scalable full-stack implementations. I believe technology should be grounded in understanding real user needs."
+    },
+    {
+      "q": "What have you published?",
+      "a": "Four peer-reviewed HCI papers on serious games, narrative design, and emotional modeling. Topics include dynamic difficulty adjustment for emotional pacing, play-oriented gamification for college student stress, narrative scaffolds for reflection, and robotic voice modulation based on emotional arousal."
+    },
+    {
+      "q": "What's your experience with team leadership?",
+      "a": "I've led a 3-person undergraduate team as technical lead on a research project, managing scoping, task assignment, weekly check-ins, code review, and team unblocking. I also mentor individual researchers on study design and synthesis."
+    },
+    {
+      "q": "What are your technical strengths?",
+      "a": "Full-stack development with emphasis on research-driven systems. Backend: Django/DRF, Node.js, microservices, databases. Frontend: React, React Native, modern CSS. DevOps: Docker, CI/CD, cloud deployment. I'm strongest when bridging research questions and robust technical implementation."
+    },
+    {
+      "q": "What's your stance on technology and well-being?",
+      "a": "I'm cautious about tech that prioritizes engagement metrics over actual user well-being. My work focuses on designing systems that support real outcomes like flourishing, stress resilience, and meaningful reflection—not just retention or usage time."
+    }
+  ]
+}

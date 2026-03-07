@@ -9,6 +9,7 @@ import Project from "./components/Projects";
 import Teaching from "./components/Teaching";
 import Contact from "./components/Contact";
 import CodeLevel from "./components/CodeLevel";
+import Research from "./components/Research";
 import ResearchInfo from "./sections/ResearchInfo";
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
       <Hero />
       <About />
       <Project />
+      <Research />
       <Teaching />
       <ResearchInfo />
       <Contact />
