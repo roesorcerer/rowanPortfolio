@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment variables (contain secrets)
+.env
+.env.local
+.env.*.local
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Claude Code local settings
+.claude/
+
+# Debug logs
+npm-debug.log*
+
+# Other projects (only portfoliomern belongs on this branch)
+threejsPortfolio/
+mernShoppingApp/
