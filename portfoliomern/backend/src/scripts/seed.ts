@@ -1,0 +1,94 @@
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
+import mongoose from "mongoose";
+import { ProjectModel } from "../models/project.model";
+
+// Seed data — your portfolio projects.
+// Update these with your real content.
+const projects = [
+  {
+    title: "The Archive - Stories to explore stress",
+    category: "Mental Health Application",
+    description:
+      "A mental health application designed through human-centered design principles.",
+    image: "/assets/thearchive_1.png",
+    technologies: ["React", "Node.js", "MongoDB"],
+    featured: true,
+    order: 1,
+  },
+  {
+    title: "Food Forward Time Management - NGO",
+    category: "Application Co-Design",
+    description:
+      "An application built through co-design methods for time management.",
+    image: "/assets/ff9.png",
+    technologies: ["React", "Express", "PostgreSQL"],
+    featured: true,
+    order: 2,
+  },
+  {
+    title: "Stress through Story: Co-Design through a board game!",
+    category: "Research Paper",
+    description:
+      "A research paper exploring co-design board games for stress management.",
+    image: "/assets/cscwscreenshot.png",
+    technologies: ["Research", "HCI", "Co-Design"],
+    featured: true,
+    order: 3,
+  },
+  {
+    title: "Spam SVM Detection: Filtering Spam Data with ML",
+    category: "Spam SVM Detection",
+    description: "A machine learning project for spam detection using SVM.",
+    image: "/assets/spamproject.png",
+    technologies: ["Python", "scikit-learn", "NLP"],
+    featured: false,
+    order: 4,
+  },
+  {
+    title: "Itasca Trails: Community Trails through exploration",
+    category: "Web Apps",
+    description: "Web application for community trail exploration.",
+    image: "/assets/ie1.png",
+    technologies: ["React", "Node.js", "Maps API"],
+    featured: false,
+    order: 5,
+  },
+];
+
+async function seed() {
+  const mongoUri = process.env.MONGODB_URI;
+  if (!mongoUri) {
+    console.error("MONGODB_URI not set in .env");
+    process.exit(1);
+  }
+
+  try {
+    await mongoose.connect(mongoUri);
+    console.log("Connected to MongoDB.");
+
+    // Drop existing projects and re-insert.
+    // This is safe for development — NEVER run seed scripts
+    // against production without extreme caution.
+    await ProjectModel.deleteMany({});
+    console.log("Cleared existing projects.");
+
+    const inserted = await ProjectModel.insertMany(projects);
+    console.log(`Seeded ${inserted.length} projects.`);
+
+    for (const p of inserted) {
+      console.log(`  - ${p.title} (${p._id})`);
+    }
+  } catch (error) {
+    console.error("Seed failed:", error);
+    process.exit(1);
+  } finally {
+    await mongoose.connection.close();
+    console.log("Done.");
+  }
+}
+
+seed();

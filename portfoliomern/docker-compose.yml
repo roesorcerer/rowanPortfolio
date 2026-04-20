@@ -1,0 +1,44 @@
+services:
+  # --- MongoDB ---
+  # Local development database. Data persists in a named volume
+  # so it survives container restarts.
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Backend (Express API) ---
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/portfolio
+      - JWT_SECRET=${JWT_SECRET:-docker-dev-secret-change-in-production}
+      - JWT_EXPIRES_IN=7d
+      - CORS_ORIGIN=http://localhost
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # --- Frontend (React + nginx) ---
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
