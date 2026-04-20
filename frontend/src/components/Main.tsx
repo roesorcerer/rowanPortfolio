@@ -1,35 +1,85 @@
 import useBreakpoint from "../utils/ScreenSize";
 import { useProjects } from "../hooks/useProjects";
 import ProjectCard from "./ProjectCard";
+import AboutSection from "./AboutSection";
+import ContactSection from "./ContactSection";
 
 // --- Hero Section ---
-// The intro text at the top of the page. Static content, not from the API.
+// Eudaimonic design: warm, purposeful, human-centered
 
 function HeroMobile() {
   return (
-    <header
-      className="content-stretch flex flex-col gap-[19px] items-start max-w-[300px] py-[40px] relative shrink-0 w-[314px]"
-      data-name="Text"
-    >
-      <div className="shrink-0 size-[100px]" />
-      <p className="absolute font-['Josefin_Sans:SemiBold',sans-serif] font-semibold h-[27px] leading-[1.2] left-0 text-[20px] text-black top-[0.21px] tracking-[-1.00px] w-[345px]">
-        {`I'm Rowan Stratton, CS Master's student and explorer of HCI methods with games. I'm passionate about understanding how different disciplines intersect to create mental health software that is meaningful, supported by the users they are made for.`}
+    <header className="px-5 pt-12 pb-16 max-w-[600px]">
+      {/* Status indicator */}
+      <div className="flex items-center gap-2 mb-6">
+        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
+        <span className="text-[#0F6E56] text-sm">Designing for well-being</span>
+      </div>
+      
+      {/* Main headline */}
+      <h1 className="text-[#2C2C2A] text-2xl font-normal leading-[1.4] tracking-tight mb-5">
+        I create mental health software that meets people where they are—through games, stories, and thoughtful interaction.
+      </h1>
+      
+      {/* Subtitle */}
+      <p className="text-[#888780] text-base leading-[1.75] mb-8">
+        CS Master's student exploring how HCI methods can make supportive tools that feel genuinely meaningful to the people who use them.
       </p>
+      
+      {/* CTAs */}
+      <div className="flex flex-col gap-4">
+        <a 
+          href="#projects"
+          className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
+        >
+          See my work
+        </a>
+        <a 
+          href="#about"
+          className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
+        >
+          Learn about my approach
+          <span className="text-xs">→</span>
+        </a>
+      </div>
     </header>
   );
 }
 
 function HeroTablet() {
   return (
-    <header
-      className="max-w-[1500px] relative shrink-0 w-full"
-      data-name="Text"
-    >
-      <div className="content-stretch flex flex-col gap-[19px] items-start max-w-[inherit] pb-[80px] pr-[80px] pt-[200px] relative w-full">
-        <div className="shrink-0 size-[100px]" />
-        <p className="absolute font-['Josefin_Sans:SemiBold',sans-serif] font-semibold h-[180px] leading-[1.2] right-[640px] text-[30px] text-black text-justify top-[121px] tracking-[-2.25px] translate-x-full w-[600px]">
-          {`I'm Rowan Stratton, CS Master's student and explorer of HCI methods with games. I'm passionate about understanding how different disciplines intersect to create mental health software that is meaningful, supported by the users they are made for.`}
-        </p>
+    <header className="px-10 pt-16 pb-20 max-w-[700px]">
+      {/* Status indicator */}
+      <div className="flex items-center gap-2 mb-8">
+        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
+        <span className="text-[#0F6E56] text-sm">Designing for well-being</span>
+      </div>
+      
+      {/* Main headline */}
+      <h1 className="text-[#2C2C2A] text-[32px] font-normal leading-[1.35] tracking-tight mb-6">
+        I create mental health software that meets people where they are—through games, stories, and thoughtful interaction.
+      </h1>
+      
+      {/* Subtitle */}
+      <p className="text-[#888780] text-[17px] leading-[1.75] mb-10 max-w-[520px]">
+        CS Master's student exploring how HCI methods can make supportive tools that feel genuinely meaningful to the people who use them.
+      </p>
+      
+      {/* CTAs */}
+      <div className="flex items-center gap-4">
+        <a 
+          href="#projects"
+          className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
+        >
+          See my work
+        </a>
+        <a 
+          href="#about"
+          className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
+        >
+          Learn about my approach
+          <span className="text-xs">→</span>
+        </a>
       </div>
     </header>
   );
@@ -37,85 +87,106 @@ function HeroTablet() {
 
 function HeroDesktop() {
   return (
-    <header
-      className="h-[479px] max-w-[1500px] relative shrink-0 w-full"
-      data-name="Text"
-    >
-      <div className="content-stretch flex flex-col gap-[19px] items-start max-w-[inherit] pb-[80px] pr-[100px] pt-[200px] relative size-full">
-        <div className="shrink-0 size-[100px]" />
-        <p className="absolute font-['Josefin_Sans:SemiBold',sans-serif] font-semibold leading-[1.2] left-[60px] text-[32px] text-black top-[121px] tracking-[-2.25px] w-[1080px]">
-          {`I'm Rowan Stratton, CS Master's student and explorer of HCI methods with games. I'm passionate about understanding how different disciplines intersect to create mental health software that is meaningful, supported by the users they are made for.`}
-        </p>
+    <header className="px-10 pt-16 pb-20 max-w-[680px]">
+      {/* Status indicator */}
+      <div className="flex items-center gap-2 mb-8">
+        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
+        <span className="text-[#0F6E56] text-sm">Designing for well-being</span>
+      </div>
+      
+      {/* Main headline */}
+      <h1 className="text-[#2C2C2A] text-4xl font-normal leading-[1.35] tracking-tight mb-7">
+        I create mental health software that meets people where they are—through games, stories, and thoughtful interaction.
+      </h1>
+      
+      {/* Subtitle */}
+      <p className="text-[#888780] text-[17px] leading-[1.75] mb-10 max-w-[480px]">
+        CS Master's student exploring how HCI methods can make supportive tools that feel genuinely meaningful to the people who use them.
+      </p>
+      
+      {/* CTAs */}
+      <div className="flex items-center gap-4">
+        <a 
+          href="#projects"
+          className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
+        >
+          See my work
+        </a>
+        <a 
+          href="#about"
+          className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
+        >
+          Learn about my approach
+          <span className="text-xs">→</span>
+        </a>
       </div>
     </header>
   );
 }
 
-// --- Closing CTA ---
-// The call-to-action section at the bottom of the page.
-
-function ClosingMobile() {
+// --- Projects Section Header ---
+function ProjectsSectionHeader({ count }: { count: number }) {
   return (
-    <div
-      className="content-stretch flex flex-col gap-[50px] items-start max-w-[300px] pb-[120px] pt-[30px] relative shrink-0 w-full"
-      data-name="Text"
-    >
-      <p className="font-['Josefin_Sans:SemiBold',sans-serif] font-semibold leading-[1.2] min-w-full relative shrink-0 text-[16px] text-black tracking-[-1.00px] w-[min-content]">
-        {`I'm dedicated to crafting meaningful software through human centered needs. `}
-      </p>
-      <a
-        className="cursor-pointer relative shrink-0"
-        data-name="button"
-        href="/about"
-        target="_self"
-      >
-        <div
-          aria-hidden="true"
-          className="absolute border border-black border-solid inset-0 pointer-events-none"
-        />
-        <div className="flex flex-row items-center justify-center size-full">
-          <div className="content-stretch flex items-center justify-center pb-[7px] pt-[4px] px-[10px] relative">
-            <p className="font-['Lato:Light',sans-serif] leading-[1.03] not-italic relative shrink-0 text-[16px] text-black text-left tracking-[-0.72px] whitespace-nowrap">
-              Discover my skills and passions
-            </p>
-          </div>
-        </div>
-      </a>
+    <div className="flex items-baseline justify-between mb-7 px-5 md:px-10">
+      <h2 className="text-[#2C2C2A] text-sm font-medium tracking-widest uppercase">
+        Selected work
+      </h2>
+      <span className="text-[#B4B2A9] text-sm">
+        {count} {count === 1 ? 'project' : 'projects'}
+      </span>
     </div>
   );
 }
 
-function ClosingTabletDesktop({ isDesktop }: { isDesktop: boolean }) {
+// --- Closing CTA ---
+function ClosingMobile() {
   return (
-    <div
-      className="max-w-[1500px] relative shrink-0 w-full"
-      data-name="Text"
-    >
-      <div
-        className={`content-stretch flex flex-col gap-[50px] items-start max-w-[inherit] pb-[120px] pr-[${isDesktop ? "120px" : "80px"}] pt-[30px] relative w-full`}
+    <footer className="px-5 py-16 border-t border-[#E8E6E1]">
+      <p className="text-[#2C2C2A] text-xl leading-[1.4] tracking-tight mb-8 max-w-[300px]">
+        I'm dedicated to crafting meaningful software through human-centered design.
+      </p>
+      <a 
+        href="/about"
+        className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
       >
-        <p
-          className={`font-['Josefin_Sans:SemiBold',sans-serif] font-semibold leading-[1.2] ${isDesktop ? "w-[855px]" : "min-w-full w-[min-content]"} relative shrink-0 text-[32px] text-black tracking-[-2.25px]`}
-        >
-          {`I'm dedicated to crafting meaningful software through human centered needs. `}
-        </p>
-        <a
-          className="cursor-pointer relative shrink-0"
-          data-name="button"
-          href="/about"
-          target="_self"
-        >
-          <div
-            aria-hidden="true"
-            className="absolute border border-black border-solid inset-0 pointer-events-none"
-          />
-          <div className="flex flex-row items-center justify-center size-full">
-            <div className="content-stretch flex items-center justify-center pb-[7px] pt-[4px] px-[10px] relative">
-              <p className="font-['Lato:Light',sans-serif] leading-[1.03] not-italic relative shrink-0 text-[16px] text-black text-left tracking-[-0.72px] whitespace-nowrap">
-                Discover my skills and passions
-              </p>
-            </div>
-          </div>
+        Discover my approach
+        <span className="text-xs">→</span>
+      </a>
+    </footer>
+  );
+}
+
+function ClosingTabletDesktop() {
+  return (
+    <footer className="px-10 py-20 border-t border-[#E8E6E1] max-w-[1400px] mx-auto w-full">
+      <p className="text-[#2C2C2A] text-2xl md:text-3xl leading-[1.35] tracking-tight mb-10 max-w-[600px]">
+        I'm dedicated to crafting meaningful software through human-centered design.
+      </p>
+      <a 
+        href="/about"
+        className="inline-flex items-center gap-2 text-[#0F6E56] text-base hover:text-[#085041] transition-colors"
+      >
+        Discover my approach
+        <span>→</span>
+      </a>
+    </footer>
+  );
+}
+
+// --- Site Footer ---
+function SiteFooter({ isMobile }: { isMobile: boolean }) {
+  return (
+    <div className={`${isMobile ? 'px-5 py-6' : 'px-10 py-8 max-w-[1400px] mx-auto w-full'} flex justify-between items-center border-t border-[#E8E6E1]`}>
+      <p className="text-[#B4B2A9] text-sm">Crafted with intention</p>
+      <div className="flex gap-5 md:gap-6">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">
+          GitHub
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">
+          LinkedIn
+        </a>
+        <a href="#contact" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">
+          Say hello
         </a>
       </div>
     </div>
@@ -123,14 +194,11 @@ function ClosingTabletDesktop({ isDesktop }: { isDesktop: boolean }) {
 }
 
 // --- Main Component ---
-// Fetches projects from the API and renders them with the appropriate
-// breakpoint layout. Loading and error states are handled gracefully.
-
 function Main() {
   const { breakpoint } = useBreakpoint();
   const { data: projects, isLoading, error } = useProjects();
+  const isMobile = breakpoint === "mobile";
 
-  // Pick the right hero for the breakpoint
   const Hero =
     breakpoint === "mobile"
       ? HeroMobile
@@ -139,43 +207,51 @@ function Main() {
         : HeroDesktop;
 
   return (
-    <div
-      className="content-stretch flex flex-col items-start relative size-full"
-      data-name="Main"
-    >
+    <main className="flex flex-col bg-[#FAF9F7] min-h-screen">
       <Hero />
 
-      {isLoading && (
-        <div className="flex items-center justify-center w-full py-20">
-          <p className="font-['Josefin_Sans:SemiBold',sans-serif] text-[20px] text-gray-400">
-            Loading projects...
-          </p>
+      {/* Projects Section */}
+      <section id="projects" className="pb-12">
+        {!isLoading && !error && projects && (
+          <ProjectsSectionHeader count={projects.length} />
+        )}
+
+        {isLoading && (
+          <div className="flex items-center justify-center w-full py-20">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-[#1D9E75] rounded-full animate-pulse" />
+              <p className="text-[#888780] text-base">Loading projects...</p>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-center justify-center w-full py-20 px-5">
+            <p className="text-[#888780] text-base text-center">
+              Unable to load projects right now. Please try again later.
+            </p>
+          </div>
+        )}
+
+        <div className={`${isMobile ? 'px-5' : 'px-10'} space-y-6`}>
+          {projects?.map((project, index) => (
+            <ProjectCard
+              key={project._id}
+              project={project}
+              index={index}
+              breakpoint={breakpoint}
+            />
+          ))}
         </div>
-      )}
+      </section>
 
-      {error && (
-        <div className="flex items-center justify-center w-full py-20">
-          <p className="font-['Josefin_Sans:SemiBold',sans-serif] text-[20px] text-red-500">
-            Failed to load projects. Is the backend running?
-          </p>
-        </div>
-      )}
+      <AboutSection />
 
-      {projects?.map((project, index) => (
-        <ProjectCard
-          key={project._id}
-          project={project}
-          index={index}
-          breakpoint={breakpoint}
-        />
-      ))}
+      <ContactSection />
 
-      {breakpoint === "mobile" ? (
-        <ClosingMobile />
-      ) : (
-        <ClosingTabletDesktop isDesktop={breakpoint === "desktop"} />
-      )}
-    </div>
+      {isMobile ? <ClosingMobile /> : <ClosingTabletDesktop />}
+      <SiteFooter isMobile={isMobile} />
+    </main>
   );
 }
 
