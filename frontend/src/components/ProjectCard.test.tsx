@@ -11,6 +11,7 @@ const mockProject: Project = {
   technologies: ["React", "Node.js"],
   featured: true,
   order: 1,
+  projectType: "featured",
   createdAt: "2024-01-01T00:00:00.000Z",
   updatedAt: "2024-01-01T00:00:00.000Z",
 };
