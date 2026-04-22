@@ -7,6 +7,8 @@ export interface ApiResponse<T = unknown> {
   error?: string;
 }
 
+export type ProjectType = "featured" | "research" | "practice";
+
 export interface Project {
   _id: string;
   title: string;
@@ -16,6 +18,7 @@ export interface Project {
   link?: string;
   technologies: string[];
   featured: boolean;
+  projectType: ProjectType;
   order: number;
   createdAt: string;
   updatedAt: string;

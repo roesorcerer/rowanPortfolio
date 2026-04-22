@@ -3,13 +3,15 @@ import healthRoutes from "./health.routes";
 import projectRoutes from "./project.routes";
 import authRoutes from "./auth.routes";
 import contactRoutes from "./contact.routes";
+import analyticsRoutes from "./analytics.routes";
 
 const router = Router();
 
 // All routes are prefixed with /api in app.ts
-router.use("/health", healthRoutes);    // GET /api/health
-router.use("/auth", authRoutes);        // POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
-router.use("/projects", projectRoutes); // GET /api/projects, GET /api/projects/:id, POST/PUT/DELETE (auth required)
-router.use("/contact", contactRoutes);  // POST /api/contact
+router.use("/health", healthRoutes);       // GET /api/health
+router.use("/auth", authRoutes);           // POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
+router.use("/projects", projectRoutes);    // GET /api/projects, GET /api/projects/:id, POST/PUT/DELETE (auth required)
+router.use("/contact", contactRoutes);     // POST /api/contact, GET /api/contact/submissions (admin)
+router.use("/analytics", analyticsRoutes); // POST /api/analytics/pageview, GET /api/analytics/summary (admin)
 
 export default router;

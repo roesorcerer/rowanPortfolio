@@ -1,4 +1,5 @@
 import '../index.css'
+import { Link } from 'react-router-dom'
 import useBreakpoint from '../utils/ScreenSize'
 
 // Redesigned Header - Eudaimonic minimal style with teal accent
@@ -7,12 +8,21 @@ import useBreakpoint from '../utils/ScreenSize'
 function NavigationMobile() {
   return (
     <header className="px-5 py-6 flex justify-between items-center bg-[#FAF9F7]">
-      <a 
-        href="/" 
-        className="text-[#2C2C2A] font-medium text-base tracking-tight hover:text-[#0F6E56] transition-colors"
-      >
-        Rowan Stratton
-      </a>
+      <div className="flex items-center gap-3">
+        <Link to="/admin/login" aria-label="Admin login">
+          <img
+            src="/assets/justme.jpg"
+            alt="Rowan Stratton"
+            className="w-8 h-10 object-cover rounded-[50%] border border-[#E8E6E1] hover:border-[#1D9E75] transition-colors"
+          />
+        </Link>
+        <Link 
+          to="/" 
+          className="text-[#2C2C2A] font-medium text-base tracking-tight hover:text-[#0F6E56] transition-colors"
+        >
+          Rowan Stratton
+        </Link>
+      </div>
       
       <nav className="flex gap-6 text-sm">
         <a 
@@ -41,12 +51,21 @@ function NavigationMobile() {
 function NavigationTablet() {
   return (
     <header className="px-10 py-7 flex justify-between items-center bg-[#FAF9F7]">
-      <a 
-        href="/" 
-        className="text-[#2C2C2A] font-medium text-base tracking-tight hover:text-[#0F6E56] transition-colors"
-      >
-        Rowan Stratton
-      </a>
+      <div className="flex items-center gap-3">
+        <Link to="/admin/login" aria-label="Admin login">
+          <img
+            src="/assets/justme.jpg"
+            alt="Rowan Stratton"
+            className="w-8 h-10 object-cover rounded-[50%] border border-[#E8E6E1] hover:border-[#1D9E75] transition-colors"
+          />
+        </Link>
+        <Link 
+          to="/" 
+          className="text-[#2C2C2A] font-medium text-base tracking-tight hover:text-[#0F6E56] transition-colors"
+        >
+          Rowan Stratton
+        </Link>
+      </div>
       
       <nav className="flex gap-8 text-sm">
         <a 
@@ -75,12 +94,21 @@ function NavigationTablet() {
 function NavigationDesktop() {
   return (
     <header className="px-10 py-7 flex justify-between items-center bg-[#FAF9F7] max-w-[1400px] mx-auto w-full">
-      <a 
-        href="/" 
-        className="text-[#2C2C2A] font-medium text-base tracking-tight hover:text-[#0F6E56] transition-colors"
-      >
-        Rowan Stratton
-      </a>
+      <div className="flex items-center gap-3">
+        <Link to="/admin/login" aria-label="Admin login">
+          <img
+            src="/assets/justme.jpg"
+            alt="Rowan Stratton"
+            className="w-8 h-10 object-cover rounded-[50%] border border-[#E8E6E1] hover:border-[#1D9E75] transition-colors"
+          />
+        </Link>
+        <Link 
+          to="/" 
+          className="text-[#2C2C2A] font-medium text-base tracking-tight hover:text-[#0F6E56] transition-colors"
+        >
+          Rowan Stratton
+        </Link>
+      </div>
       
       <nav className="flex gap-8 text-sm">
         <a 

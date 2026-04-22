@@ -20,6 +20,7 @@ export const createProjectSchema = z.object({
   link: z.string().url("Link must be a valid URL").optional(),
   technologies: z.array(z.string().trim()).default([]),
   featured: z.boolean().default(false),
+  projectType: z.enum(["featured", "research", "practice"]).default("practice"),
   order: z.number().int().default(0),
 });
 

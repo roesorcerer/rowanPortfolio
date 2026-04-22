@@ -13,7 +13,7 @@ export default defineConfig({
       // Forward /api requests to the Express backend.
       // This avoids CORS issues in development — the browser thinks
       // it's talking to localhost:3000, but Vite proxies to :5001.
-      "/api": "http://localhost:5001",
+      "/api": "http://localhost:5000",
     },
   },
   plugins: [

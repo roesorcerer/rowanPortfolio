@@ -3,6 +3,8 @@ import mongoose, { Schema, Document } from "mongoose";
 // This interface represents a Project document in MongoDB.
 // It extends Mongoose's Document type, which adds _id, __v,
 // save(), remove(), and other Mongoose methods.
+export type ProjectType = "featured" | "research" | "practice";
+
 export interface IProject extends Document {
   title: string;
   category: string;
@@ -11,6 +13,7 @@ export interface IProject extends Document {
   link?: string;
   technologies: string[];
   featured: boolean;
+  projectType: ProjectType;
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -50,6 +53,12 @@ const projectSchema = new Schema<IProject>(
       type: Boolean,
       default: false,
     },
+    projectType: {
+      type: String,
+      enum: ["featured", "research", "practice"],
+      required: [true, "Project type is required"],
+      default: "practice",
+    },
     order: {
       type: Number,
       default: 0,
@@ -67,5 +76,6 @@ const projectSchema = new Schema<IProject>(
 // Indexes make these queries fast even with thousands of documents.
 projectSchema.index({ order: 1 });
 projectSchema.index({ featured: 1 });
+projectSchema.index({ projectType: 1 });
 
 export const ProjectModel = mongoose.model<IProject>("Project", projectSchema);

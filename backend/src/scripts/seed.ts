@@ -17,6 +17,7 @@ const projects = [
     image: "/assets/thearchive_1.png",
     technologies: ["React", "Node.js", "MongoDB"],
     featured: true,
+    projectType: "featured",
     order: 1,
   },
   {
@@ -27,6 +28,7 @@ const projects = [
     image: "/assets/ff9.png",
     technologies: ["React", "Express", "PostgreSQL"],
     featured: true,
+    projectType: "featured",
     order: 2,
   },
   {
@@ -37,6 +39,7 @@ const projects = [
     image: "/assets/cscwscreenshot.png",
     technologies: ["Research", "HCI", "Co-Design"],
     featured: true,
+    projectType: "research",
     order: 3,
   },
   {
@@ -46,6 +49,7 @@ const projects = [
     image: "/assets/spamproject.png",
     technologies: ["Python", "scikit-learn", "NLP"],
     featured: false,
+    projectType: "practice",
     order: 4,
   },
   {
@@ -55,6 +59,7 @@ const projects = [
     image: "/assets/ie1.png",
     technologies: ["React", "Node.js", "Maps API"],
     featured: false,
+    projectType: "practice",
     order: 5,
   },
 ];

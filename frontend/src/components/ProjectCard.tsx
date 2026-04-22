@@ -1,19 +1,100 @@
 import { useState } from "react";
-import type { Project } from "../types";
+import type { Project, ProjectType } from "../types";
 import ProjectModal from "./ProjectModal";
 
 interface ProjectCardProps {
   project: Project;
   index: number;
   breakpoint: "mobile" | "tablet" | "desktop";
+  variant?: ProjectType;
 }
 
-function ProjectCard({ project, breakpoint }: ProjectCardProps) {
+function ProjectCard({ project, breakpoint, variant = "featured" }: ProjectCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = breakpoint === "mobile";
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
+
+  // --- Research variant: compact horizontal row, no large image ---
+  if (variant === "research") {
+    return (
+      <>
+        <article
+          className="bg-white rounded-xl border border-[#E8E6E1] p-5 flex gap-4 items-start cursor-pointer hover:border-[#1D9E75] transition-colors"
+          onClick={openModal}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && openModal()}
+          aria-label={`Explore ${project.title}`}
+        >
+          {/* Small thumbnail */}
+          <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-[#1a1a1a] overflow-hidden">
+            <img
+              alt={project.title}
+              className="w-full h-full object-cover"
+              src={project.image}
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="inline-block px-2 py-1 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded mb-2">
+              {project.category}
+            </span>
+            <h3 className="text-[#2C2C2A] text-sm font-medium tracking-tight leading-snug mb-1">
+              {project.title}
+            </h3>
+            {project.description && (
+              <p className="text-[#888780] text-xs leading-relaxed line-clamp-2">
+                {project.description}
+              </p>
+            )}
+          </div>
+          <span className="text-[#0F6E56] text-xs flex-shrink-0 mt-1">→</span>
+        </article>
+        {isOpen && <ProjectModal project={project} onClose={closeModal} />}
+      </>
+    );
+  }
+
+  // --- Practice variant: compact grid card ---
+  if (variant === "practice") {
+    return (
+      <>
+        <article
+          className="bg-white rounded-xl border border-[#E8E6E1] overflow-hidden cursor-pointer hover:border-[#1D9E75] transition-colors"
+          onClick={openModal}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && openModal()}
+          aria-label={`Explore ${project.title}`}
+        >
+          <div className="aspect-video bg-[#1a1a1a] relative overflow-hidden">
+            <img
+              alt={project.title}
+              className="absolute inset-0 w-full h-full object-cover"
+              src={project.image}
+            />
+          </div>
+          <div className="p-4">
+            <span className="inline-block px-2 py-1 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded mb-2">
+              {project.category}
+            </span>
+            <h3 className="text-[#2C2C2A] text-sm font-medium tracking-tight leading-snug mb-2">
+              {project.title}
+            </h3>
+            <div className="flex flex-wrap gap-1">
+              {project.technologies.slice(0, 3).map((tech) => (
+                <span key={tech} className="text-[#B4B2A9] text-xs">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </article>
+        {isOpen && <ProjectModal project={project} onClose={closeModal} />}
+      </>
+    );
+  }
 
   const exploreButton = (
     <button

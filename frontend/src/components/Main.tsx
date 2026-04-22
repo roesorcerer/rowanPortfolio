@@ -1,8 +1,10 @@
+import { useState } from "react";
 import useBreakpoint from "../utils/ScreenSize";
 import { useProjects } from "../hooks/useProjects";
 import ProjectCard from "./ProjectCard";
 import AboutSection from "./AboutSection";
 import ContactSection from "./ContactSection";
+import type { ProjectType } from "../types";
 
 // --- Hero Section ---
 // Eudaimonic design: warm, purposeful, human-centered
@@ -124,16 +126,55 @@ function HeroDesktop() {
   );
 }
 
-// --- Projects Section Header ---
-function ProjectsSectionHeader({ count }: { count: number }) {
+// --- Projects Section Header + Tab Filter ---
+const TAB_LABELS: { type: ProjectType; label: string; description: string }[] = [
+  { type: "featured", label: "Featured", description: "Selected work" },
+  { type: "research", label: "Research", description: "Papers & studies" },
+  { type: "practice", label: "Practice", description: "Experiments & builds" },
+];
+
+function ProjectsFilter({
+  activeTab,
+  counts,
+  onChange,
+  isMobile,
+}: {
+  activeTab: ProjectType;
+  counts: Record<ProjectType, number>;
+  onChange: (t: ProjectType) => void;
+  isMobile: boolean;
+}) {
   return (
-    <div className="flex items-baseline justify-between mb-7 px-5 md:px-10">
-      <h2 className="text-[#2C2C2A] text-sm font-medium tracking-widest uppercase">
-        Selected work
-      </h2>
-      <span className="text-[#B4B2A9] text-sm">
-        {count} {count === 1 ? 'project' : 'projects'}
-      </span>
+    <div className={`${isMobile ? "px-5" : "px-10"} mb-7`}>
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-[#2C2C2A] text-sm font-medium tracking-widest uppercase">
+          Selected work
+        </h2>
+        <span className="text-[#B4B2A9] text-sm">
+          {counts[activeTab]} {counts[activeTab] === 1 ? "project" : "projects"}
+        </span>
+      </div>
+      <div className="flex gap-2">
+        {TAB_LABELS.map(({ type, label }) => (
+          <button
+            key={type}
+            type="button"
+            onClick={() => onChange(type)}
+            className={`px-4 py-2 rounded-full text-sm transition-colors ${
+              activeTab === type
+                ? "bg-[#2C2C2A] text-[#FAF9F7]"
+                : "bg-white text-[#888780] border border-[#E8E6E1] hover:border-[#2C2C2A] hover:text-[#2C2C2A]"
+            }`}
+          >
+            {label}
+            {counts[type] > 0 && (
+              <span className={`ml-1.5 text-xs ${activeTab === type ? "text-[#B4B2A9]" : "text-[#B4B2A9]"}`}>
+                {counts[type]}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -198,6 +239,7 @@ function Main() {
   const { breakpoint } = useBreakpoint();
   const { data: projects, isLoading, error } = useProjects();
   const isMobile = breakpoint === "mobile";
+  const [activeTab, setActiveTab] = useState<ProjectType>("featured");
 
   const Hero =
     breakpoint === "mobile"
@@ -206,16 +248,20 @@ function Main() {
         ? HeroTablet
         : HeroDesktop;
 
+  const counts: Record<ProjectType, number> = {
+    featured: projects?.filter((p) => p.projectType === "featured").length ?? 0,
+    research: projects?.filter((p) => p.projectType === "research").length ?? 0,
+    practice: projects?.filter((p) => p.projectType === "practice").length ?? 0,
+  };
+
+  const visibleProjects = projects?.filter((p) => p.projectType === activeTab) ?? [];
+
   return (
     <main className="flex flex-col bg-[#FAF9F7] min-h-screen">
       <Hero />
 
       {/* Projects Section */}
       <section id="projects" className="pb-12">
-        {!isLoading && !error && projects && (
-          <ProjectsSectionHeader count={projects.length} />
-        )}
-
         {isLoading && (
           <div className="flex items-center justify-center w-full py-20">
             <div className="flex items-center gap-3">
@@ -233,16 +279,67 @@ function Main() {
           </div>
         )}
 
-        <div className={`${isMobile ? 'px-5' : 'px-10'} space-y-6`}>
-          {projects?.map((project, index) => (
-            <ProjectCard
-              key={project._id}
-              project={project}
-              index={index}
-              breakpoint={breakpoint}
+        {!isLoading && !error && projects && (
+          <>
+            <ProjectsFilter
+              activeTab={activeTab}
+              counts={counts}
+              onChange={setActiveTab}
+              isMobile={isMobile}
             />
-          ))}
-        </div>
+
+            {/* Featured: full stacked cards */}
+            {activeTab === "featured" && (
+              <div className={`${isMobile ? "px-5" : "px-10"} space-y-6`}>
+                {visibleProjects.map((project, index) => (
+                  <ProjectCard
+                    key={project._id}
+                    project={project}
+                    index={index}
+                    breakpoint={breakpoint}
+                    variant="featured"
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Research: compact list rows */}
+            {activeTab === "research" && (
+              <div className={`${isMobile ? "px-5" : "px-10"} space-y-3`}>
+                {visibleProjects.map((project, index) => (
+                  <ProjectCard
+                    key={project._id}
+                    project={project}
+                    index={index}
+                    breakpoint={breakpoint}
+                    variant="research"
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Practice: 2-column grid */}
+            {activeTab === "practice" && (
+              <div className={`${isMobile ? "px-5" : "px-10"} grid grid-cols-1 sm:grid-cols-2 gap-4`}>
+                {visibleProjects.map((project, index) => (
+                  <ProjectCard
+                    key={project._id}
+                    project={project}
+                    index={index}
+                    breakpoint={breakpoint}
+                    variant="practice"
+                  />
+                ))}
+              </div>
+            )}
+
+            {visibleProjects.length === 0 && (
+              <div className={`${isMobile ? "px-5" : "px-10"} py-16`}>
+                <p className="text-[#B4B2A9] text-sm">No projects in this category yet.</p>
+              </div>
+            )}
+          </>
+        )}
       </section>
 
       <AboutSection />
