@@ -12,35 +12,31 @@ import type { ProjectType } from "../types";
 function HeroMobile() {
   return (
     <header className="px-5 pt-12 pb-16 max-w-[600px]">
-      {/* Status indicator */}
       <div className="flex items-center gap-2 mb-6">
         <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">Designing for well-being</span>
+        <span className="text-[#0F6E56] text-sm">Open to fullstack roles</span>
       </div>
-      
-      {/* Main headline */}
+
       <h1 className="text-[#2C2C2A] text-2xl font-normal leading-[1.4] tracking-tight mb-5">
-        I create mental health software that meets people where they are—through games, stories, and thoughtful interaction.
+        Fullstack developer building thoughtful software in React, TypeScript, and Django.
       </h1>
-      
-      {/* Subtitle */}
+
       <p className="text-[#888780] text-base leading-[1.75] mb-8">
-        CS Master's student exploring how HCI methods can make supportive tools that feel genuinely meaningful to the people who use them.
+        Just finished my MS at UMN Duluth, where I led development on an active research platform. Looking for fullstack engineering roles where craft and care both matter.
       </p>
-      
-      {/* CTAs */}
+
       <div className="flex flex-col gap-4">
-        <a 
+        <a
           href="#projects"
           className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
         >
           See my work
         </a>
-        <a 
+        <a
           href="#about"
           className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
         >
-          Learn about my approach
+          About me
           <span className="text-xs">→</span>
         </a>
       </div>
@@ -51,35 +47,31 @@ function HeroMobile() {
 function HeroTablet() {
   return (
     <header className="px-10 pt-16 pb-20 max-w-[700px]">
-      {/* Status indicator */}
       <div className="flex items-center gap-2 mb-8">
         <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">Designing for well-being</span>
+        <span className="text-[#0F6E56] text-sm">Open to fullstack roles</span>
       </div>
-      
-      {/* Main headline */}
+
       <h1 className="text-[#2C2C2A] text-[32px] font-normal leading-[1.35] tracking-tight mb-6">
-        I create mental health software that meets people where they are—through games, stories, and thoughtful interaction.
+        Fullstack developer building thoughtful software in React, TypeScript, and Django.
       </h1>
-      
-      {/* Subtitle */}
-      <p className="text-[#888780] text-[17px] leading-[1.75] mb-10 max-w-[520px]">
-        CS Master's student exploring how HCI methods can make supportive tools that feel genuinely meaningful to the people who use them.
+
+      <p className="text-[#888780] text-[17px] leading-[1.75] mb-10 max-w-[560px]">
+        Just finished my MS at UMN Duluth, where I led development on an active research platform. Looking for fullstack engineering roles where craft and care both matter.
       </p>
-      
-      {/* CTAs */}
+
       <div className="flex items-center gap-4">
-        <a 
+        <a
           href="#projects"
           className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
         >
           See my work
         </a>
-        <a 
+        <a
           href="#about"
           className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
         >
-          Learn about my approach
+          About me
           <span className="text-xs">→</span>
         </a>
       </div>
@@ -89,36 +81,32 @@ function HeroTablet() {
 
 function HeroDesktop() {
   return (
-    <header className="px-10 pt-16 pb-20 max-w-[680px]">
-      {/* Status indicator */}
+    <header className="px-10 pt-16 pb-20 max-w-[720px]">
       <div className="flex items-center gap-2 mb-8">
         <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">Designing for well-being</span>
+        <span className="text-[#0F6E56] text-sm">Open to fullstack roles</span>
       </div>
-      
-      {/* Main headline */}
+
       <h1 className="text-[#2C2C2A] text-4xl font-normal leading-[1.35] tracking-tight mb-7">
-        I create mental health software that meets people where they are—through games, stories, and thoughtful interaction.
+        Fullstack developer building thoughtful software in React, TypeScript, and Django.
       </h1>
-      
-      {/* Subtitle */}
-      <p className="text-[#888780] text-[17px] leading-[1.75] mb-10 max-w-[480px]">
-        CS Master's student exploring how HCI methods can make supportive tools that feel genuinely meaningful to the people who use them.
+
+      <p className="text-[#888780] text-[17px] leading-[1.75] mb-10 max-w-[560px]">
+        Just finished my MS at UMN Duluth, where I led development on an active research platform. Looking for fullstack engineering roles where craft and care both matter.
       </p>
-      
-      {/* CTAs */}
+
       <div className="flex items-center gap-4">
-        <a 
+        <a
           href="#projects"
           className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
         >
           See my work
         </a>
-        <a 
+        <a
           href="#about"
           className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
         >
-          Learn about my approach
+          About me
           <span className="text-xs">→</span>
         </a>
       </div>
@@ -183,14 +171,14 @@ function ProjectsFilter({
 function ClosingMobile() {
   return (
     <footer className="px-5 py-16 border-t border-[#E8E6E1]">
-      <p className="text-[#2C2C2A] text-xl leading-[1.4] tracking-tight mb-8 max-w-[300px]">
-        I'm dedicated to crafting meaningful software through human-centered design.
+      <p className="text-[#2C2C2A] text-xl leading-[1.4] tracking-tight mb-8 max-w-[340px]">
+        Currently looking for fullstack engineering roles.
       </p>
-      <a 
-        href="/about"
+      <a
+        href="#contact"
         className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
       >
-        Discover my approach
+        Get in touch
         <span className="text-xs">→</span>
       </a>
     </footer>
@@ -199,15 +187,15 @@ function ClosingMobile() {
 
 function ClosingTabletDesktop() {
   return (
-    <footer className="px-10 py-20 border-t border-[#E8E6E1] max-w-[1400px] mx-auto w-full">
-      <p className="text-[#2C2C2A] text-2xl md:text-3xl leading-[1.35] tracking-tight mb-10 max-w-[600px]">
-        I'm dedicated to crafting meaningful software through human-centered design.
+    <footer className="px-10 py-20 border-t border-[#E8E6E1] w-full">
+      <p className="text-[#2C2C2A] text-2xl md:text-3xl leading-[1.35] tracking-tight mb-10 max-w-[680px]">
+        Currently looking for fullstack engineering roles where craft and care both matter.
       </p>
-      <a 
-        href="/about"
+      <a
+        href="#contact"
         className="inline-flex items-center gap-2 text-[#0F6E56] text-base hover:text-[#085041] transition-colors"
       >
-        Discover my approach
+        Get in touch
         <span>→</span>
       </a>
     </footer>
@@ -217,13 +205,13 @@ function ClosingTabletDesktop() {
 // --- Site Footer ---
 function SiteFooter({ isMobile }: { isMobile: boolean }) {
   return (
-    <div className={`${isMobile ? 'px-5 py-6' : 'px-10 py-8 max-w-[1400px] mx-auto w-full'} flex justify-between items-center border-t border-[#E8E6E1]`}>
+    <div className={`${isMobile ? 'px-5 py-6' : 'px-10 py-8 w-full'} flex justify-between items-center border-t border-[#E8E6E1]`}>
       <p className="text-[#B4B2A9] text-sm">Crafted with intention</p>
       <div className="flex gap-5 md:gap-6">
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">
+        <a href="https://github.com/roesorcerer" target="_blank" rel="noopener noreferrer" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">
           GitHub
         </a>
-        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">
+        <a href="https://www.linkedin.com/in/rowan-stratton-611247247" target="_blank" rel="noopener noreferrer" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">
           LinkedIn
         </a>
         <a href="#contact" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">

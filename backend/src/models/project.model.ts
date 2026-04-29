@@ -11,6 +11,8 @@ export interface IProject extends Document {
   description: string;
   image: string;
   link?: string;
+  githubLink?: string;
+  developmentTime?: string;
   technologies: string[];
   featured: boolean;
   projectType: ProjectType;
@@ -44,6 +46,15 @@ const projectSchema = new Schema<IProject>(
     link: {
       type: String,
       trim: true,
+    },
+    githubLink: {
+      type: String,
+      trim: true,
+    },
+    developmentTime: {
+      type: String,
+      trim: true,
+      maxlength: [60, "Development time cannot exceed 60 characters"],
     },
     technologies: {
       type: [String],

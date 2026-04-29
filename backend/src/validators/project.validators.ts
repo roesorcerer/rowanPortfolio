@@ -18,6 +18,12 @@ export const createProjectSchema = z.object({
     .string({ error: "Image path is required" })
     .min(1, "Image path is required"),
   link: z.string().url("Link must be a valid URL").optional(),
+  githubLink: z.string().url("GitHub link must be a valid URL").optional(),
+  developmentTime: z
+    .string()
+    .max(60, "Development time cannot exceed 60 characters")
+    .trim()
+    .optional(),
   technologies: z.array(z.string().trim()).default([]),
   featured: z.boolean().default(false),
   projectType: z.enum(["featured", "research", "practice"]).default("practice"),

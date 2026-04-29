@@ -16,6 +16,8 @@ export interface Project {
   description: string;
   image: string;
   link?: string;
+  githubLink?: string;
+  developmentTime?: string;
   technologies: string[];
   featured: boolean;
   projectType: ProjectType;

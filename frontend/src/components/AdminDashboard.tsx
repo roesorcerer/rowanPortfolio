@@ -40,6 +40,8 @@ const EMPTY_FORM = {
   description: "",
   image: "",
   link: "",
+  githubLink: "",
+  developmentTime: "",
   technologies: "",
   projectType: "practice" as ProjectType,
   featured: false,
@@ -106,6 +108,8 @@ function AdminDashboard() {
       description: project.description,
       image: project.image,
       link: project.link ?? "",
+      githubLink: project.githubLink ?? "",
+      developmentTime: project.developmentTime ?? "",
       technologies: project.technologies.join(", "),
       projectType: project.projectType,
       featured: project.featured,
@@ -132,6 +136,8 @@ function AdminDashboard() {
       description: form.description,
       image: form.image,
       link: form.link || undefined,
+      githubLink: form.githubLink || undefined,
+      developmentTime: form.developmentTime || undefined,
       technologies: form.technologies
         .split(",")
         .map((t) => t.trim())
@@ -529,13 +535,32 @@ function AdminDashboard() {
                 />
               </Field>
 
-              <Field label="Link (optional)">
+              <Field label="Live demo link (optional)">
                 <input
                   value={form.link}
                   onChange={(e) => setForm({ ...form, link: e.target.value })}
                   className={inputCls}
-                  placeholder="https://..."
+                  placeholder="https://my-project.example.com"
                   type="url"
+                />
+              </Field>
+
+              <Field label="GitHub link (optional)">
+                <input
+                  value={form.githubLink}
+                  onChange={(e) => setForm({ ...form, githubLink: e.target.value })}
+                  className={inputCls}
+                  placeholder="https://github.com/user/repo"
+                  type="url"
+                />
+              </Field>
+
+              <Field label="Development time (optional)">
+                <input
+                  value={form.developmentTime}
+                  onChange={(e) => setForm({ ...form, developmentTime: e.target.value })}
+                  className={inputCls}
+                  placeholder="e.g. 3 weeks, 2 months"
                 />
               </Field>
 

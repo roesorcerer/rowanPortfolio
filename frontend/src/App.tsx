@@ -3,6 +3,7 @@ import Navigation from "./components/Header";
 import Main from "./components/Main";
 import AdminLogin from "./components/AdminLogin";
 import AdminDashboard from "./components/AdminDashboard";
+import Resume from "./components/Resume";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 export function sum(a: number, b: number): number {
@@ -24,6 +25,7 @@ function AppRoutes() {
       />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/resume" element={<Resume />} />
     </Routes>
   );
 }

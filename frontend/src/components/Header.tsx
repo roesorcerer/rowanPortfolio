@@ -93,7 +93,7 @@ function NavigationTablet() {
 
 function NavigationDesktop() {
   return (
-    <header className="px-10 py-7 flex justify-between items-center bg-[#FAF9F7] max-w-[1400px] mx-auto w-full">
+    <header className="px-10 py-7 flex justify-between items-center bg-[#FAF9F7] w-full">
       <div className="flex items-center gap-3">
         <Link to="/admin/login" aria-label="Admin login">
           <img
