@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Project, ProjectType } from "../types";
 import ProjectModal from "./ProjectModal";
+import { trackEvent } from "../utils/trackEvent";
 
 interface ProjectCardProps {
   project: Project;
@@ -13,7 +14,15 @@ function ProjectCard({ project, breakpoint, variant = "featured" }: ProjectCardP
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = breakpoint === "mobile";
 
-  const openModal = () => setIsOpen(true);
+  const openModal = () => {
+    setIsOpen(true);
+    trackEvent({
+      eventType: "project_view",
+      projectId: project._id,
+      projectTitle: project.title,
+      projectType: project.projectType,
+    });
+  };
   const closeModal = () => setIsOpen(false);
 
   // --- Research variant: compact horizontal row, no large image ---

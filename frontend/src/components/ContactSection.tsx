@@ -141,7 +141,7 @@ function ContactForm({
             className="text-[#0F6E56] text-sm flex items-center gap-2"
           >
             <span className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-            Thanks — your message is on its way. I'll get back to you soon.
+            Thanks for reaching out! Your message is on its way to me and I will get in touch shortly. 
           </p>
         )}
 
@@ -164,11 +164,10 @@ function ContactMobile(props: FormProps) {
       </div>
 
       <h2 className="text-[#2C2C2A] text-2xl font-normal leading-[1.4] tracking-tight mb-4">
-        Let's build something meaningful together.
+        Work with me and let's build something catered to your needs. 
       </h2>
       <p className="text-[#888780] text-base leading-[1.75] mb-8">
-        Whether it's HCI research, a mental-health-adjacent project, or a chat
-        about eudaimonic design — send me a note and I'll reply personally.
+        Whether it's about my research , or if you would like to work together on a project send your contact information and I will connect with you soon. 
       </p>
 
       <ContactForm {...props} />
@@ -195,17 +194,15 @@ function ContactTabletDesktop({
       >
         <div>
           <h2 className="text-[#2C2C2A] text-3xl font-normal leading-[1.35] tracking-tight mb-6">
-            Let's build something meaningful together.
+            Work with me and let's build something catered to your needs. 
           </h2>
           <div className="space-y-5 text-[#5F5E5A] text-[17px] leading-[1.75]">
             <p>
-              Whether it's HCI research, a mental-health-adjacent project, or a
-              chat about eudaimonic design — send me a note and I'll reply
-              personally.
+                      Whether it's about my research, or if you would like to work together on a project send your contact information and I will connect with you soon. 
+
             </p>
             <p>
-              I'm especially interested in collaborations that treat users as
-              partners, not data points.
+              I'm especially interested in strengthing my skillset across tech stacks and research oppertunties in the fields of development, HCI, and game based features to support wellbeing. 
             </p>
           </div>
         </div>

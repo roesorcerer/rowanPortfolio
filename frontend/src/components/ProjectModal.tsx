@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import type { Project } from "../types";
+import { trackEvent } from "../utils/trackEvent";
 
 interface ProjectModalProps {
   project: Project;
@@ -110,6 +111,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent({ eventType: "link_click", projectId: project._id, projectTitle: project.title, linkType: "demo" })}
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
                   >
                     Live demo
@@ -121,6 +123,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                     href={project.githubLink}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent({ eventType: "link_click", projectId: project._id, projectTitle: project.title, linkType: "github" })}
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#E8E6E1] text-[#2C2C2A] text-sm rounded-lg hover:border-[#2C2C2A] transition-colors"
                   >
                     <svg

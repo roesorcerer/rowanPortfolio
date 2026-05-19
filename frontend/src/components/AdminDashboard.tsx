@@ -7,8 +7,30 @@ import api from "../api/client";
 // ---- Types for analytics + contact submissions ----
 interface AnalyticsSummary {
   totalViews: number;
+  todayViews: number;
+  last7DaysViews: number;
   byPath: { path: string; count: number }[];
   byDay: { date: string; count: number }[];
+  byReferrer: { source: string; count: number }[];
+  deviceBreakdown: { mobile: number; desktop: number };
+  recentVisits: { path: string; source: string; device: string; createdAt: string }[];
+  byHour: { hour: number; count: number }[];
+}
+
+interface ProjectEngagement {
+  projectId: string;
+  projectTitle: string;
+  projectType: string;
+  views: number;
+  demoClicks: number;
+  githubClicks: number;
+}
+
+interface EngagementSummary {
+  projectEngagement: ProjectEngagement[];
+  conversionRate: number;
+  totalMessages: number;
+  totalPageViews: number;
 }
 
 interface ContactSubmission {
@@ -63,6 +85,7 @@ function AdminDashboard() {
   // Analytics
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [engagement, setEngagement] = useState<EngagementSummary | null>(null);
 
   // Contact messages
   const [messages, setMessages] = useState<ContactSubmission[]>([]);
@@ -72,9 +95,14 @@ function AdminDashboard() {
   useEffect(() => {
     if (activeTab === "analytics" && !analytics) {
       setAnalyticsLoading(true);
-      api
-        .get<{ success: boolean; data: AnalyticsSummary }>("/api/analytics/summary")
-        .then((r) => setAnalytics(r.data.data))
+      Promise.all([
+        api.get<{ success: boolean; data: AnalyticsSummary }>("/api/analytics/summary"),
+        api.get<{ success: boolean; data: EngagementSummary }>("/api/analytics/engagement"),
+      ])
+        .then(([summaryRes, engagementRes]) => {
+          setAnalytics(summaryRes.data.data);
+          setEngagement(engagementRes.data.data);
+        })
         .catch(() => undefined)
         .finally(() => setAnalyticsLoading(false));
     }
@@ -319,68 +347,223 @@ function AdminDashboard() {
 
             {!analyticsLoading && analytics && (
               <>
-                {/* Stat cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                  <div className="bg-white border border-[#E8E6E1] rounded-xl p-5">
-                    <p className="text-[#888780] text-xs uppercase tracking-wide mb-1">All-time views</p>
-                    <p className="text-[#2C2C2A] text-3xl font-semibold">{analytics.totalViews.toLocaleString()}</p>
-                  </div>
-                  <div className="bg-white border border-[#E8E6E1] rounded-xl p-5">
-                    <p className="text-[#888780] text-xs uppercase tracking-wide mb-1">Last 30 days</p>
-                    <p className="text-[#2C2C2A] text-3xl font-semibold">
-                      {analytics.byDay.reduce((s, d) => s + d.count, 0).toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="bg-white border border-[#E8E6E1] rounded-xl p-5">
-                    <p className="text-[#888780] text-xs uppercase tracking-wide mb-1">Unique pages tracked</p>
-                    <p className="text-[#2C2C2A] text-3xl font-semibold">{analytics.byPath.length}</p>
-                  </div>
+                {/* ── Stat cards ── */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                  {[
+                    { label: "Today", value: analytics.todayViews },
+                    { label: "Last 7 days", value: analytics.last7DaysViews },
+                    { label: "Last 30 days", value: analytics.byDay.reduce((s, d) => s + d.count, 0) },
+                    { label: "All-time", value: analytics.totalViews },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="bg-white border border-[#E8E6E1] rounded-xl p-5">
+                      <p className="text-[#888780] text-xs uppercase tracking-wide mb-1">{label}</p>
+                      <p className="text-[#2C2C2A] text-2xl font-semibold">{value.toLocaleString()}</p>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Top pages */}
-                <div className="bg-white border border-[#E8E6E1] rounded-xl p-6 mb-6">
-                  <h2 className="text-[#2C2C2A] text-sm font-medium mb-4">Top pages</h2>
-                  <div className="space-y-3">
-                    {analytics.byPath.map((row) => {
-                      const max = analytics.byPath[0]?.count ?? 1;
-                      const pct = Math.round((row.count / max) * 100);
+                {/* ── Project engagement ── */}
+                {engagement && (
+                  <div className="bg-white border border-[#E8E6E1] rounded-xl p-6 mb-4">
+                    <div className="flex items-center justify-between mb-1">
+                      <h2 className="text-[#2C2C2A] text-sm font-medium">Project engagement</h2>
+                      <span className="text-[#B4B2A9] text-xs">
+                        {engagement.conversionRate}% contact conversion
+                        <span className="ml-1 text-[#E8E6E1]">·</span>
+                        <span className="ml-1">{engagement.totalMessages} message{engagement.totalMessages !== 1 ? "s" : ""}</span>
+                      </span>
+                    </div>
+                    <p className="text-[#B4B2A9] text-xs mb-4">Modal opens · demo & GitHub clicks</p>
+                    {engagement.projectEngagement.length === 0 ? (
+                      <p className="text-[#B4B2A9] text-sm">No project interactions recorded yet.</p>
+                    ) : (
+                      <div className="space-y-0 divide-y divide-[#F5F4F0]">
+                        {engagement.projectEngagement.map((p) => {
+                          const maxViews = engagement.projectEngagement[0]?.views ?? 1;
+                          const barPct = Math.round((p.views / maxViews) * 100);
+                          const typeColors: Record<string, string> = {
+                            featured: "bg-[#E1F5EE] text-[#0F6E56]",
+                            research: "bg-[#EEF0FF] text-[#3D4EBF]",
+                            practice: "bg-[#F5F0E1] text-[#8A6A00]",
+                          };
+                          return (
+                            <div key={p.projectId} className="py-3 flex items-center gap-3">
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded flex-shrink-0 ${typeColors[p.projectType] ?? "bg-[#F5F4F0] text-[#888780]"}`}>
+                                {p.projectType}
+                              </span>
+                              <span className="text-[#2C2C2A] text-xs truncate flex-1 min-w-0">{p.projectTitle}</span>
+                              <div className="w-20 bg-[#F5F4F0] rounded-full h-1.5 overflow-hidden flex-shrink-0 hidden sm:block">
+                                <div className="h-full bg-[#1D9E75] rounded-full" style={{ width: `${barPct}%` }} />
+                              </div>
+                              <div className="flex items-center gap-3 flex-shrink-0 text-xs text-[#888780]">
+                                <span title="Modal opens">{p.views} view{p.views !== 1 ? "s" : ""}</span>
+                                {p.demoClicks > 0 && (
+                                  <span className="text-[#0F6E56]" title="Demo link clicks">↗ {p.demoClicks}</span>
+                                )}
+                                {p.githubClicks > 0 && (
+                                  <span title="GitHub link clicks">⌥ {p.githubClicks}</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* ── Traffic sources + Device breakdown ── */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  {/* Traffic sources */}
+                  <div className="bg-white border border-[#E8E6E1] rounded-xl p-6">
+                    <h2 className="text-[#2C2C2A] text-sm font-medium mb-4">Traffic sources</h2>
+                    {analytics.byReferrer.length === 0 ? (
+                      <p className="text-[#B4B2A9] text-sm">No referrer data yet.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {analytics.byReferrer.map((row) => {
+                          const total = analytics.byReferrer.reduce((s, r) => s + r.count, 0);
+                          const pct = Math.round((row.count / (total || 1)) * 100);
+                          return (
+                            <div key={row.source} className="flex items-center gap-3">
+                              <span className="text-[#2C2C2A] text-xs w-24 truncate flex-shrink-0">{row.source}</span>
+                              <div className="flex-1 bg-[#F5F4F0] rounded-full h-1.5 overflow-hidden">
+                                <div
+                                  className="h-full bg-[#1D9E75] rounded-full transition-all"
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
+                              <span className="text-[#B4B2A9] text-xs w-8 text-right flex-shrink-0">{pct}%</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Device breakdown */}
+                  <div className="bg-white border border-[#E8E6E1] rounded-xl p-6">
+                    <h2 className="text-[#2C2C2A] text-sm font-medium mb-4">Devices</h2>
+                    {(() => {
+                      const { mobile, desktop } = analytics.deviceBreakdown;
+                      const total = mobile + desktop || 1;
+                      const mobilePct = Math.round((mobile / total) * 100);
+                      const desktopPct = 100 - mobilePct;
                       return (
-                        <div key={row.path} className="flex items-center gap-3">
-                          <span className="text-[#2C2C2A] text-sm w-32 truncate flex-shrink-0">{row.path}</span>
-                          <div className="flex-1 bg-[#F5F4F0] rounded-full h-2 overflow-hidden">
-                            <div
-                              className="h-full bg-[#1D9E75] rounded-full transition-all"
-                              style={{ width: `${pct}%` }}
-                            />
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between text-xs mb-1.5">
+                              <span className="text-[#2C2C2A]">Desktop</span>
+                              <span className="text-[#888780]">{desktop.toLocaleString()} ({desktopPct}%)</span>
+                            </div>
+                            <div className="bg-[#F5F4F0] rounded-full h-2 overflow-hidden">
+                              <div className="h-full bg-[#2C2C2A] rounded-full" style={{ width: `${desktopPct}%` }} />
+                            </div>
                           </div>
-                          <span className="text-[#888780] text-xs w-10 text-right flex-shrink-0">
-                            {row.count.toLocaleString()}
-                          </span>
+                          <div>
+                            <div className="flex justify-between text-xs mb-1.5">
+                              <span className="text-[#2C2C2A]">Mobile</span>
+                              <span className="text-[#888780]">{mobile.toLocaleString()} ({mobilePct}%)</span>
+                            </div>
+                            <div className="bg-[#F5F4F0] rounded-full h-2 overflow-hidden">
+                              <div className="h-full bg-[#1D9E75] rounded-full" style={{ width: `${mobilePct}%` }} />
+                            </div>
+                          </div>
+                          <p className="text-[#B4B2A9] text-xs pt-1">{total.toLocaleString()} total views tracked</p>
                         </div>
                       );
-                    })}
+                    })()}
                   </div>
                 </div>
 
-                {/* Daily views bar chart */}
+                {/* ── 30-day trend + Hourly activity ── */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  {/* Daily trend */}
+                  <div className="bg-white border border-[#E8E6E1] rounded-xl p-6">
+                    <h2 className="text-[#2C2C2A] text-sm font-medium mb-1">30-day trend</h2>
+                    <p className="text-[#B4B2A9] text-xs mb-4">Page views per day</p>
+                    {analytics.byDay.length === 0 ? (
+                      <p className="text-[#B4B2A9] text-sm">No data yet.</p>
+                    ) : (
+                      <div className="flex items-end gap-0.5 h-24">
+                        {analytics.byDay.map((d) => {
+                          const maxCount = Math.max(...analytics.byDay.map((x) => x.count), 1);
+                          const heightPct = (d.count / maxCount) * 100;
+                          const label = new Date(d.date + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" });
+                          return (
+                            <div
+                              key={d.date}
+                              title={`${label}: ${d.count} view${d.count !== 1 ? "s" : ""}`}
+                              className="flex-1 bg-[#1D9E75] rounded-sm hover:bg-[#0F6E56] transition-colors cursor-default"
+                              style={{ height: `${heightPct}%`, minHeight: 3 }}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Hourly activity — shows when people browse (recruiter hours) */}
+                  <div className="bg-white border border-[#E8E6E1] rounded-xl p-6">
+                    <h2 className="text-[#2C2C2A] text-sm font-medium mb-1">Activity by hour</h2>
+                    <p className="text-[#B4B2A9] text-xs mb-4">Last 7 days · local time</p>
+                    {analytics.byHour.length === 0 ? (
+                      <p className="text-[#B4B2A9] text-sm">No data yet.</p>
+                    ) : (
+                      <>
+                        <div className="flex items-end gap-0.5 h-24">
+                          {Array.from({ length: 24 }, (_, h) => {
+                            const entry = analytics.byHour.find((x) => x.hour === h);
+                            const count = entry?.count ?? 0;
+                            const maxCount = Math.max(...analytics.byHour.map((x) => x.count), 1);
+                            const heightPct = (count / maxCount) * 100;
+                            const label = `${h.toString().padStart(2, "0")}:00 – ${count} view${count !== 1 ? "s" : ""}`;
+                            return (
+                              <div
+                                key={h}
+                                title={label}
+                                className={`flex-1 rounded-sm transition-colors cursor-default ${count > 0 ? "bg-[#1D9E75] hover:bg-[#0F6E56]" : "bg-[#F5F4F0]"}`}
+                                style={{ height: count > 0 ? `${heightPct}%` : "8px", minHeight: count > 0 ? 3 : 8 }}
+                              />
+                            );
+                          })}
+                        </div>
+                        <div className="flex justify-between mt-1.5">
+                          <span className="text-[#B4B2A9] text-[10px]">12am</span>
+                          <span className="text-[#B4B2A9] text-[10px]">6am</span>
+                          <span className="text-[#B4B2A9] text-[10px]">12pm</span>
+                          <span className="text-[#B4B2A9] text-[10px]">6pm</span>
+                          <span className="text-[#B4B2A9] text-[10px]">11pm</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* ── Recent visits feed ── */}
                 <div className="bg-white border border-[#E8E6E1] rounded-xl p-6">
-                  <h2 className="text-[#2C2C2A] text-sm font-medium mb-4">Views per day (last 30 days)</h2>
-                  {analytics.byDay.length === 0 ? (
-                    <p className="text-[#B4B2A9] text-sm">No data yet.</p>
+                  <h2 className="text-[#2C2C2A] text-sm font-medium mb-4">Recent visits</h2>
+                  {analytics.recentVisits.length === 0 ? (
+                    <p className="text-[#B4B2A9] text-sm">No visits recorded yet.</p>
                   ) : (
-                    <div className="flex items-end gap-1 h-28">
-                      {analytics.byDay.map((d) => {
-                        const maxCount = Math.max(...analytics.byDay.map((x) => x.count), 1);
-                        const heightPct = (d.count / maxCount) * 100;
-                        return (
-                          <div
-                            key={d.date}
-                            title={`${d.date}: ${d.count}`}
-                            className="flex-1 bg-[#1D9E75] rounded-sm hover:bg-[#0F6E56] transition-colors cursor-default"
-                            style={{ height: `${heightPct}%`, minHeight: 4 }}
-                          />
-                        );
-                      })}
+                    <div className="space-y-0 divide-y divide-[#F5F4F0]">
+                      {analytics.recentVisits.map((visit, i) => (
+                        <div key={i} className="flex items-center gap-3 py-2.5">
+                          <span
+                            className="text-[10px] px-1.5 py-0.5 rounded border flex-shrink-0"
+                            style={visit.device === "mobile"
+                              ? { background: "#E1F5EE", color: "#0F6E56", borderColor: "#C3EBD8" }
+                              : { background: "#F5F4F0", color: "#5F5E5A", borderColor: "#E8E6E1" }}
+                          >
+                            {visit.device === "mobile" ? "Mobile" : "Desktop"}
+                          </span>
+                          <span className="text-[#2C2C2A] text-xs font-mono truncate flex-1">{visit.path}</span>
+                          <span className="text-[#B4B2A9] text-xs flex-shrink-0 hidden sm:block">{visit.source}</span>
+                          <span className="text-[#B4B2A9] text-xs flex-shrink-0">
+                            {new Date(visit.createdAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

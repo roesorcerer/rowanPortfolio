@@ -29,12 +29,12 @@ const TECH_STACK: { category: string; items: string[] }[] = [
 
 const PRINCIPLES: { title: string; description: string }[] = [
   {
-    title: "Eudaimonic design",
-    description: "Building for meaning and growth, not just engagement metrics.",
+    title: "Consistently learning",
+    description: "Through research and iteratively improving projects. Building products that mean something. ",
   },
   {
     title: "Built with users",
-    description: "Design sessions before code, feedback throughout. Not for users — with them.",
+    description: "Co-design work with users to built supportive software systems. ",
   },
   {
     title: "Tested, not just shipped",
@@ -95,17 +95,17 @@ function BioContent({
   return (
     <>
       <h2 className={headingClass}>
-        I build production software, and I think carefully about who uses it.
+        I build full-stack production software, and I research the features that matter.
       </h2>
       <div className={paraClass}>
         <p>
-          I'm Rowan Stratton, a fullstack developer with a recently completed MS in Computer Science from UMN Duluth. For the past two years I've led development on a research project there — a Django + React Native mobile app with 140+ REST endpoints, now running in an active longitudinal study with real participants.
+          I'm Rowan Stratton, a fullstack developer with a recently completed MS in Computer Science from UMN Duluth. For the past two years I've led a Research through Design project to create an application for stress management to support college students. This was a three phase community driven project where we had over +100 participants contribute to this research. These findings informed the development of the research artifact built with Django + React Native as a mobile app with 140+ REST endpoints. This research is concluded and the findings will be presented in June. All research papers published center around this project and the insights gathered from the research. 
         </p>
         <p>
-          I work across the stack: React and TypeScript on the frontend, Django or Express on the backend, Postgres or SQLite underneath. Outside the research role, I've TA'd intro programming for three semesters and shipped a time-management mobile app to a real client.
+          I am flexible and have experiences working across stacks. TypeScript and Javascript knowlege provides me the flexibility to work with React realted technologies and Angular. This also allows me to develop backend stacks with Express.js. My python background gives me flexibility in Django and game development. Outside the research role, I've TA'd intro programming for three semesters leading interactive labs based on industry standard practices. I have also developed and shipped software such as a time-management solution for a local organization and a habit tracker with AI reminders to customize habit adoption. 
         </p>
         <p>
-          Coming from HCI, I'm comfortable working with users from the start — running participatory design sessions, iterating on feedback, and writing tests for what I ship. I'm looking for fullstack engineering roles where craft and care both matter.
+          Coming from HCI, I'm comfortable working with users through the development process. This is demonstratrated through my work in running participatory design sessions, iterating on feedback, and continous development with stakeholders. I'm looking for fullstack development roles and research opportunities where craft and care both matter.
         </p>
       </div>
     </>
