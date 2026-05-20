@@ -26,7 +26,7 @@ describe("App", () => {
   it("renders the hero text", () => {
     renderWithProviders();
     expect(
-      screen.getByText(/CS Master's student and explorer of HCI/i)
+      screen.getByText(/a fullstack developer with a recently/i)
     ).toBeInTheDocument();
   });
 
