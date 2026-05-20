@@ -13,7 +13,6 @@ describe("createProjectSchema", () => {
     expect(result.title).toBe("Test Project");
     // Defaults should be applied
     expect(result.technologies).toEqual([]);
-    expect(result.featured).toBe(false);
     expect(result.order).toBe(0);
   });
 
@@ -27,7 +26,6 @@ describe("createProjectSchema", () => {
     });
     expect(result.link).toBe("https://example.com");
     expect(result.technologies).toEqual(["React", "Node.js"]);
-    expect(result.featured).toBe(true);
     expect(result.order).toBe(5);
   });
 

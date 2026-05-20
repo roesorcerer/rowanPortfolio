@@ -66,7 +66,6 @@ const EMPTY_FORM = {
   developmentTime: "",
   technologies: "",
   projectType: "practice" as ProjectType,
-  featured: false,
   order: 0,
 };
 
@@ -140,7 +139,6 @@ function AdminDashboard() {
       developmentTime: project.developmentTime ?? "",
       technologies: project.technologies.join(", "),
       projectType: project.projectType,
-      featured: project.featured,
       order: project.order,
     });
     setError(null);
@@ -171,7 +169,6 @@ function AdminDashboard() {
         .map((t) => t.trim())
         .filter(Boolean),
       projectType: form.projectType,
-      featured: form.featured,
       order: form.order,
     };
 
@@ -765,17 +762,7 @@ function AdminDashboard() {
                     className={inputCls}
                   />
                 </Field>
-                <Field label="Featured">
-                  <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.featured}
-                      onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-                      className="w-4 h-4 accent-[#1D9E75]"
-                    />
-                    <span className="text-[#5F5E5A] text-sm">Mark as featured</span>
-                  </label>
-                </Field>
+
               </div>
 
               {error && <p className="text-red-500 text-xs">{error}</p>}
