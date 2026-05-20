@@ -25,7 +25,6 @@ export const createProjectSchema = z.object({
     .trim()
     .optional(),
   technologies: z.array(z.string().trim()).default([]),
-  featured: z.boolean().default(false),
   projectType: z.enum(["featured", "research", "practice"]).default("practice"),
   order: z.number().int().default(0),
 });

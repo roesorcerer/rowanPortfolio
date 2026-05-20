@@ -6,3 +6,11 @@ dist
 .claude/
 .vscode/
 .vercel/
+.idea/
+*.log
+*.env
+*.local
+*.lock
+.agents/
+skills-lock.json
+

@@ -19,7 +19,6 @@ export interface Project {
   githubLink?: string;
   developmentTime?: string;
   technologies: string[];
-  featured: boolean;
   projectType: ProjectType;
   order: number;
   createdAt: string;

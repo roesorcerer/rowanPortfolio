@@ -14,7 +14,6 @@ export interface IProject extends Document {
   githubLink?: string;
   developmentTime?: string;
   technologies: string[];
-  featured: boolean;
   projectType: ProjectType;
   order: number;
   createdAt: Date;
@@ -60,10 +59,6 @@ const projectSchema = new Schema<IProject>(
       type: [String],
       default: [],
     },
-    featured: {
-      type: Boolean,
-      default: false,
-    },
     projectType: {
       type: String,
       enum: ["featured", "research", "practice"],
@@ -86,7 +81,6 @@ const projectSchema = new Schema<IProject>(
 // Index on 'order' for sorted queries, and 'featured' for filtering.
 // Indexes make these queries fast even with thousands of documents.
 projectSchema.index({ order: 1 });
-projectSchema.index({ featured: 1 });
 projectSchema.index({ projectType: 1 });
 
 export const ProjectModel = mongoose.model<IProject>("Project", projectSchema);
