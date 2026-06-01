@@ -10,10 +10,6 @@ import RequireAdmin from "./components/admin/RequireAdmin";
 import Resume from "./components/Resume";
 import { AnalyticsProvider, fetchAnalyticsAdapter } from "./analytics";
 
-export function sum(a: number, b: number): number {
-  return a + b
-}
-
 function AppRoutes() {
   return (
     <Routes>

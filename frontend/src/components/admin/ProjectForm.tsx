@@ -34,15 +34,15 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black/30 flex items-start justify-center pt-16 px-4 z-50 overflow-y-auto">
-      <div className="bg-white rounded-2xl border border-[#E8E6E1] w-full max-w-[560px] p-7 mb-16">
+      <div className="bg-white rounded-2xl border border-rule w-full max-w-[560px] p-7 mb-16">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-[#2C2C2A] text-base font-medium">
+          <h2 className="text-ink text-base font-medium">
             {initialProject ? "Edit project" : "New project"}
           </h2>
           <button
             type="button"
             onClick={onCancel}
-            className="text-[#B4B2A9] hover:text-[#2C2C2A] transition-colors text-lg leading-none"
+            className="text-faint hover:text-ink transition-colors text-lg leading-none"
           >
             ×
           </button>
@@ -158,9 +158,9 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
                   type="checkbox"
                   checked={form.featured}
                   onChange={(e) => setField("featured", e.target.checked)}
-                  className="w-4 h-4 accent-[#1D9E75]"
+                  className="w-4 h-4 accent-accent"
                 />
-                <span className="text-[#5F5E5A] text-sm">Mark as featured</span>
+                <span className="text-body text-sm">Mark as featured</span>
               </label>
             </Field>
           </div>
@@ -171,7 +171,7 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2.5 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors disabled:opacity-50"
+              className="flex-1 py-2.5 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors disabled:opacity-50"
             >
               {saving
                 ? "Saving…"
@@ -182,7 +182,7 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2.5 border border-[#E8E6E1] text-[#888780] text-sm rounded-lg hover:border-[#2C2C2A] hover:text-[#2C2C2A] transition-colors"
+              className="px-4 py-2.5 border border-rule text-muted text-sm rounded-lg hover:border-ink hover:text-ink transition-colors"
             >
               Cancel
             </button>
@@ -194,7 +194,7 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
 }
 
 const inputCls =
-  "w-full px-3 py-2 bg-white border border-[#E8E6E1] rounded-lg text-sm text-[#2C2C2A] placeholder-[#B4B2A9] focus:outline-none focus:border-[#1D9E75] transition-colors";
+  "w-full px-3 py-2 bg-white border border-rule rounded-lg text-sm text-ink placeholder-faint focus:outline-none focus:border-accent transition-colors";
 
 function Field({
   label,
@@ -207,9 +207,9 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-[#5F5E5A] text-xs mb-1.5">
+      <label className="block text-body text-xs mb-1.5">
         {label}
-        {required && <span className="text-[#1D9E75] ml-0.5">*</span>}
+        {required && <span className="text-accent ml-0.5">*</span>}
       </label>
       {children}
     </div>

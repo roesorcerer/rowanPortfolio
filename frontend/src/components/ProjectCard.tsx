@@ -24,7 +24,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
     return (
       <>
         <article
-          className="bg-white rounded-xl border border-[#E8E6E1] p-5 flex gap-4 items-start cursor-pointer hover:border-[#1D9E75] transition-colors"
+          className="bg-white rounded-xl border border-rule p-5 flex gap-4 items-start cursor-pointer hover:border-accent transition-colors"
           onClick={openModal}
           role="button"
           tabIndex={0}
@@ -32,7 +32,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
           aria-label={`Explore ${project.title}`}
         >
           {/* Small thumbnail */}
-          <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-[#1a1a1a] overflow-hidden">
+          <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-ink-deep overflow-hidden">
             <img
               alt={project.title}
               className="w-full h-full object-cover"
@@ -40,19 +40,19 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
             />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="inline-block px-2 py-1 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded mb-2">
+            <span className="inline-block px-2 py-1 bg-accent-soft text-accent-dark text-xs rounded mb-2">
               {project.category}
             </span>
-            <h3 className="text-[#2C2C2A] text-sm font-medium tracking-tight leading-snug mb-1">
+            <h3 className="text-ink text-sm font-medium tracking-tight leading-snug mb-1">
               {project.title}
             </h3>
             {project.description && (
-              <p className="text-[#888780] text-xs leading-relaxed line-clamp-2">
+              <p className="text-muted text-xs leading-relaxed line-clamp-2">
                 {project.description}
               </p>
             )}
           </div>
-          <span className="text-[#0F6E56] text-xs flex-shrink-0 mt-1">→</span>
+          <span className="text-accent-dark text-xs flex-shrink-0 mt-1">→</span>
         </article>
         {isOpen && <ProjectModal project={project} onClose={closeModal} />}
       </>
@@ -64,14 +64,14 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
     return (
       <>
         <article
-          className="bg-white rounded-xl border border-[#E8E6E1] overflow-hidden cursor-pointer hover:border-[#1D9E75] transition-colors"
+          className="bg-white rounded-xl border border-rule overflow-hidden cursor-pointer hover:border-accent transition-colors"
           onClick={openModal}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && openModal()}
           aria-label={`Explore ${project.title}`}
         >
-          <div className="aspect-video bg-[#1a1a1a] relative overflow-hidden">
+          <div className="aspect-video bg-ink-deep relative overflow-hidden">
             <img
               alt={project.title}
               className="absolute inset-0 w-full h-full object-cover"
@@ -79,15 +79,15 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
             />
           </div>
           <div className="p-4">
-            <span className="inline-block px-2 py-1 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded mb-2">
+            <span className="inline-block px-2 py-1 bg-accent-soft text-accent-dark text-xs rounded mb-2">
               {project.category}
             </span>
-            <h3 className="text-[#2C2C2A] text-sm font-medium tracking-tight leading-snug mb-2">
+            <h3 className="text-ink text-sm font-medium tracking-tight leading-snug mb-2">
               {project.title}
             </h3>
             <div className="flex flex-wrap gap-1">
               {project.technologies.slice(0, 3).map((tech) => (
-                <span key={tech} className="text-[#B4B2A9] text-xs">
+                <span key={tech} className="text-faint text-xs">
                   {tech}
                 </span>
               ))}
@@ -107,7 +107,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
     return (
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 md:mt-5">
         {project.developmentTime && (
-          <span className="inline-flex items-center gap-1.5 text-[#5F5E5A] text-xs">
+          <span className="inline-flex items-center gap-1.5 text-body text-xs">
             <svg
               width="12"
               height="12"
@@ -131,7 +131,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={stop}
-            className="inline-flex items-center gap-1.5 text-[#2C2C2A] text-xs hover:text-[#0F6E56] transition-colors"
+            className="inline-flex items-center gap-1.5 text-ink text-xs hover:text-accent-dark transition-colors"
             aria-label={`View ${project.title} source on GitHub`}
           >
             <svg
@@ -152,7 +152,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={stop}
-            className="inline-flex items-center gap-1.5 text-[#0F6E56] text-xs hover:text-[#085041] transition-colors"
+            className="inline-flex items-center gap-1.5 text-accent-dark text-xs hover:text-accent-darker transition-colors"
             aria-label={`Open ${project.title} live demo`}
           >
             <svg
@@ -180,9 +180,9 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
   // Featured: stacked on mobile (image on top), 2-col grid on md+ (image right, content left).
   return (
     <>
-      <article className="bg-white rounded-2xl overflow-hidden border border-[#E8E6E1] md:grid md:grid-cols-2 md:max-w-[1200px]">
+      <article className="bg-white rounded-2xl overflow-hidden border border-rule md:grid md:grid-cols-2 md:max-w-[1200px]">
         {/* Image — first in DOM so mobile reads it on top; placed in the right column on md+. */}
-        <div className="aspect-video md:aspect-auto md:min-h-[260px] md:col-start-2 bg-[#1a1a1a] relative overflow-hidden">
+        <div className="aspect-video md:aspect-auto md:min-h-[260px] md:col-start-2 bg-ink-deep relative overflow-hidden">
           <img
             alt={project.title}
             className="absolute inset-0 w-full h-full object-cover"
@@ -195,16 +195,16 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
         {/* Content — placed in the left column on md+, same row as the image. */}
         <div className="p-5 md:p-8 lg:p-9 md:col-start-1 md:row-start-1 md:flex md:flex-col md:justify-between">
           <div>
-            <span className="inline-block px-3 py-1.5 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded-md mb-4 md:mb-5">
+            <span className="inline-block px-3 py-1.5 bg-accent-soft text-accent-dark text-xs rounded-md mb-4 md:mb-5">
               {project.category}
             </span>
 
-            <h3 className="text-[#2C2C2A] text-xl md:text-2xl font-medium tracking-tight mb-2 md:mb-3">
+            <h3 className="text-ink text-xl md:text-2xl font-medium tracking-tight mb-2 md:mb-3">
               {project.title}
             </h3>
 
             {project.description && (
-              <p className="text-[#888780] text-sm md:text-[15px] leading-relaxed md:leading-[1.65] mb-2 md:mb-0">
+              <p className="text-muted text-sm md:text-[15px] leading-relaxed md:leading-[1.65] mb-2 md:mb-0">
                 {project.description}
               </p>
             )}
@@ -216,7 +216,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
             type="button"
             onClick={openModal}
             aria-label={`Explore ${project.title}`}
-            className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors mt-5 md:mt-7"
+            className="inline-flex items-center gap-2 text-accent-dark text-sm hover:text-accent-darker transition-colors mt-5 md:mt-7"
           >
             Explore project
             <span className="text-xs">→</span>

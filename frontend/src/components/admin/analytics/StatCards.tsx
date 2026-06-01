@@ -21,12 +21,12 @@ function StatCards({ summary }: Props) {
       {cards.map(({ label, value }) => (
         <div
           key={label}
-          className="bg-white border border-[#E8E6E1] rounded-xl p-5"
+          className="bg-white border border-rule rounded-xl p-5"
         >
-          <p className="text-[#888780] text-xs uppercase tracking-wide mb-1">
+          <p className="text-muted text-xs uppercase tracking-wide mb-1">
             {label}
           </p>
-          <p className="text-[#2C2C2A] text-2xl font-semibold">
+          <p className="text-ink text-2xl font-semibold">
             {value.toLocaleString()}
           </p>
         </div>

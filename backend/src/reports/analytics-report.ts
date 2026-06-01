@@ -1,37 +1,25 @@
 import { PageViewModel } from "../models/page-view.model";
 import { EventModel } from "../models/event.model";
 import { ContactSubmissionModel } from "../models/contact-submission.model";
+import type {
+  AnalyticsSummary,
+  EngagementSummary,
+} from "../../../shared/contracts";
 
-export type SummaryDTO = {
-  totalViews: number;
-  todayViews: number;
-  last7DaysViews: number;
-  byPath: Array<{ path: string; count: number }>;
-  byDay: Array<{ date: string; count: number }>;
-  byReferrer: Array<{ source: string; count: number }>;
-  deviceBreakdown: { mobile: number; desktop: number };
+// Internal DTO names kept as aliases so existing imports continue to work.
+// recentVisits[].createdAt is a Date at this layer; Express serializes it
+// to an ISO string when the response is sent, which matches the wire
+// shape declared in /shared/contracts.d.ts.
+export type SummaryDTO = Omit<AnalyticsSummary, "recentVisits"> & {
   recentVisits: Array<{
     path: string;
     source: string;
     device: "mobile" | "desktop";
     createdAt: Date;
   }>;
-  byHour: Array<{ hour: number; count: number }>;
 };
 
-export type EngagementDTO = {
-  projectEngagement: Array<{
-    projectId: string;
-    projectTitle: string;
-    projectType: string;
-    views: number;
-    demoClicks: number;
-    githubClicks: number;
-  }>;
-  conversionRate: number;
-  totalMessages: number;
-  totalPageViews: number;
-};
+export type EngagementDTO = EngagementSummary;
 
 const DEVICE_REGEX_SOURCE = "mobile|android|iphone|ipad|tablet";
 const DEVICE_REGEX = new RegExp(DEVICE_REGEX_SOURCE, "i");

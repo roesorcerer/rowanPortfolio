@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Project, ProjectType } from "../../types";
 import { useDeleteProject, useProjects } from "../../hooks/useProjects";
+import LoadingPulse from "../LoadingPulse";
 import ProjectForm from "./ProjectForm";
 
 const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
@@ -10,7 +11,7 @@ const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
 };
 
 const PROJECT_TYPE_COLORS: Record<ProjectType, string> = {
-  featured: "bg-[#E1F5EE] text-[#0F6E56]",
+  featured: "bg-accent-soft text-accent-dark",
   research: "bg-[#EEF0FF] text-[#3D4EBF]",
   practice: "bg-[#F5F0E1] text-[#8A6A00]",
 };
@@ -35,37 +36,32 @@ function ProjectsTab() {
     <>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-[#2C2C2A] text-xl font-medium tracking-tight">
+          <h1 className="text-ink text-xl font-medium tracking-tight">
             Projects
           </h1>
-          <p className="text-[#B4B2A9] text-sm mt-0.5">
+          <p className="text-faint text-sm mt-0.5">
             {projects?.length ?? 0} total
           </p>
         </div>
         <button
           type="button"
           onClick={() => setEditing(undefined)}
-          className="px-4 py-2 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
+          className="px-4 py-2 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors"
         >
           + New project
         </button>
       </div>
 
-      {isLoading && (
-        <div className="flex items-center gap-2 py-10">
-          <div className="w-2 h-2 bg-[#1D9E75] rounded-full animate-pulse" />
-          <span className="text-[#888780] text-sm">Loading…</span>
-        </div>
-      )}
+      {isLoading && <LoadingPulse />}
 
       {!isLoading && (
         <div className="space-y-2">
           {projects?.map((project) => (
             <div
               key={project._id}
-              className="bg-white border border-[#E8E6E1] rounded-xl px-5 py-4 flex items-center gap-4"
+              className="bg-white border border-rule rounded-xl px-5 py-4 flex items-center gap-4"
             >
-              <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-[#1a1a1a] overflow-hidden">
+              <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-ink-deep overflow-hidden">
                 <img
                   src={project.image}
                   alt={project.title}
@@ -79,18 +75,18 @@ function ProjectsTab() {
                   >
                     {PROJECT_TYPE_LABELS[project.projectType]}
                   </span>
-                  <span className="text-[#B4B2A9] text-xs">#{project.order}</span>
+                  <span className="text-faint text-xs">#{project.order}</span>
                 </div>
-                <p className="text-[#2C2C2A] text-sm font-medium truncate">
+                <p className="text-ink text-sm font-medium truncate">
                   {project.title}
                 </p>
-                <p className="text-[#B4B2A9] text-xs truncate">{project.category}</p>
+                <p className="text-faint text-xs truncate">{project.category}</p>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0">
                 <button
                   type="button"
                   onClick={() => setEditing(project)}
-                  className="text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
+                  className="text-accent-dark text-sm hover:text-accent-darker transition-colors"
                 >
                   Edit
                 </button>
@@ -101,7 +97,7 @@ function ProjectsTab() {
                     deleteProject.isPending &&
                     deleteProject.variables === project._id
                   }
-                  className="text-[#888780] text-sm hover:text-red-500 transition-colors disabled:opacity-40"
+                  className="text-muted text-sm hover:text-red-500 transition-colors disabled:opacity-40"
                 >
                   {deleteProject.isPending &&
                   deleteProject.variables === project._id

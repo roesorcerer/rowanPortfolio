@@ -1,23 +1,11 @@
 import api from "./client";
-import type { Project, ProjectType } from "../types";
+import type { Project, ProjectPayload } from "../../../shared/contracts";
+
+export type { ProjectPayload };
 
 // Each function maps 1:1 to a backend endpoint.
 // The deepened client unwraps the {success, data} envelope and throws
 // ApiError on failure, so these are one-liners.
-
-export interface ProjectPayload {
-  title: string;
-  category: string;
-  description: string;
-  image: string;
-  link?: string;
-  githubLink?: string;
-  developmentTime?: string;
-  technologies: string[];
-  projectType: ProjectType;
-  featured: boolean;
-  order: number;
-}
 
 export function getProjects(): Promise<Project[]> {
   return api.get<Project[]>("/api/projects");

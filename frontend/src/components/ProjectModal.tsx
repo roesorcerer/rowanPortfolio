@@ -39,19 +39,19 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
       />
 
       {/* Dialog */}
-      <div className="relative bg-[#FAF9F7] w-full max-w-[900px] max-h-[90vh] rounded-2xl overflow-hidden border border-[#E8E6E1] shadow-2xl flex flex-col">
+      <div className="relative bg-paper w-full max-w-[900px] max-h-[90vh] rounded-2xl overflow-hidden border border-rule shadow-2xl flex flex-col">
         {/* Close button */}
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 hover:bg-white border border-[#E8E6E1] flex items-center justify-center text-[#2C2C2A] transition-colors"
+          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 hover:bg-white border border-rule flex items-center justify-center text-ink transition-colors"
         >
           <span className="text-lg leading-none">×</span>
         </button>
 
         <div className="overflow-y-auto">
           {/* Image */}
-          <div className="aspect-video bg-[#1a1a1a] relative overflow-hidden">
+          <div className="aspect-video bg-ink-deep relative overflow-hidden">
             <img
               alt={project.title}
               src={project.image}
@@ -61,33 +61,33 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
 
           {/* Content */}
           <div className="p-6 md:p-10">
-            <span className="inline-block px-3 py-1.5 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded-md mb-5">
+            <span className="inline-block px-3 py-1.5 bg-accent-soft text-accent-dark text-xs rounded-md mb-5">
               {project.category}
             </span>
 
             <h2
               id={`project-modal-title-${project._id}`}
-              className="text-[#2C2C2A] text-2xl md:text-3xl font-medium tracking-tight mb-5"
+              className="text-ink text-2xl md:text-3xl font-medium tracking-tight mb-5"
             >
               {project.title}
             </h2>
 
             {project.description && (
-              <p className="text-[#5F5E5A] text-[15px] md:text-base leading-[1.75] mb-7 whitespace-pre-line">
+              <p className="text-body text-[15px] md:text-base leading-[1.75] mb-7 whitespace-pre-line">
                 {project.description}
               </p>
             )}
 
             {project.technologies && project.technologies.length > 0 && (
               <div className="mb-7">
-                <h3 className="text-[#2C2C2A] text-xs uppercase tracking-widest font-medium mb-3">
+                <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-3">
                   Built with
                 </h3>
                 <ul className="flex flex-wrap gap-2">
                   {project.technologies.map((tech) => (
                     <li
                       key={tech}
-                      className="px-3 py-1.5 bg-white border border-[#E8E6E1] text-[#2C2C2A] text-xs rounded-md"
+                      className="px-3 py-1.5 bg-white border border-rule text-ink text-xs rounded-md"
                     >
                       {tech}
                     </li>
@@ -98,10 +98,10 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
 
             {project.developmentTime && (
               <div className="mb-7">
-                <h3 className="text-[#2C2C2A] text-xs uppercase tracking-widest font-medium mb-2">
+                <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-2">
                   Development time
                 </h3>
-                <p className="text-[#5F5E5A] text-sm">{project.developmentTime}</p>
+                <p className="text-body text-sm">{project.developmentTime}</p>
               </div>
             )}
 
@@ -113,7 +113,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => analytics.linkClick(project, "demo")}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors"
                   >
                     Live demo
                     <span className="text-xs">→</span>
@@ -125,7 +125,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => analytics.linkClick(project, "github")}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#E8E6E1] text-[#2C2C2A] text-sm rounded-lg hover:border-[#2C2C2A] transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-rule text-ink text-sm rounded-lg hover:border-ink transition-colors"
                   >
                     <svg
                       width="16"

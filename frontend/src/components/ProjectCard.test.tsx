@@ -10,6 +10,7 @@ const mockProject: Project = {
   image: "/assets/test.png",
   technologies: ["React", "Node.js"],
   order: 1,
+  featured: true,
   projectType: "featured",
   createdAt: "2024-01-01T00:00:00.000Z",
   updatedAt: "2024-01-01T00:00:00.000Z",

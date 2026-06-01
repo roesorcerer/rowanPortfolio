@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useContactSubmissions } from "../../hooks/useContactSubmissions";
+import LoadingPulse from "../LoadingPulse";
 
 function MessagesTab() {
   const { data: messages = [], isLoading } = useContactSubmissions();
@@ -8,21 +9,16 @@ function MessagesTab() {
   return (
     <>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-[#2C2C2A] text-xl font-medium tracking-tight">
+        <h1 className="text-ink text-xl font-medium tracking-tight">
           Contact messages
         </h1>
-        <span className="text-[#888780] text-sm">{messages.length} total</span>
+        <span className="text-muted text-sm">{messages.length} total</span>
       </div>
 
-      {isLoading && (
-        <div className="flex items-center gap-2 py-10">
-          <div className="w-2 h-2 bg-[#1D9E75] rounded-full animate-pulse" />
-          <span className="text-[#888780] text-sm">Loading…</span>
-        </div>
-      )}
+      {isLoading && <LoadingPulse />}
 
       {!isLoading && messages.length === 0 && (
-        <p className="text-[#B4B2A9] text-sm py-10">No messages yet.</p>
+        <p className="text-faint text-sm py-10">No messages yet.</p>
       )}
 
       {!isLoading && messages.length > 0 && (
@@ -32,7 +28,7 @@ function MessagesTab() {
             return (
               <div
                 key={msg._id}
-                className="bg-white border border-[#E8E6E1] rounded-xl overflow-hidden"
+                className="bg-white border border-rule rounded-xl overflow-hidden"
               >
                 <button
                   type="button"
@@ -41,36 +37,36 @@ function MessagesTab() {
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[#2C2C2A] text-sm font-medium">
+                      <span className="text-ink text-sm font-medium">
                         {msg.name}
                       </span>
-                      <span className="text-[#B4B2A9] text-xs">·</span>
-                      <span className="text-[#888780] text-xs">{msg.email}</span>
+                      <span className="text-faint text-xs">·</span>
+                      <span className="text-muted text-xs">{msg.email}</span>
                     </div>
-                    <p className="text-[#5F5E5A] text-sm truncate">{msg.subject}</p>
+                    <p className="text-body text-sm truncate">{msg.subject}</p>
                     {!isExpanded && (
-                      <p className="text-[#B4B2A9] text-xs truncate mt-0.5">
+                      <p className="text-faint text-xs truncate mt-0.5">
                         {msg.message}
                       </p>
                     )}
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0 mt-0.5">
-                    <span className="text-[#B4B2A9] text-xs">
+                    <span className="text-faint text-xs">
                       {new Date(msg.createdAt).toLocaleDateString()}
                     </span>
-                    <span className="text-[#B4B2A9] text-xs">
+                    <span className="text-faint text-xs">
                       {isExpanded ? "▲" : "▼"}
                     </span>
                   </div>
                 </button>
                 {isExpanded && (
                   <div className="px-5 pb-5 border-t border-[#F0EEE9]">
-                    <p className="text-[#2C2C2A] text-sm whitespace-pre-wrap pt-4">
+                    <p className="text-ink text-sm whitespace-pre-wrap pt-4">
                       {msg.message}
                     </p>
                     <a
                       href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject)}`}
-                      className="inline-block mt-3 text-xs text-[#0F6E56] hover:underline"
+                      className="inline-block mt-3 text-xs text-accent-dark hover:underline"
                     >
                       Reply via email →
                     </a>

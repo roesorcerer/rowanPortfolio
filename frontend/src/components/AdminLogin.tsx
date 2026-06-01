@@ -43,12 +43,12 @@ function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center px-5">
+    <div className="min-h-screen bg-paper flex items-center justify-center px-5">
       <div className="w-full max-w-[360px]">
         {/* Back link */}
         <a
           href="/"
-          className="inline-flex items-center gap-2 text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors mb-10"
+          className="inline-flex items-center gap-2 text-muted text-sm hover:text-ink transition-colors mb-10"
         >
           ← Back
         </a>
@@ -58,20 +58,20 @@ function AdminLogin() {
           <img
             src="/assets/justme.jpg"
             alt="Rowan Stratton"
-            className="w-14 h-[70px] object-cover rounded-[50%] border border-[#E8E6E1]"
+            className="w-14 h-[70px] object-cover rounded-[50%] border border-rule"
           />
         </div>
 
-        <h1 className="text-[#2C2C2A] text-xl font-medium tracking-tight text-center mb-1">
+        <h1 className="text-ink text-xl font-medium tracking-tight text-center mb-1">
           Admin
         </h1>
-        <p className="text-[#B4B2A9] text-sm text-center mb-8">
+        <p className="text-faint text-sm text-center mb-8">
           Sign in to manage your portfolio
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-[#5F5E5A] text-xs mb-1.5">
+            <label htmlFor="email" className="block text-body text-xs mb-1.5">
               Email
             </label>
             <input
@@ -81,13 +81,13 @@ function AdminLogin() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-white border border-[#E8E6E1] rounded-lg text-sm text-[#2C2C2A] placeholder-[#B4B2A9] focus:outline-none focus:border-[#1D9E75] transition-colors"
+              className="w-full px-4 py-3 bg-white border border-rule rounded-lg text-sm text-ink placeholder-faint focus:outline-none focus:border-accent transition-colors"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-[#5F5E5A] text-xs mb-1.5">
+            <label htmlFor="password" className="block text-body text-xs mb-1.5">
               Password
             </label>
             <input
@@ -97,7 +97,7 @@ function AdminLogin() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-white border border-[#E8E6E1] rounded-lg text-sm text-[#2C2C2A] placeholder-[#B4B2A9] focus:outline-none focus:border-[#1D9E75] transition-colors"
+              className="w-full px-4 py-3 bg-white border border-rule rounded-lg text-sm text-ink placeholder-faint focus:outline-none focus:border-accent transition-colors"
               placeholder="••••••••"
             />
           </div>
@@ -109,7 +109,7 @@ function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors disabled:opacity-50"
+            className="w-full py-3 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors disabled:opacity-50"
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>

@@ -43,17 +43,17 @@ const PRINCIPLES: { title: string; description: string }[] = [
 
 function TechStackCard() {
   return (
-    <div className="bg-white rounded-2xl border border-[#E8E6E1] p-6 md:p-8">
-      <h3 className="text-[#2C2C2A] text-lg md:text-xl font-medium tracking-tight mb-5">
+    <div className="bg-white rounded-2xl border border-rule p-6 md:p-8">
+      <h3 className="text-ink text-lg md:text-xl font-medium tracking-tight mb-5">
         What I build with
       </h3>
       <dl className="space-y-4">
         {TECH_STACK.map(({ category, items }) => (
           <div key={category}>
-            <dt className="text-[#5F5E5A] text-xs uppercase tracking-widest font-medium mb-2">
+            <dt className="text-body text-xs uppercase tracking-widest font-medium mb-2">
               {category}
             </dt>
-            <dd className="text-[#2C2C2A] text-sm leading-[1.7]">
+            <dd className="text-ink text-sm leading-[1.7]">
               {items.join(" · ")}
             </dd>
           </div>
@@ -65,17 +65,17 @@ function TechStackCard() {
 
 function ApproachCard() {
   return (
-    <div className="bg-white rounded-2xl border border-[#E8E6E1] p-6 md:p-8">
-      <h3 className="text-[#2C2C2A] text-lg md:text-xl font-medium tracking-tight mb-5">
+    <div className="bg-white rounded-2xl border border-rule p-6 md:p-8">
+      <h3 className="text-ink text-lg md:text-xl font-medium tracking-tight mb-5">
         How I work
       </h3>
       <ul className="space-y-5">
         {PRINCIPLES.map(({ title, description }) => (
           <li key={title} className="flex gap-4">
-            <div className="w-1.5 h-1.5 bg-[#1D9E75] rounded-full mt-2.5 shrink-0" />
+            <div className="w-1.5 h-1.5 bg-accent rounded-full mt-2.5 shrink-0" />
             <div>
-              <h4 className="text-[#2C2C2A] text-base font-medium mb-1">{title}</h4>
-              <p className="text-[#888780] text-sm leading-[1.6]">{description}</p>
+              <h4 className="text-ink text-base font-medium mb-1">{title}</h4>
+              <p className="text-muted text-sm leading-[1.6]">{description}</p>
             </div>
           </li>
         ))}
@@ -88,20 +88,20 @@ function AboutSection() {
   return (
     <section
       id="about"
-      className="px-5 md:px-10 py-16 md:py-20 lg:py-24 border-t border-[#E8E6E1] max-w-[1400px] mx-auto w-full"
+      className="px-5 md:px-10 py-16 md:py-20 lg:py-24 border-t border-rule max-w-[1400px] mx-auto w-full"
     >
       <div className="flex items-center gap-2 mb-10 md:mb-12">
-        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">About me</span>
+        <div className="w-2 h-2 bg-accent rounded-full" />
+        <span className="text-accent-dark text-sm">About me</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
         {/* Left column: bio + contact nudge */}
         <div>
-          <h2 className="text-[#2C2C2A] text-2xl lg:text-3xl font-normal leading-[1.4] lg:leading-[1.35] tracking-tight mb-5 lg:mb-6">
+          <h2 className="text-ink text-2xl lg:text-3xl font-normal leading-[1.4] lg:leading-[1.35] tracking-tight mb-5 lg:mb-6">
             I build full-stack production software, and I research the features that matter.
           </h2>
-          <div className="space-y-4 lg:space-y-5 text-[#5F5E5A] text-base lg:text-[17px] leading-[1.75]">
+          <div className="space-y-4 lg:space-y-5 text-body text-base lg:text-[17px] leading-[1.75]">
             <p>
               I'm Rowan Stratton, a fullstack developer with a recently completed MS in Computer Science from UMN Duluth. For the past two years I've led a Research through Design project to create an application for stress management to support college students. This was a three phase community driven project where we had over +100 participants contribute to this research. These findings informed the development of the research artifact built with Django + React Native as a mobile app with 140+ REST endpoints. This research is concluded and the findings will be presented in June. All research papers published center around this project and the insights gathered from the research.
             </p>
@@ -113,11 +113,11 @@ function AboutSection() {
             </p>
           </div>
 
-          <div className="mt-10 pt-8 border-t border-[#E8E6E1]">
-            <p className="text-[#888780] text-sm mb-4">Hiring, collaborating, or just want to talk shop?</p>
+          <div className="mt-10 pt-8 border-t border-rule">
+            <p className="text-muted text-sm mb-4">Hiring, collaborating, or just want to talk shop?</p>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 text-[#0F6E56] text-sm lg:text-base hover:text-[#085041] transition-colors"
+              className="inline-flex items-center gap-2 text-accent-dark text-sm lg:text-base hover:text-accent-darker transition-colors"
             >
               Get in touch
               <span className="text-xs">→</span>

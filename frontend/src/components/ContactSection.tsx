@@ -46,14 +46,14 @@ function ContactForm({
   errorMessage,
 }: FormProps) {
   const inputBase =
-    "w-full bg-white border border-[#E8E6E1] rounded-lg px-4 py-3 text-[#2C2C2A] text-[15px] placeholder:text-[#B4B2A9] focus:outline-none focus:border-[#0F6E56] focus:ring-2 focus:ring-[#1D9E75]/20 transition-colors";
+    "w-full bg-white border border-rule rounded-lg px-4 py-3 text-ink text-[15px] placeholder:text-faint focus:outline-none focus:border-accent-dark focus:ring-2 focus:ring-accent/20 transition-colors";
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
       {/* Name + email — stacked on mobile, side-by-side on md+. */}
       <div className="flex flex-col md:grid md:grid-cols-2 gap-4">
         <label className="flex flex-col gap-2">
-          <span className="text-[#5F5E5A] text-sm">Name</span>
+          <span className="text-body text-sm">Name</span>
           <input
             type="text"
             required
@@ -66,7 +66,7 @@ function ContactForm({
           />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="text-[#5F5E5A] text-sm">Email</span>
+          <span className="text-body text-sm">Email</span>
           <input
             type="email"
             required
@@ -80,8 +80,8 @@ function ContactForm({
       </div>
 
       <label className="flex flex-col gap-2">
-        <span className="text-[#5F5E5A] text-sm">
-          Subject <span className="text-[#B4B2A9]">(optional)</span>
+        <span className="text-body text-sm">
+          Subject <span className="text-faint">(optional)</span>
         </span>
         <input
           type="text"
@@ -94,7 +94,7 @@ function ContactForm({
       </label>
 
       <label className="flex flex-col gap-2">
-        <span className="text-[#5F5E5A] text-sm">Message</span>
+        <span className="text-body text-sm">Message</span>
         <textarea
           required
           value={form.message}
@@ -135,7 +135,7 @@ function ContactForm({
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors disabled:opacity-60 disabled:cursor-not-allowed self-start"
+          className="inline-flex items-center justify-center px-6 py-3 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors disabled:opacity-60 disabled:cursor-not-allowed self-start"
         >
           {isPending ? "Sending..." : "Send message"}
         </button>
@@ -143,15 +143,15 @@ function ContactForm({
         {isSuccess && successMessage && (
           <p
             role="status"
-            className="text-[#0F6E56] text-sm flex items-center gap-2"
+            className="text-accent-dark text-sm flex items-center gap-2"
           >
-            <span className="w-2 h-2 bg-[#1D9E75] rounded-full" />
+            <span className="w-2 h-2 bg-accent rounded-full" />
             {successMessage}
           </p>
         )}
 
         {errorMessage && (
-          <p role="alert" className="text-[#B0443C] text-sm">
+          <p role="alert" className="text-danger text-sm">
             {errorMessage}
           </p>
         )}
@@ -189,20 +189,20 @@ function ContactSection() {
   return (
     <section
       id="contact"
-      className="px-5 md:px-10 py-16 md:py-20 lg:py-24 border-t border-[#E8E6E1] max-w-[1400px] mx-auto w-full"
+      className="px-5 md:px-10 py-16 md:py-20 lg:py-24 border-t border-rule max-w-[1400px] mx-auto w-full"
     >
       <div className="flex items-center gap-2 mb-8 lg:mb-12">
-        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">Work with me</span>
+        <div className="w-2 h-2 bg-accent rounded-full" />
+        <span className="text-accent-dark text-sm">Work with me</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
         {/* Left: heading + blurb. Wider/longer copy from lg: up. */}
         <div>
-          <h2 className="text-[#2C2C2A] text-2xl lg:text-3xl font-normal leading-[1.4] lg:leading-[1.35] tracking-tight mb-4 lg:mb-6">
+          <h2 className="text-ink text-2xl lg:text-3xl font-normal leading-[1.4] lg:leading-[1.35] tracking-tight mb-4 lg:mb-6">
             Work with me and let's build something catered to your needs.
           </h2>
-          <div className="space-y-5 text-[#888780] lg:text-[#5F5E5A] text-base lg:text-[17px] leading-[1.75]">
+          <div className="space-y-5 text-muted lg:text-body text-base lg:text-[17px] leading-[1.75]">
             <p>
               Whether it's about my research, or if you would like to work together on a project send your contact information and I will connect with you soon.
             </p>
@@ -213,7 +213,7 @@ function ContactSection() {
         </div>
 
         {/* Right: form. Card framing only appears from lg: up. */}
-        <div className="lg:bg-white lg:rounded-2xl lg:border lg:border-[#E8E6E1] lg:p-8 lg:h-fit">
+        <div className="lg:bg-white lg:rounded-2xl lg:border lg:border-rule lg:p-8 lg:h-fit">
           <ContactForm
             form={form}
             onChange={handleChange}

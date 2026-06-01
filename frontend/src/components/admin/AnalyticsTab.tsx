@@ -1,4 +1,5 @@
 import { useAdminAnalytics } from "../../hooks/useAdminAnalytics";
+import LoadingPulse from "../LoadingPulse";
 import StatCards from "./analytics/StatCards";
 import ProjectEngagement from "./analytics/ProjectEngagement";
 import TrafficSources from "./analytics/TrafficSources";
@@ -12,16 +13,11 @@ function AnalyticsTab() {
 
   return (
     <>
-      <h1 className="text-[#2C2C2A] text-xl font-medium tracking-tight mb-8">
+      <h1 className="text-ink text-xl font-medium tracking-tight mb-8">
         Analytics
       </h1>
 
-      {isLoading && (
-        <div className="flex items-center gap-2 py-10">
-          <div className="w-2 h-2 bg-[#1D9E75] rounded-full animate-pulse" />
-          <span className="text-[#888780] text-sm">Loading…</span>
-        </div>
-      )}
+      {isLoading && <LoadingPulse />}
 
       {!isLoading && summary && (
         <>
