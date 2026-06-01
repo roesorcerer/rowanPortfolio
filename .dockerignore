@@ -1,0 +1,12 @@
+# Build context is the repo root; exclude everything not needed by the
+# backend image to keep the upload to Fly's remote builder small.
+.git
+.github
+**/node_modules
+**/dist
+**/.next
+**/npm-debug.log
+**/.env
+**/.env.local
+frontend
+*.md

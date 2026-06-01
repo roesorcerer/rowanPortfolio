@@ -83,13 +83,11 @@ jobs:
         run: npm run build
 
   # ---- Deploy backend to Fly.io ----
+  # Runs from the repo root so the Docker build context includes shared/
+  # (used by backend/src for wire-format types).
   deploy-backend:
     runs-on: ubuntu-latest
     needs: [backend-checks, frontend-checks]
-
-    defaults:
-      run:
-        working-directory: backend
 
     steps:
       - uses: actions/checkout@v4
