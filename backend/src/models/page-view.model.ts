@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { LIMITS } from "../validators/limits";
 
 export interface IPageView extends Document {
   path: string;       // e.g. "/", "/admin/login"
@@ -10,9 +11,24 @@ export interface IPageView extends Document {
 
 const pageViewSchema = new Schema<IPageView>(
   {
-    path: { type: String, required: true, trim: true },
-    referrer: { type: String, default: "", trim: true },
-    userAgent: { type: String, default: "", trim: true },
+    path: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: LIMITS.tracking.pathMax,
+    },
+    referrer: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: LIMITS.tracking.referrerMax,
+    },
+    userAgent: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: LIMITS.tracking.userAgentMax,
+    },
   },
   { timestamps: true }
 );

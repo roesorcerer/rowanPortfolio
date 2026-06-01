@@ -1,5 +1,4 @@
 import { useState } from "react";
-import useBreakpoint from "../utils/ScreenSize";
 import { useProjects } from "../hooks/useProjects";
 import ProjectCard from "./ProjectCard";
 import AboutSection from "./AboutSection";
@@ -9,93 +8,23 @@ import type { ProjectType } from "../types";
 // --- Hero Section ---
 // Eudaimonic design: warm, purposeful, human-centered
 
-function HeroMobile() {
+function Hero() {
   return (
-    <header className="px-5 pt-12 pb-16 max-w-[600px]">
-      <div className="flex items-center gap-2 mb-6">
+    <header className="px-5 md:px-10 pt-12 md:pt-16 pb-16 md:pb-20 max-w-[600px] md:max-w-[700px] lg:max-w-[720px]">
+      <div className="flex items-center gap-2 mb-6 md:mb-8">
         <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
         <span className="text-[#0F6E56] text-sm">Open to fullstack roles</span>
       </div>
 
-      <h1 className="text-[#2C2C2A] text-2xl font-normal leading-[1.4] tracking-tight mb-5">
+      <h1 className="text-[#2C2C2A] text-2xl md:text-[32px] lg:text-4xl font-normal leading-[1.4] md:leading-[1.35] tracking-tight mb-5 md:mb-6 lg:mb-7">
         Fullstack developer building thoughtful software in React, TypeScript, and Django.
       </h1>
 
-      <p className="text-[#888780] text-base leading-[1.75] mb-8">
+      <p className="text-[#888780] text-base md:text-[17px] leading-[1.75] mb-8 md:mb-10 md:max-w-[560px]">
         Just finished my MS at UMN Duluth, where I led development on an active research platform. Looking for fullstack engineering roles where craft and care both matter.
       </p>
 
-      <div className="flex flex-col gap-4">
-        <a
-          href="#projects"
-          className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
-        >
-          See my work
-        </a>
-        <a
-          href="#about"
-          className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
-        >
-          About me
-          <span className="text-xs">→</span>
-        </a>
-      </div>
-    </header>
-  );
-}
-
-function HeroTablet() {
-  return (
-    <header className="px-10 pt-16 pb-20 max-w-[700px]">
-      <div className="flex items-center gap-2 mb-8">
-        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">Open to fullstack roles</span>
-      </div>
-
-      <h1 className="text-[#2C2C2A] text-[32px] font-normal leading-[1.35] tracking-tight mb-6">
-        Fullstack developer building thoughtful software in React, TypeScript, and Django.
-      </h1>
-
-      <p className="text-[#888780] text-[17px] leading-[1.75] mb-10 max-w-[560px]">
-        Just finished my MS at UMN Duluth, where I led development on an active research platform. Looking for fullstack engineering roles where craft and care both matter.
-      </p>
-
-      <div className="flex items-center gap-4">
-        <a
-          href="#projects"
-          className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
-        >
-          See my work
-        </a>
-        <a
-          href="#about"
-          className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
-        >
-          About me
-          <span className="text-xs">→</span>
-        </a>
-      </div>
-    </header>
-  );
-}
-
-function HeroDesktop() {
-  return (
-    <header className="px-10 pt-16 pb-20 max-w-[720px]">
-      <div className="flex items-center gap-2 mb-8">
-        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">Open to fullstack roles</span>
-      </div>
-
-      <h1 className="text-[#2C2C2A] text-4xl font-normal leading-[1.35] tracking-tight mb-7">
-        Fullstack developer building thoughtful software in React, TypeScript, and Django.
-      </h1>
-
-      <p className="text-[#888780] text-[17px] leading-[1.75] mb-10 max-w-[560px]">
-        Just finished my MS at UMN Duluth, where I led development on an active research platform. Looking for fullstack engineering roles where craft and care both matter.
-      </p>
-
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col md:flex-row md:items-center gap-4">
         <a
           href="#projects"
           className="inline-flex items-center justify-center px-6 py-3 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
@@ -125,15 +54,13 @@ function ProjectsFilter({
   activeTab,
   counts,
   onChange,
-  isMobile,
 }: {
   activeTab: ProjectType;
   counts: Record<ProjectType, number>;
   onChange: (t: ProjectType) => void;
-  isMobile: boolean;
 }) {
   return (
-    <div className={`${isMobile ? "px-5" : "px-10"} mb-7`}>
+    <div className="px-5 md:px-10 mb-7">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-[#2C2C2A] text-sm font-medium tracking-widest uppercase">
           Selected work
@@ -168,44 +95,28 @@ function ProjectsFilter({
 }
 
 // --- Closing CTA ---
-function ClosingMobile() {
+// Mobile uses a shorter blurb; the tail clause appears from md: up.
+function Closing() {
   return (
-    <footer className="px-5 py-16 border-t border-[#E8E6E1]">
-      <p className="text-[#2C2C2A] text-xl leading-[1.4] tracking-tight mb-8 max-w-[340px]">
-        Currently looking for fullstack engineering roles.
+    <footer className="px-5 md:px-10 py-16 md:py-20 border-t border-[#E8E6E1] md:w-full">
+      <p className="text-[#2C2C2A] text-xl md:text-2xl lg:text-3xl leading-[1.4] md:leading-[1.35] tracking-tight mb-8 md:mb-10 max-w-[340px] md:max-w-[680px]">
+        Currently looking for fullstack engineering roles<span className="hidden md:inline"> where craft and care both matter</span>.
       </p>
       <a
         href="#contact"
-        className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors"
+        className="inline-flex items-center gap-2 text-[#0F6E56] text-sm md:text-base hover:text-[#085041] transition-colors"
       >
         Get in touch
-        <span className="text-xs">→</span>
-      </a>
-    </footer>
-  );
-}
-
-function ClosingTabletDesktop() {
-  return (
-    <footer className="px-10 py-20 border-t border-[#E8E6E1] w-full">
-      <p className="text-[#2C2C2A] text-2xl md:text-3xl leading-[1.35] tracking-tight mb-10 max-w-[680px]">
-        Currently looking for fullstack engineering roles where craft and care both matter.
-      </p>
-      <a
-        href="#contact"
-        className="inline-flex items-center gap-2 text-[#0F6E56] text-base hover:text-[#085041] transition-colors"
-      >
-        Get in touch
-        <span>→</span>
+        <span className="text-xs md:text-sm">→</span>
       </a>
     </footer>
   );
 }
 
 // --- Site Footer ---
-function SiteFooter({ isMobile }: { isMobile: boolean }) {
+function SiteFooter() {
   return (
-    <div className={`${isMobile ? 'px-5 py-6' : 'px-10 py-8 w-full'} flex justify-between items-center border-t border-[#E8E6E1]`}>
+    <div className="px-5 md:px-10 py-6 md:py-8 md:w-full flex justify-between items-center border-t border-[#E8E6E1]">
       <p className="text-[#B4B2A9] text-sm">Crafted with intention</p>
       <div className="flex gap-5 md:gap-6">
         <a href="https://github.com/roesorcerer" target="_blank" rel="noopener noreferrer" className="text-[#888780] text-sm hover:text-[#2C2C2A] transition-colors">
@@ -224,17 +135,8 @@ function SiteFooter({ isMobile }: { isMobile: boolean }) {
 
 // --- Main Component ---
 function Main() {
-  const { breakpoint } = useBreakpoint();
   const { data: projects, isLoading, error } = useProjects();
-  const isMobile = breakpoint === "mobile";
   const [activeTab, setActiveTab] = useState<ProjectType>("featured");
-
-  const Hero =
-    breakpoint === "mobile"
-      ? HeroMobile
-      : breakpoint === "tablet"
-        ? HeroTablet
-        : HeroDesktop;
 
   const counts: Record<ProjectType, number> = {
     featured: projects?.filter((p) => p.projectType === "featured").length ?? 0,
@@ -273,18 +175,16 @@ function Main() {
               activeTab={activeTab}
               counts={counts}
               onChange={setActiveTab}
-              isMobile={isMobile}
             />
 
             {/* Featured: full stacked cards */}
             {activeTab === "featured" && (
-              <div className={`${isMobile ? "px-5" : "px-10"} space-y-6`}>
+              <div className="px-5 md:px-10 space-y-6">
                 {visibleProjects.map((project, index) => (
                   <ProjectCard
                     key={project._id}
                     project={project}
                     index={index}
-                    breakpoint={breakpoint}
                     variant="featured"
                   />
                 ))}
@@ -293,13 +193,12 @@ function Main() {
 
             {/* Research: compact list rows */}
             {activeTab === "research" && (
-              <div className={`${isMobile ? "px-5" : "px-10"} space-y-3`}>
+              <div className="px-5 md:px-10 space-y-3">
                 {visibleProjects.map((project, index) => (
                   <ProjectCard
                     key={project._id}
                     project={project}
                     index={index}
-                    breakpoint={breakpoint}
                     variant="research"
                   />
                 ))}
@@ -308,13 +207,12 @@ function Main() {
 
             {/* Practice: 2-column grid */}
             {activeTab === "practice" && (
-              <div className={`${isMobile ? "px-5" : "px-10"} grid grid-cols-1 sm:grid-cols-2 gap-4`}>
+              <div className="px-5 md:px-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {visibleProjects.map((project, index) => (
                   <ProjectCard
                     key={project._id}
                     project={project}
                     index={index}
-                    breakpoint={breakpoint}
                     variant="practice"
                   />
                 ))}
@@ -322,7 +220,7 @@ function Main() {
             )}
 
             {visibleProjects.length === 0 && (
-              <div className={`${isMobile ? "px-5" : "px-10"} py-16`}>
+              <div className="px-5 md:px-10 py-16">
                 <p className="text-[#B4B2A9] text-sm">No projects in this category yet.</p>
               </div>
             )}
@@ -334,8 +232,8 @@ function Main() {
 
       <ContactSection />
 
-      {isMobile ? <ClosingMobile /> : <ClosingTabletDesktop />}
-      <SiteFooter isMobile={isMobile} />
+      <Closing />
+      <SiteFooter />
     </main>
   );
 }

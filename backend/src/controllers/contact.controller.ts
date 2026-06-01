@@ -1,47 +1,27 @@
 import { Request, Response, NextFunction } from "express";
 import { ApiResponse } from "../types";
 import { ContactInput } from "../validators/contact.validators";
-import { sendContactEmail } from "../services/mailer.service";
-import { ContactSubmissionModel } from "../models/contact-submission.model";
+import { submitContact as submitContactOp } from "../operations/contact-operations";
+
+const COPY = {
+  ok: "Message sent. Thanks for reaching out!",
+  persistedMailerFailed: "Message received — I'll get back to you shortly.",
+};
 
 // POST /api/contact
-// Sends the visitor's message to the configured inbox.
-// The body has already been validated by Zod middleware.
+// The visitor sees a 202 in both branches — their message is captured either
+// way. The copy differs so they aren't told "delivered" when the mailer
+// silently dropped the message.
 export async function submitContact(
   req: Request<unknown, unknown, ContactInput>,
   res: Response<ApiResponse>,
   next: NextFunction
 ): Promise<void> {
   try {
-    const { name, email, subject, message } = req.body;
-
-    // Persist to DB first so we never lose a message even if the mailer fails.
-    await ContactSubmissionModel.create({ name, email, subject, message });
-
-    await sendContactEmail({ name, email, subject, message });
-
-    res.status(202).json({
-      success: true,
-      data: { message: "Message sent. Thanks for reaching out!" },
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-// GET /api/contact/submissions  (admin only)
-export async function getContactSubmissions(
-  _req: Request,
-  res: Response<ApiResponse>,
-  next: NextFunction
-): Promise<void> {
-  try {
-    const submissions = await ContactSubmissionModel.find()
-      .sort({ createdAt: -1 })
-      .limit(200)
-      .lean();
-
-    res.json({ success: true, data: submissions });
+    const result = await submitContactOp(req.body);
+    const message =
+      result.kind === "ok" ? COPY.ok : COPY.persistedMailerFailed;
+    res.status(202).json({ success: true, data: { message } });
   } catch (error) {
     next(error);
   }

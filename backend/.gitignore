@@ -2,3 +2,11 @@ node_modules/
 dist/
 .env
 *.js.map
+CONTEXT.md
+/scripts/
+
+Dockerfile
+docker-compose.yml
+.dockerignore
+fly.toml
+docs/

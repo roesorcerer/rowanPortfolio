@@ -10,6 +10,7 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "seed": "ts-node src/scripts/seed.ts",
+    "admin": "ts-node src/scripts/createAdmin.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },

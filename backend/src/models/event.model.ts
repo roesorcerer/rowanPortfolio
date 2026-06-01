@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { LIMITS } from "../validators/limits";
 
 // Named interaction events fired by the frontend (non-pageview).
 // e.g. project_view, link_click
@@ -16,13 +17,48 @@ export interface IEvent extends Document {
 
 const eventSchema = new Schema<IEvent>(
   {
-    eventType:    { type: String, required: true, trim: true },
-    projectId:    { type: String, default: "", trim: true },
-    projectTitle: { type: String, default: "", trim: true },
-    projectType:  { type: String, default: "", trim: true },
-    linkType:     { type: String, default: "", trim: true },
-    referrer:     { type: String, default: "", trim: true },
-    userAgent:    { type: String, default: "", trim: true },
+    eventType: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: LIMITS.event.typeMax,
+    },
+    projectId: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: LIMITS.event.projectIdMax,
+    },
+    projectTitle: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: LIMITS.event.projectTitleMax,
+    },
+    projectType: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: LIMITS.event.projectTypeMax,
+    },
+    linkType: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: LIMITS.event.linkTypeMax,
+    },
+    referrer: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: LIMITS.tracking.referrerMax,
+    },
+    userAgent: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: LIMITS.tracking.userAgentMax,
+    },
   },
   { timestamps: true }
 );

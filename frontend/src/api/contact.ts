@@ -1,5 +1,4 @@
 import api from "./client";
-import type { ApiResponse } from "../types";
 
 export interface ContactPayload {
   name: string;
@@ -11,12 +10,22 @@ export interface ContactPayload {
   website?: string;
 }
 
-export async function sendContactMessage(
+export interface ContactSubmission {
+  _id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  createdAt: string;
+}
+
+export function sendContactMessage(
   payload: ContactPayload
 ): Promise<{ message: string }> {
-  const { data } = await api.post<ApiResponse<{ message: string }>>(
-    "/api/contact",
-    payload
-  );
-  return data.data!;
+  return api.post<{ message: string }>("/api/contact", payload);
+}
+
+// Admin-only read endpoint — protected by requireAuth on the backend.
+export function getContactSubmissions(): Promise<ContactSubmission[]> {
+  return api.get<ContactSubmission[]>("/api/contact/submissions");
 }

@@ -1,12 +1,27 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { isAuthenticated, login } from "../api/auth";
+import { ApiError } from "../api/client";
 
 function AdminLogin() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Where to send the user after a successful login. If RequireAdmin
+  // bounced them here, location.state.from holds the original target;
+  // otherwise default to the dashboard.
+  const from = (location.state as { from?: string } | null)?.from ?? "/admin";
+
+  // If you're already signed in, don't show the login form — bounce.
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate(from, { replace: true });
+    }
+  }, [from, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,23 +29,14 @@ function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error ?? "Login failed");
-      } else {
-        localStorage.setItem("token", data.data.token);
-        navigate("/admin");
-      }
-    } catch {
-      setError("Unable to connect. Please try again.");
+      await login(email, password);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(
+        err instanceof ApiError && err.status !== 0
+          ? err.message
+          : "Unable to connect. Please try again."
+      );
     } finally {
       setLoading(false);
     }

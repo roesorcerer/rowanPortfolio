@@ -1,18 +1,48 @@
-import { useQuery } from "@tanstack/react-query";
-import { getProjects } from "../api/projects";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createProject,
+  deleteProject,
+  getProjects,
+  updateProject,
+  type ProjectPayload,
+} from "../api/projects";
 
-// Custom hook that wraps React Query's useQuery.
-// Components call useProjects() and get back:
-//   - data: the projects array (undefined while loading)
-//   - isLoading: true during the initial fetch
-//   - error: any error that occurred
-//
-// React Query handles caching, deduplication, and background refetching
-// automatically. If two components call useProjects(), only one API
-// request is made.
+const PROJECTS_KEY = ["projects"] as const;
+
+// Read hook. Components call useProjects() and get { data, isLoading, ... }.
+// React Query handles caching, deduplication, and background refetching.
 export function useProjects() {
   return useQuery({
-    queryKey: ["projects"],
+    queryKey: PROJECTS_KEY,
     queryFn: getProjects,
+  });
+}
+
+// Mutations — each one invalidates the projects query on success so any
+// list rendering refreshes automatically. Callers don't need to call
+// refetch() manually.
+
+export function useCreateProject() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: ProjectPayload) => createProject(payload),
+    onSuccess: () => qc.invalidateQueries({ queryKey: PROJECTS_KEY }),
+  });
+}
+
+export function useUpdateProject() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: ProjectPayload }) =>
+      updateProject(id, payload),
+    onSuccess: () => qc.invalidateQueries({ queryKey: PROJECTS_KEY }),
+  });
+}
+
+export function useDeleteProject() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteProject(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: PROJECTS_KEY }),
   });
 }

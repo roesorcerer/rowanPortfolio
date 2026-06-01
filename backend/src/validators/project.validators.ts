@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { LIMITS } from "./limits";
 
 export const createProjectSchema = z.object({
   title: z
     .string({ error: "Title is required" })
     .min(1, "Title is required")
-    .max(200, "Title cannot exceed 200 characters")
+    .max(LIMITS.project.titleMax, `Title cannot exceed ${LIMITS.project.titleMax} characters`)
     .trim(),
   category: z
     .string({ error: "Category is required" })
@@ -21,7 +22,10 @@ export const createProjectSchema = z.object({
   githubLink: z.string().url("GitHub link must be a valid URL").optional(),
   developmentTime: z
     .string()
-    .max(60, "Development time cannot exceed 60 characters")
+    .max(
+      LIMITS.project.devTimeMax,
+      `Development time cannot exceed ${LIMITS.project.devTimeMax} characters`
+    )
     .trim()
     .optional(),
   technologies: z.array(z.string().trim()).default([]),
@@ -30,9 +34,7 @@ export const createProjectSchema = z.object({
   order: z.number().int().default(0),
 });
 
-// For updates, every field is optional — you only send what changed.
-// .partial() makes all fields optional while preserving their validation
-// rules when a field IS provided.
+// For updates, every field is optional — only send what changed.
 export const updateProjectSchema = createProjectSchema.partial();
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;

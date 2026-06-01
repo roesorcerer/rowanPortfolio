@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { LIMITS } from "./limits";
 
 export const contactSchema = z.object({
   name: z
     .string({ error: "Name is required" })
     .min(1, "Name is required")
-    .max(100, "Name cannot exceed 100 characters")
+    .max(LIMITS.contact.nameMax, `Name cannot exceed ${LIMITS.contact.nameMax} characters`)
     .trim(),
   email: z
     .string({ error: "Email is required" })
@@ -13,18 +14,16 @@ export const contactSchema = z.object({
     .email("Invalid email format"),
   subject: z
     .string()
-    .max(200, "Subject cannot exceed 200 characters")
+    .max(LIMITS.contact.subjectMax, `Subject cannot exceed ${LIMITS.contact.subjectMax} characters`)
     .trim()
     .optional(),
   message: z
     .string({ error: "Message is required" })
-    .min(10, "Message must be at least 10 characters")
-    .max(5000, "Message cannot exceed 5000 characters")
+    .min(LIMITS.contact.messageMin, `Message must be at least ${LIMITS.contact.messageMin} characters`)
+    .max(LIMITS.contact.messageMax, `Message cannot exceed ${LIMITS.contact.messageMax} characters`)
     .trim(),
-  // Honeypot: a hidden field that real users leave empty. Bots fill every
-  // input they see, so a non-empty value here means the submission is spam.
-  // Naming it something plausible (website) makes it more effective than
-  // an obvious name like "honeypot".
+  // Honeypot: a hidden field real users leave empty. Bots fill every input
+  // they see, so a non-empty value here means the submission is spam.
   website: z.string().max(0, "Spam detected").optional(),
 });
 

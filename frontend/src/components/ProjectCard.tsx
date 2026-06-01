@@ -1,27 +1,21 @@
 import { useState } from "react";
 import type { Project, ProjectType } from "../types";
 import ProjectModal from "./ProjectModal";
-import { trackEvent } from "../utils/trackEvent";
+import { useAnalytics } from "../analytics";
 
 interface ProjectCardProps {
   project: Project;
   index: number;
-  breakpoint: "mobile" | "tablet" | "desktop";
   variant?: ProjectType;
 }
 
-function ProjectCard({ project, breakpoint, variant = "featured" }: ProjectCardProps) {
+function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const isMobile = breakpoint === "mobile";
+  const analytics = useAnalytics();
 
   const openModal = () => {
     setIsOpen(true);
-    trackEvent({
-      eventType: "project_view",
-      projectId: project._id,
-      projectTitle: project.title,
-      projectType: project.projectType,
-    });
+    analytics.projectView(project);
   };
   const closeModal = () => setIsOpen(false);
 
@@ -107,13 +101,11 @@ function ProjectCard({ project, breakpoint, variant = "featured" }: ProjectCardP
 
   const stop = (e: React.MouseEvent | React.KeyboardEvent) => e.stopPropagation();
 
-  const metaRow = (compact: boolean) => {
+  const metaRow = () => {
     const hasMeta = project.developmentTime || project.githubLink || project.link;
     if (!hasMeta) return null;
     return (
-      <div
-        className={`flex flex-wrap items-center gap-x-4 gap-y-2 ${compact ? "mt-4" : "mt-5"}`}
-      >
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 md:mt-5">
         {project.developmentTime && (
           <span className="inline-flex items-center gap-1.5 text-[#5F5E5A] text-xs">
             <svg
@@ -185,112 +177,50 @@ function ProjectCard({ project, breakpoint, variant = "featured" }: ProjectCardP
     );
   };
 
-  const exploreButton = (
-    <button
-      type="button"
-      onClick={openModal}
-      aria-label={`Explore ${project.title}`}
-      className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors mt-7"
-    >
-      Explore project
-      <span className="text-xs">→</span>
-    </button>
-  );
-
-  if (isMobile) {
-    return (
-      <>
-        <article className="bg-white rounded-2xl overflow-hidden border border-[#E8E6E1]">
-          {/* Image */}
-          <div className="aspect-video bg-[#1a1a1a] relative overflow-hidden">
-            <img
-              alt={project.title}
-              className="absolute inset-0 w-full h-full object-cover"
-              src={project.image}
-            />
-          </div>
-
-          {/* Content */}
-          <div className="p-5">
-            {/* Category tag */}
-            <span className="inline-block px-3 py-1.5 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded-md mb-4">
-              {project.category}
-            </span>
-
-            {/* Title */}
-            <h3 className="text-[#2C2C2A] text-xl font-medium tracking-tight mb-2">
-              {project.title}
-            </h3>
-
-            {/* Description */}
-            {project.description && (
-              <p className="text-[#888780] text-sm leading-relaxed mb-2">
-                {project.description}
-              </p>
-            )}
-
-            {/* Metadata: dev time, GitHub, live demo */}
-            {metaRow(true)}
-
-            {/* Trigger */}
-            <button
-              type="button"
-              onClick={openModal}
-              aria-label={`Explore ${project.title}`}
-              className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors mt-5"
-            >
-              Explore project
-              <span className="text-xs">→</span>
-            </button>
-          </div>
-        </article>
-
-        {isOpen && <ProjectModal project={project} onClose={closeModal} />}
-      </>
-    );
-  }
-
-  // Tablet and Desktop: Side-by-side layout
+  // Featured: stacked on mobile (image on top), 2-col grid on md+ (image right, content left).
   return (
     <>
-      <article className="bg-white rounded-2xl overflow-hidden border border-[#E8E6E1] grid grid-cols-2 max-w-[1200px]">
-        {/* Content */}
-        <div className="p-8 md:p-9 flex flex-col justify-between">
-          <div>
-            {/* Category tag */}
-            <span className="inline-block px-3 py-1.5 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded-md mb-5">
-              {project.category}
-            </span>
-
-            {/* Title */}
-            <h3 className="text-[#2C2C2A] text-2xl font-medium tracking-tight mb-3">
-              {project.title}
-            </h3>
-
-            {/* Description */}
-            {project.description && (
-              <p className="text-[#888780] text-[15px] leading-[1.65]">
-                {project.description}
-              </p>
-            )}
-
-            {/* Metadata: dev time, GitHub, live demo */}
-            {metaRow(false)}
-          </div>
-
-          {exploreButton}
-        </div>
-
-        {/* Image */}
-        <div className="bg-[#1a1a1a] relative min-h-[260px] flex items-center justify-center overflow-hidden">
+      <article className="bg-white rounded-2xl overflow-hidden border border-[#E8E6E1] md:grid md:grid-cols-2 md:max-w-[1200px]">
+        {/* Image — first in DOM so mobile reads it on top; placed in the right column on md+. */}
+        <div className="aspect-video md:aspect-auto md:min-h-[260px] md:col-start-2 bg-[#1a1a1a] relative overflow-hidden">
           <img
             alt={project.title}
             className="absolute inset-0 w-full h-full object-cover"
             src={project.image}
           />
+          {/* Subtle overlay for polish — only on md+. */}
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-transparent to-black/10 pointer-events-none" />
+        </div>
 
-          {/* Subtle overlay for polish */}
-          <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/10 pointer-events-none" />
+        {/* Content — placed in the left column on md+, same row as the image. */}
+        <div className="p-5 md:p-8 lg:p-9 md:col-start-1 md:row-start-1 md:flex md:flex-col md:justify-between">
+          <div>
+            <span className="inline-block px-3 py-1.5 bg-[#E1F5EE] text-[#0F6E56] text-xs rounded-md mb-4 md:mb-5">
+              {project.category}
+            </span>
+
+            <h3 className="text-[#2C2C2A] text-xl md:text-2xl font-medium tracking-tight mb-2 md:mb-3">
+              {project.title}
+            </h3>
+
+            {project.description && (
+              <p className="text-[#888780] text-sm md:text-[15px] leading-relaxed md:leading-[1.65] mb-2 md:mb-0">
+                {project.description}
+              </p>
+            )}
+
+            {metaRow()}
+          </div>
+
+          <button
+            type="button"
+            onClick={openModal}
+            aria-label={`Explore ${project.title}`}
+            className="inline-flex items-center gap-2 text-[#0F6E56] text-sm hover:text-[#085041] transition-colors mt-5 md:mt-7"
+          >
+            Explore project
+            <span className="text-xs">→</span>
+          </button>
         </div>
       </article>
 

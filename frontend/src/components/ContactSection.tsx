@@ -1,10 +1,14 @@
 import { FormEvent, useState } from "react";
-import useBreakpoint from "../utils/ScreenSize";
 import { useContact } from "../hooks/useContact";
+import { ApiError } from "../api/client";
 
 // --- Contact Section ---
 // Scroll target: #contact
 // Eudaimonic design: warm, direct, respectful of attention.
+//
+// Single component: layout collapses from single-column on mobile to a
+// 2-column grid on lg:. The desktop variant adds an extra "interested in
+// strengthening my skillset" paragraph that's hidden below lg:.
 
 interface FormState {
   name: string;
@@ -28,8 +32,8 @@ interface FormProps {
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
   isPending: boolean;
   isSuccess: boolean;
+  successMessage: string | null;
   errorMessage: string | null;
-  compact: boolean;
 }
 
 function ContactForm({
@@ -38,15 +42,16 @@ function ContactForm({
   onSubmit,
   isPending,
   isSuccess,
+  successMessage,
   errorMessage,
-  compact,
 }: FormProps) {
   const inputBase =
     "w-full bg-white border border-[#E8E6E1] rounded-lg px-4 py-3 text-[#2C2C2A] text-[15px] placeholder:text-[#B4B2A9] focus:outline-none focus:border-[#0F6E56] focus:ring-2 focus:ring-[#1D9E75]/20 transition-colors";
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
-      <div className={compact ? "flex flex-col gap-4" : "grid grid-cols-2 gap-4"}>
+      {/* Name + email — stacked on mobile, side-by-side on md+. */}
+      <div className="flex flex-col md:grid md:grid-cols-2 gap-4">
         <label className="flex flex-col gap-2">
           <span className="text-[#5F5E5A] text-sm">Name</span>
           <input
@@ -135,13 +140,13 @@ function ContactForm({
           {isPending ? "Sending..." : "Send message"}
         </button>
 
-        {isSuccess && (
+        {isSuccess && successMessage && (
           <p
             role="status"
             className="text-[#0F6E56] text-sm flex items-center gap-2"
           >
             <span className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-            Thanks for reaching out! Your message is on its way to me and I will get in touch shortly. 
+            {successMessage}
           </p>
         )}
 
@@ -155,70 +160,9 @@ function ContactForm({
   );
 }
 
-function ContactMobile(props: FormProps) {
-  return (
-    <section id="contact" className="px-5 py-16 border-t border-[#E8E6E1]">
-      <div className="flex items-center gap-2 mb-8">
-        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">Work with me</span>
-      </div>
-
-      <h2 className="text-[#2C2C2A] text-2xl font-normal leading-[1.4] tracking-tight mb-4">
-        Work with me and let's build something catered to your needs. 
-      </h2>
-      <p className="text-[#888780] text-base leading-[1.75] mb-8">
-        Whether it's about my research , or if you would like to work together on a project send your contact information and I will connect with you soon. 
-      </p>
-
-      <ContactForm {...props} />
-    </section>
-  );
-}
-
-function ContactTabletDesktop({
-  isDesktop,
-  ...props
-}: FormProps & { isDesktop: boolean }) {
-  return (
-    <section
-      id="contact"
-      className={`${isDesktop ? "px-10 py-24" : "px-10 py-20"} border-t border-[#E8E6E1] max-w-[1400px] mx-auto w-full`}
-    >
-      <div className="flex items-center gap-2 mb-12">
-        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
-        <span className="text-[#0F6E56] text-sm">Work with me</span>
-      </div>
-
-      <div
-        className={`grid ${isDesktop ? "grid-cols-2 gap-16" : "grid-cols-1 gap-12"}`}
-      >
-        <div>
-          <h2 className="text-[#2C2C2A] text-3xl font-normal leading-[1.35] tracking-tight mb-6">
-            Work with me and let's build something catered to your needs. 
-          </h2>
-          <div className="space-y-5 text-[#5F5E5A] text-[17px] leading-[1.75]">
-            <p>
-                      Whether it's about my research, or if you would like to work together on a project send your contact information and I will connect with you soon. 
-
-            </p>
-            <p>
-              I'm especially interested in strengthing my skillset across tech stacks and research oppertunties in the fields of development, HCI, and game based features to support wellbeing. 
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-[#E8E6E1] p-8 h-fit">
-          <ContactForm {...props} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function ContactSection() {
-  const { breakpoint } = useBreakpoint();
   const [form, setForm] = useState<FormState>(emptyForm);
-  const { mutate, isPending, isSuccess, error, reset } = useContact();
+  const { mutate, isPending, isSuccess, data, error, reset } = useContact();
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -237,26 +181,51 @@ function ContactSection() {
   };
 
   const errorMessage = error
-    ? // axios errors expose the server's message on error.response.data.error
-      (error as { response?: { data?: { error?: string } }; message?: string })
-        .response?.data?.error ||
-      (error as Error).message ||
-      "Something went wrong. Please try again."
+    ? error instanceof ApiError
+      ? error.message
+      : (error as Error).message || "Something went wrong. Please try again."
     : null;
 
-  const formProps: FormProps = {
-    form,
-    onChange: handleChange,
-    onSubmit: handleSubmit,
-    isPending,
-    isSuccess,
-    errorMessage,
-    compact: breakpoint === "mobile",
-  };
-
-  if (breakpoint === "mobile") return <ContactMobile {...formProps} />;
   return (
-    <ContactTabletDesktop {...formProps} isDesktop={breakpoint === "desktop"} />
+    <section
+      id="contact"
+      className="px-5 md:px-10 py-16 md:py-20 lg:py-24 border-t border-[#E8E6E1] max-w-[1400px] mx-auto w-full"
+    >
+      <div className="flex items-center gap-2 mb-8 lg:mb-12">
+        <div className="w-2 h-2 bg-[#1D9E75] rounded-full" />
+        <span className="text-[#0F6E56] text-sm">Work with me</span>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+        {/* Left: heading + blurb. Wider/longer copy from lg: up. */}
+        <div>
+          <h2 className="text-[#2C2C2A] text-2xl lg:text-3xl font-normal leading-[1.4] lg:leading-[1.35] tracking-tight mb-4 lg:mb-6">
+            Work with me and let's build something catered to your needs.
+          </h2>
+          <div className="space-y-5 text-[#888780] lg:text-[#5F5E5A] text-base lg:text-[17px] leading-[1.75]">
+            <p>
+              Whether it's about my research, or if you would like to work together on a project send your contact information and I will connect with you soon.
+            </p>
+            <p className="hidden lg:block">
+              I'm especially interested in strengthing my skillset across tech stacks and research oppertunties in the fields of development, HCI, and game based features to support wellbeing.
+            </p>
+          </div>
+        </div>
+
+        {/* Right: form. Card framing only appears from lg: up. */}
+        <div className="lg:bg-white lg:rounded-2xl lg:border lg:border-[#E8E6E1] lg:p-8 lg:h-fit">
+          <ContactForm
+            form={form}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            isPending={isPending}
+            isSuccess={isSuccess}
+            successMessage={data?.message ?? null}
+            errorMessage={errorMessage}
+          />
+        </div>
+      </div>
+    </section>
   );
 }
 

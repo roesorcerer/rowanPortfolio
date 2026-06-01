@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { getHealth } from "../controllers/health.controller";
+import { respond } from "./respond";
 
 const router = Router();
 
-router.get("/", getHealth);
+router.get("/", respond(() => ({ uptime: process.uptime() })));
 
 export default router;

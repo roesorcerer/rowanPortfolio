@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LIMITS } from "./limits";
 
 export const registerSchema = z.object({
   email: z
@@ -8,12 +9,12 @@ export const registerSchema = z.object({
     .email("Invalid email format"),
   password: z
     .string({ error: "Password is required" })
-    .min(8, "Password must be at least 8 characters")
-    .max(128, "Password cannot exceed 128 characters"),
+    .min(LIMITS.user.passwordMin, `Password must be at least ${LIMITS.user.passwordMin} characters`)
+    .max(LIMITS.user.passwordMax, `Password cannot exceed ${LIMITS.user.passwordMax} characters`),
   name: z
     .string({ error: "Name is required" })
     .min(1, "Name is required")
-    .max(100, "Name cannot exceed 100 characters")
+    .max(LIMITS.user.nameMax, `Name cannot exceed ${LIMITS.user.nameMax} characters`)
     .trim(),
 });
 
@@ -28,8 +29,5 @@ export const loginSchema = z.object({
     .min(1, "Password is required"),
 });
 
-// Infer TypeScript types from the schemas.
-// This is the key Zod pattern: define once, get both
-// runtime validation AND compile-time types.
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

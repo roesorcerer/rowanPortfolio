@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { LIMITS } from "../validators/limits";
 
 // This interface represents a Project document in MongoDB.
 // It extends Mongoose's Document type, which adds _id, __v,
@@ -27,7 +28,7 @@ const projectSchema = new Schema<IProject>(
       type: String,
       required: [true, "Project title is required"],
       trim: true,
-      maxlength: [200, "Title cannot exceed 200 characters"],
+      maxlength: [LIMITS.project.titleMax, `Title cannot exceed ${LIMITS.project.titleMax} characters`],
     },
     category: {
       type: String,
@@ -54,7 +55,7 @@ const projectSchema = new Schema<IProject>(
     developmentTime: {
       type: String,
       trim: true,
-      maxlength: [60, "Development time cannot exceed 60 characters"],
+      maxlength: [LIMITS.project.devTimeMax, `Development time cannot exceed ${LIMITS.project.devTimeMax} characters`],
     },
     technologies: {
       type: [String],
