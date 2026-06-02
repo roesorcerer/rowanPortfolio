@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useProjects } from "../hooks/useProjects";
 import ProjectCard from "./ProjectCard";
 import AboutSection from "./AboutSection";
@@ -38,6 +39,13 @@ function Hero() {
           About me
           <span className="text-xs">→</span>
         </a>
+        <Link
+          to="/resume"
+          className="inline-flex items-center gap-2 text-accent-dark text-sm hover:text-accent-darker transition-colors"
+        >
+          Resume
+          <span className="text-xs">→</span>
+        </Link>
       </div>
     </header>
   );
@@ -125,6 +133,9 @@ function SiteFooter() {
         <a href="https://www.linkedin.com/in/rowan-stratton-611247247" target="_blank" rel="noopener noreferrer" className="text-muted text-sm hover:text-ink transition-colors">
           LinkedIn
         </a>
+        <Link to="/resume" className="text-muted text-sm hover:text-ink transition-colors">
+          Resume
+        </Link>
         <a href="#contact" className="text-muted text-sm hover:text-ink transition-colors">
           Say hello
         </a>

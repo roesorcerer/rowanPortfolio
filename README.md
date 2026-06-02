@@ -1,115 +1,53 @@
-# vite-mern-template
+# 📦 My Package
 
-[![Depfu](https://badges.depfu.com/badges/1b70410a7764005553d576dd171dce8d/status.svg)](https://depfu.com)
-[![Depfu](https://badges.depfu.com/badges/1b70410a7764005553d576dd171dce8d/count.svg)](https://depfu.com/github/apicgg/vite-mern-template?project_id=38988)
+(add your badges here)
 
-> Simple opinionated boilerplate for MERN stack with Vite, Redux Toolkit and TypeScript.
+> *Your documentation is a direct reflection of your software, so hold it to the same standards.*
 
-> This includes React+TypeScript with familiar configuration for vite.config.ts for front-end and Express+TypeScript for back-end.
 
-Feel free to add or tweak the setup as needed.
+## 🌟 Highlights
 
-This has been created with the official [Vite](https://vitejs.dev/) template (`npm create vite@latest`) and some extended setup. There are two separate folders called `backend` and `frontend`. The entry point for the backend is `backend/src/index.js`.
+- Some functionality made easy!
+- This problem handled
+- etc.
 
-Any package manager can be used with this project (e.g. npm or yarn or pnpm).
 
+## ℹ️ Overview
+
+A paragraph explaining your work, who you are, and why you made it.
+
+
+### ✍️ Authors
+
+Mention who you are and link to your GitHub or organization's website.
+
+
+## 🚀 Usage
+
+*Show off what your software looks like in action! Try to limit it to one-liners if possible and don't delve into API specifics.*
+
+```py
+>>> import mypackage
+>>> mypackage.do_stuff()
+'Oh yeah!'
 ```
-If you love this boilerplate, give it a star, you will be a ray of sunshine in our lives :)
-```
 
-> Thanks to [awesome-vite](https://github.com/vitejs/awesome-vite) for publishing this project.
 
-## Tools & Technology
+## ⬇️ Installation
 
-### Front-end
-
-- [React](https://reactjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [React Router DOM](https://reactrouter.com/)
-- [Redux Toolkit](https://redux-toolkit.js.org/)
-- [TanStack Query](https://tanstack.com/query/latest)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
-- [Vitest](https://vitest.dev/)
-- [Prettier](https://prettier.io/)
-- [Eslint](https://eslint.org/)
-
-### Back-end
-
-- [Node.js](https://nodejs.org/en)
-- [Express](https://expressjs.com/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [express-async-handler](https://www.npmjs.com/package/express-async-handler)
-- [mongoose](https://mongoosejs.com/)
-- [argon2](https://www.npmjs.com/package/argon2)
-- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
-- [Prettier](https://prettier.io/)
-- [Eslint](https://eslint.org/)
-
-#### The dependency versions are managed by [depfu](https://depfu.com/).
-
-## Requirements
-
-- [Node.js](https://nodejs.org/en/) 18+
-
-## Demo
-
-![vite-mern-template-gh-demo](https://user-images.githubusercontent.com/78271602/234833309-fe8df564-2895-4727-be1e-c807fe142333.gif)
-
-## Installation
+Simple, understandable installation instructions!
 
 ```bash
-npx degit apicgg/vite-mern-template my-app
+pip install my-package
 ```
 
-or
+And be sure to specify any other minimum requirements like Python versions or operating systems.
 
-```bash
-git clone https://github.com/apicgg/vite-mern-template.git
-```
+*You may be inclined to add development instructions here, don't.*
 
-## Install dependencies (npm or yarn or pnpm)
 
-- Backend
+## 💭 Feedback and Contributing
 
-```bash
-npm install
-```
+Add a link to the Discussions tab in your repo and invite users to open issues for bugs/feature requests.
 
-- Frontend
-
-```bash
-cd frontend
-npm install
-```
-
-## Start the development server
-
-- Backend
-
-```bash
-npm run dev:backend
-```
-
-- Frontend
-
-```bash
-npm run dev:frontend
-```
-
-- Remove the .github folder and initialize your own git repository with ```git init```.
-
-## TODO
-
-- [x] Include eslint and prettier.
-- [x] Add testing framework.
-
-## License
-
-MIT License.
-
-Please review the [License](https://github.com/apicgg/vite-mern-template/blob/main/LICENSE).
-
-## Contributors ✨
-
-Contributions of any kind welcome! Kindly have a look into [Contributing Guidelines](CONTRIBUTING.md)
+This is also a great place to invite others to contribute in any ways that make sense for your project. Point people to your DEVELOPMENT and/or CONTRIBUTING guides if you have them.
