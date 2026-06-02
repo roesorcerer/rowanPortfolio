@@ -1,0 +1,12 @@
+{
+  "framework": "vite",
+  "installCommand": "npm install --prefix frontend",
+  "buildCommand": "npm run build:frontend",
+  "outputDirectory": "frontend/build",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://rowan-portfolio-api.fly.dev/api/:path*"
+    }
+  ]
+}
