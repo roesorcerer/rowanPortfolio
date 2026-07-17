@@ -10,3 +10,6 @@ docker-compose.yml
 .dockerignore
 fly.toml
 docs/
+CONTEXT.md
+.gitignore
+
