@@ -1,57 +1,193 @@
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+
 import { useProjects } from "../hooks/useProjects";
+import type { ProjectType } from "../types";
 import ProjectCard from "./ProjectCard";
 import AboutSection from "./AboutSection";
 import ContactSection from "./ContactSection";
-import type { ProjectType } from "../types";
 
-// --- Hero Section ---
-// Eudaimonic design: warm, purposeful, human-centered
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-function Hero() {
+interface HeroImage {
+  src: string;
+  alt: string;
+  srcDark?: string;
+}
+
+interface HeroButtonConfig {
+  text: string;
+  url: string;
+  icon?: ReactNode;
+}
+
+interface HeroButtons {
+  primary?: HeroButtonConfig;
+  secondary?: HeroButtonConfig;
+}
+
+interface HeroBadgeConfig {
+  text: string;
+  announcement?: string;
+  url?: string;
+}
+
+interface HeroBasicProps {
+  badge?: HeroBadgeConfig;
+  headingPrefix: string;
+  headingWords: string[];
+  description: string;
+  buttons?: HeroButtons;
+  image: HeroImage;
+  className?: string;
+}
+
+type Hero1Props = Partial<HeroBasicProps>;
+
+const defaultHeroProps: HeroBasicProps = {
+  badge: {
+    text: "Hi, I'm Rowan!",
+    announcement: "Available for 2026 engineering opportunities",
+  },
+  headingPrefix: "I'm a...",
+  headingWords: ["Developer", "Researcher", "Teacher", "Game Developer", "Artist"],
+  description:
+    "A Minnesota based developer. I believe that technology can be created to support and enrich people's lives. My work seeks to find that balance of creating systems that fulfill that purpose. ",
+  buttons: {
+    primary: {
+      text: "See my work",
+      url: "#projects",
+    },
+    secondary: {
+      text: "About me",
+      url: "#about",
+    },
+  },
+  image: {
+    src: "https://57zrb2kcas.ufs.sh/f/LHwfoeNVr61ivdcRlDPgqtuCYzNZPokO0AeRFT3Ml6cBshjy",
+    alt: "Ocean waves background",
+  },
+};
+
+function FlipWords({ words, intervalMs = 2200 }: { words: string[]; intervalMs?: number }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (words.length <= 1) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % words.length);
+    }, intervalMs);
+
+    return () => window.clearInterval(timer);
+  }, [intervalMs, words]);
+
+  const currentWord = words[index] ?? "Developer";
+
   return (
-    <header className="px-5 md:px-10 pt-12 md:pt-16 pb-16 md:pb-20 max-w-[600px] md:max-w-[700px] lg:max-w-[720px]">
-      <div className="flex items-center gap-2 mb-6 md:mb-8">
-        <div className="w-2 h-2 bg-accent rounded-full" />
-        <span className="text-accent-dark text-sm">Open to fullstack roles</span>
-      </div>
+    <span className="inline-block min-w-[11ch] align-baseline">
+      <span
+        key={currentWord}
+        className="inline-block animate-in fade-in-0 slide-in-from-bottom-2 duration-500"
+      >
+        {currentWord}
+      </span>
+    </span>
+  );
+}
 
-      <h1 className="text-ink text-2xl md:text-[32px] lg:text-4xl font-normal leading-[1.4] md:leading-[1.35] tracking-tight mb-5 md:mb-6 lg:mb-7">
-        Fullstack developer building thoughtful software in React, TypeScript, and Django.
-      </h1>
+function Hero1(props: Hero1Props) {
+  const { badge, headingPrefix, headingWords, description, buttons, image, className } = {
+    ...defaultHeroProps,
+    ...props,
+  };
 
-      <p className="text-muted text-base md:text-[17px] leading-[1.75] mb-8 md:mb-10 md:max-w-[560px]">
-        Just finished my MS at UMN Duluth, where I led development on an active research platform. Looking for fullstack engineering roles where craft and care both matter.
-      </p>
+  return (
+    <header id="top" className={cn("pt-4 pb-8 md:pt-5 md:pb-10", className)}>
+      <div className="mx-auto w-full px-6">
+        <div className="relative h-[min(820px,calc(100vh-9rem))] min-h-[520px] w-full overflow-hidden border-2 border-ink/35 bg-paper shadow-[0_10px_24px_rgba(15,23,42,0.07)] transition-colors transition-shadow duration-200 hover:border-ink/60 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] dark:border-white/30 dark:hover:border-white/45 dark:hover:shadow-[0_14px_30px_rgba(0,0,0,0.35)]">
+          <video
+            className="absolute inset-0 h-full w-full object-cover opacity-30 brightness-110 dark:opacity-60 dark:brightness-95"
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-hidden="true"
+          >
+            <source src={image.src} type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-white/65 dark:bg-black/25" aria-hidden="true" />
 
-      <div className="flex flex-col md:flex-row md:items-center gap-4">
-        <a
-          href="#projects"
-          className="inline-flex items-center justify-center px-6 py-3 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors"
-        >
-          See my work
-        </a>
-        <a
-          href="#about"
-          className="inline-flex items-center gap-2 text-accent-dark text-sm hover:text-accent-darker transition-colors"
-        >
-          About me
-          <span className="text-xs">→</span>
-        </a>
-        <Link
-          to="/resume"
-          className="inline-flex items-center gap-2 text-accent-dark text-sm hover:text-accent-darker transition-colors"
-        >
-          Resume
-          <span className="text-xs">→</span>
-        </Link>
+          <div className="relative z-10 px-5 py-16 md:px-10 md:py-20 lg:px-14">
+            <div className="grid h-full grid-rows-[1fr_auto] gap-10">
+              <div className="flex flex-col items-start gap-5 text-left">
+                {badge && (
+                  <Badge variant="outline" className="inline-flex items-center gap-2">
+                    {badge.text}
+                    <ArrowUpRight className="size-4" />
+                  </Badge>
+                )}
+                <h1 className="max-w-xl text-4xl font-light tracking-tight text-pretty md:text-5xl lg:max-w-3xl lg:text-6xl">
+                  <span className="block">{headingPrefix}</span>
+                  <span className="mt-1 block">
+                    <FlipWords words={headingWords} />
+                  </span>
+                </h1>
+              </div>
+
+              <div className="grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:gap-12">
+                <div className="flex w-full flex-col gap-2 sm:flex-row">
+                  {buttons?.primary && (
+                    <a
+                      href={buttons.primary.url}
+                      className={cn(
+                        buttonVariants({ size: "lg" }),
+                        "w-full transition-colors duration-150 hover:bg-ink hover:text-paper sm:w-auto dark:hover:bg-white dark:hover:text-ink"
+                      )}
+                    >
+                      {buttons.primary.text}
+                      <ArrowRight className="size-4" />
+                    </a>
+                  )}
+                  {buttons?.secondary && (
+                    <a
+                      href={buttons.secondary.url}
+                      className={cn(
+                        buttonVariants({ variant: "outline", size: "lg" }),
+                        "w-full transition-colors duration-150 hover:border-ink hover:bg-ink/10 hover:text-ink sm:w-auto dark:hover:border-white dark:hover:bg-white/20 dark:hover:text-white"
+                      )}
+                    >
+                      {buttons.secondary.text}
+                    </a>
+                  )}
+                  <Link
+                    to="/resume"
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "lg" }),
+                      "w-full transition-colors duration-150 hover:bg-ink/10 hover:text-ink sm:w-auto dark:hover:bg-white/20 dark:hover:text-white"
+                    )}
+                  >
+                    Resume
+                  </Link>
+                </div>
+
+                <p className="max-w-md justify-self-start font-light text-balance text-muted-foreground italic lg:justify-self-end lg:text-right lg:text-xl">
+                  {description}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );
 }
 
-// --- Projects Section Header + Tab Filter ---
 const TAB_LABELS: { type: ProjectType; label: string; description: string }[] = [
   { type: "featured", label: "Featured", description: "Selected work" },
   { type: "research", label: "Research", description: "Papers & studies" },
@@ -70,9 +206,7 @@ function ProjectsFilter({
   return (
     <div className="px-5 md:px-10 mb-7">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-ink text-sm font-medium tracking-widest uppercase">
-          Selected work
-        </h2>
+        <h2 className="text-ink text-sm font-medium tracking-widest uppercase">Selected work</h2>
         <span className="text-faint text-sm">
           {counts[activeTab]} {counts[activeTab] === 1 ? "project" : "projects"}
         </span>
@@ -102,13 +236,12 @@ function ProjectsFilter({
   );
 }
 
-// --- Closing CTA ---
-// Mobile uses a shorter blurb; the tail clause appears from md: up.
 function Closing() {
   return (
     <footer className="px-5 md:px-10 py-16 md:py-20 border-t border-rule md:w-full">
       <p className="text-ink text-xl md:text-2xl lg:text-3xl leading-[1.4] md:leading-[1.35] tracking-tight mb-8 md:mb-10 max-w-[340px] md:max-w-[680px]">
-        Currently looking for fullstack engineering roles<span className="hidden md:inline"> where craft and care both matter</span>.
+        Currently looking for fullstack engineering roles
+        <span className="hidden md:inline"> where craft and care both matter</span>.
       </p>
       <a
         href="#contact"
@@ -121,16 +254,25 @@ function Closing() {
   );
 }
 
-// --- Site Footer ---
 function SiteFooter() {
   return (
     <div className="px-5 md:px-10 py-6 md:py-8 md:w-full flex justify-between items-center border-t border-rule">
       <p className="text-faint text-sm">Crafted with intention</p>
       <div className="flex gap-5 md:gap-6">
-        <a href="https://github.com/roesorcerer" target="_blank" rel="noopener noreferrer" className="text-muted text-sm hover:text-ink transition-colors">
+        <a
+          href="https://github.com/roesorcerer"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-muted text-sm hover:text-ink transition-colors"
+        >
           GitHub
         </a>
-        <a href="https://www.linkedin.com/in/rowan-stratton-611247247" target="_blank" rel="noopener noreferrer" className="text-muted text-sm hover:text-ink transition-colors">
+        <a
+          href="https://www.linkedin.com/in/rowan-stratton-611247247"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-muted text-sm hover:text-ink transition-colors"
+        >
           LinkedIn
         </a>
         <Link to="/resume" className="text-muted text-sm hover:text-ink transition-colors">
@@ -144,7 +286,6 @@ function SiteFooter() {
   );
 }
 
-// --- Main Component ---
 function Main() {
   const { data: projects, isLoading, error } = useProjects();
   const [activeTab, setActiveTab] = useState<ProjectType>("featured");
@@ -159,9 +300,8 @@ function Main() {
 
   return (
     <main className="flex flex-col bg-paper min-h-screen">
-      <Hero />
+      <Hero1 />
 
-      {/* Projects Section */}
       <section id="projects" className="pb-12">
         {isLoading && (
           <div className="flex items-center justify-center w-full py-20">
@@ -182,50 +322,28 @@ function Main() {
 
         {!isLoading && !error && projects && (
           <>
-            <ProjectsFilter
-              activeTab={activeTab}
-              counts={counts}
-              onChange={setActiveTab}
-            />
+            <ProjectsFilter activeTab={activeTab} counts={counts} onChange={setActiveTab} />
 
-            {/* Featured: full stacked cards */}
             {activeTab === "featured" && (
               <div className="px-5 md:px-10 space-y-6">
                 {visibleProjects.map((project, index) => (
-                  <ProjectCard
-                    key={project._id}
-                    project={project}
-                    index={index}
-                    variant="featured"
-                  />
+                  <ProjectCard key={project._id} project={project} index={index} variant="featured" />
                 ))}
               </div>
             )}
 
-            {/* Research: compact list rows */}
             {activeTab === "research" && (
               <div className="px-5 md:px-10 space-y-3">
                 {visibleProjects.map((project, index) => (
-                  <ProjectCard
-                    key={project._id}
-                    project={project}
-                    index={index}
-                    variant="research"
-                  />
+                  <ProjectCard key={project._id} project={project} index={index} variant="research" />
                 ))}
               </div>
             )}
 
-            {/* Practice: 2-column grid */}
             {activeTab === "practice" && (
               <div className="px-5 md:px-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {visibleProjects.map((project, index) => (
-                  <ProjectCard
-                    key={project._id}
-                    project={project}
-                    index={index}
-                    variant="practice"
-                  />
+                  <ProjectCard key={project._id} project={project} index={index} variant="practice" />
                 ))}
               </div>
             )}
@@ -240,9 +358,7 @@ function Main() {
       </section>
 
       <AboutSection />
-
       <ContactSection />
-
       <Closing />
       <SiteFooter />
     </main>

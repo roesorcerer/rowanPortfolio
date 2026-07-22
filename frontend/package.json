@@ -13,13 +13,21 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "@fontsource-variable/inter": "^5.3.0",
     "@reduxjs/toolkit": "^2.2.1",
     "@tanstack/react-query": "^5.51.23",
     "axios": "^1.15.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.25.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.22.3",
+    "shadcn": "^4.13.1",
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0",
     "vite-plugin-svgr": "^4.2.0"
   },
   "devDependencies": {
