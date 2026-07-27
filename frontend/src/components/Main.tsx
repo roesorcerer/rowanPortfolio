@@ -147,7 +147,7 @@ function Hero1(props: Hero1Props) {
                       href={buttons.primary.url}
                       className={cn(
                         buttonVariants({ size: "lg" }),
-                        "w-full transition-colors duration-150 hover:bg-ink hover:text-paper sm:w-auto dark:hover:bg-white dark:hover:text-ink"
+                        "w-full sm:w-auto"
                       )}
                     >
                       {buttons.primary.text}
@@ -159,7 +159,7 @@ function Hero1(props: Hero1Props) {
                       href={buttons.secondary.url}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "lg" }),
-                        "w-full transition-colors duration-150 hover:border-ink hover:bg-ink/10 hover:text-ink sm:w-auto dark:hover:border-white dark:hover:bg-white/20 dark:hover:text-white"
+                        "w-full sm:w-auto"
                       )}
                     >
                       {buttons.secondary.text}
@@ -169,7 +169,7 @@ function Hero1(props: Hero1Props) {
                     to="/resume"
                     className={cn(
                       buttonVariants({ variant: "outline", size: "lg" }),
-                      "w-full transition-colors duration-150 hover:bg-ink/10 hover:text-ink sm:w-auto dark:hover:bg-white/20 dark:hover:text-white"
+                      "w-full sm:w-auto"
                     )}
                   >
                     Resume
@@ -217,15 +217,15 @@ function ProjectsFilter({
             key={type}
             type="button"
             onClick={() => onChange(type)}
-            className={`px-4 py-2 rounded-full text-sm transition-colors ${
-              activeTab === type
-                ? "bg-ink text-paper"
-                : "bg-white text-muted border border-rule hover:border-ink hover:text-ink"
-            }`}
+            aria-expanded={activeTab === type}
+            className={buttonVariants({ 
+              variant: activeTab === type ? "outline" : "ghost",
+              size: "sm"
+            })}
           >
             {label}
             {counts[type] > 0 && (
-              <span className={`ml-1.5 text-xs ${activeTab === type ? "text-faint" : "text-faint"}`}>
+              <span className="ml-1.5 text-xs">
                 {counts[type]}
               </span>
             )}

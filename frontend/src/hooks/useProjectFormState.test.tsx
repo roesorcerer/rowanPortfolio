@@ -13,9 +13,30 @@ const project: Project = {
   category: "Web",
   description: "A description",
   image: "/x.png",
+  media: [
+    {
+      type: "image",
+      src: "/assets/one.png",
+      alt: "Main shot",
+    },
+    {
+      type: "video",
+      src: "https://example.com/demo.mp4",
+      poster: "/assets/poster.png",
+    },
+  ],
   link: "https://demo.example.com",
   githubLink: "https://github.com/x/y",
+  relatedResearchLink: "https://doi.org/example",
   developmentTime: "3 weeks",
+  collaborators: [
+    {
+      name: "Rowan",
+      role: "Developer",
+      socialLink: "https://linkedin.com/in/rowan",
+      socialLabel: "LinkedIn",
+    },
+  ],
   technologies: ["React", "Node.js", "MongoDB"],
   order: 2,
   featured: true,
@@ -35,12 +56,18 @@ describe("fromProject / toPayload", () => {
       ...project,
       link: undefined,
       githubLink: undefined,
+      relatedResearchLink: undefined,
       developmentTime: undefined,
+      media: undefined,
+      collaborators: undefined,
     };
     const form = fromProject(sparse);
     expect(form.link).toBe("");
     expect(form.githubLink).toBe("");
+    expect(form.relatedResearchLink).toBe("");
     expect(form.developmentTime).toBe("");
+    expect(form.media).toEqual([]);
+    expect(form.collaborators).toEqual([]);
   });
 
   it("toPayload splits the CSV, trims, and drops empties", () => {
@@ -56,11 +83,44 @@ describe("fromProject / toPayload", () => {
       ...EMPTY_FORM,
       link: "",
       githubLink: "",
+      relatedResearchLink: "",
       developmentTime: "",
     });
     expect(payload.link).toBeUndefined();
     expect(payload.githubLink).toBeUndefined();
+    expect(payload.relatedResearchLink).toBeUndefined();
     expect(payload.developmentTime).toBeUndefined();
+  });
+
+  it("toPayload keeps valid media and collaborators and drops incomplete rows", () => {
+    const payload = toPayload({
+      ...EMPTY_FORM,
+      media: [
+        { type: "image", src: " /shot.png ", alt: " Shot ", poster: "", caption: "" },
+        { type: "video", src: "", alt: "", poster: "", caption: "" },
+      ],
+      collaborators: [
+        {
+          name: " Rowan ",
+          role: " Dev ",
+          socialLink: " https://linkedin.com/in/rowan ",
+          socialLabel: " LinkedIn ",
+        },
+        { name: "", role: "", socialLink: "", socialLabel: "" },
+      ],
+    });
+
+    expect(payload.media).toEqual([
+      { type: "image", src: "/shot.png", alt: "Shot", poster: undefined, caption: undefined },
+    ]);
+    expect(payload.collaborators).toEqual([
+      {
+        name: "Rowan",
+        role: "Dev",
+        socialLink: "https://linkedin.com/in/rowan",
+        socialLabel: "LinkedIn",
+      },
+    ]);
   });
 });
 

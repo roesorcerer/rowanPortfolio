@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // Resume page recreated to match the LaTeX-style PDF layout.
 // Serif typography, horizontal-rule section headers, two-column rows.
@@ -48,7 +50,7 @@ function Resume() {
         <button
           type="button"
           onClick={() => window.print()}
-          className="inline-flex items-center justify-center px-4 py-2 bg-[#2C2C2A] text-[#FAF9F7] text-sm rounded-lg hover:bg-[#1a1a1a] transition-colors"
+          className={cn(buttonVariants({ size: "sm" }), "text-sm")}
         >
           Print / Save as PDF
         </button>

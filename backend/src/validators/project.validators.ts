@@ -1,6 +1,21 @@
 import { z } from "zod";
 import { LIMITS } from "./limits";
 
+const mediaItemSchema = z.object({
+  type: z.enum(["image", "video"]),
+  src: z.string().min(1, "Media source is required").trim(),
+  alt: z.string().trim().optional(),
+  poster: z.string().trim().optional(),
+  caption: z.string().trim().optional(),
+});
+
+const collaboratorSchema = z.object({
+  name: z.string().min(1, "Collaborator name is required").trim(),
+  role: z.string().trim().optional(),
+  socialLink: z.string().url("Collaborator social link must be a valid URL"),
+  socialLabel: z.string().trim().optional(),
+});
+
 export const createProjectSchema = z.object({
   title: z
     .string({ error: "Title is required" })
@@ -20,6 +35,10 @@ export const createProjectSchema = z.object({
     .min(1, "Image path is required"),
   link: z.string().url("Link must be a valid URL").optional(),
   githubLink: z.string().url("GitHub link must be a valid URL").optional(),
+  relatedResearchLink: z
+    .string()
+    .url("Related research link must be a valid URL")
+    .optional(),
   developmentTime: z
     .string()
     .max(
@@ -29,6 +48,8 @@ export const createProjectSchema = z.object({
     .trim()
     .optional(),
   technologies: z.array(z.string().trim()).default([]),
+  media: z.array(mediaItemSchema).default([]),
+  collaborators: z.array(collaboratorSchema).default([]),
   featured: z.boolean().default(false),
   projectType: z.enum(["featured", "research", "practice"]).default("practice"),
   order: z.number().int().default(0),

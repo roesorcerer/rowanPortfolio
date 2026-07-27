@@ -1,6 +1,8 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { logout } from "../../api/auth";
 import { useContactSubmissions } from "../../hooks/useContactSubmissions";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -37,7 +39,7 @@ function AdminDashboard() {
           <button
             type="button"
             onClick={handleLogout}
-            className="text-muted text-sm hover:text-ink transition-colors"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-sm")}
           >
             Sign out
           </button>

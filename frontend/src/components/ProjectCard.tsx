@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { Project, ProjectType } from "../types";
 import ProjectModal from "./ProjectModal";
 import { useAnalytics } from "../analytics";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface ProjectCardProps {
   project: Project;
@@ -12,6 +14,28 @@ interface ProjectCardProps {
 function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const analytics = useAnalytics();
+
+  const formatDate = (value: string) => {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return null;
+    return parsed.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const datesLabel = () => {
+    if (project.developmentTime?.trim()) return project.developmentTime;
+
+    const created = formatDate(project.createdAt);
+    const updated = formatDate(project.updatedAt);
+
+    if (created && updated && created !== updated) {
+      return `${created} - ${updated}`;
+    }
+
+    return updated ?? created ?? "Not specified";
+  };
 
   const openModal = () => {
     setIsOpen(true);
@@ -24,7 +48,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
     return (
       <>
         <article
-          className="bg-white rounded-xl border border-rule p-5 flex gap-4 items-start cursor-pointer hover:border-accent transition-colors"
+          className="bg-white border border-rule p-5 flex gap-4 items-start cursor-pointer hover:border-accent transition-colors"
           onClick={openModal}
           role="button"
           tabIndex={0}
@@ -32,7 +56,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
           aria-label={`Explore ${project.title}`}
         >
           {/* Small thumbnail */}
-          <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-ink-deep overflow-hidden">
+          <div className="w-16 h-16 flex-shrink-0 bg-ink-deep overflow-hidden">
             <img
               alt={project.title}
               className="w-full h-full object-cover"
@@ -64,7 +88,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
     return (
       <>
         <article
-          className="bg-white rounded-xl border border-rule overflow-hidden cursor-pointer hover:border-accent transition-colors"
+          className="bg-white border border-rule overflow-hidden cursor-pointer hover:border-accent transition-colors"
           onClick={openModal}
           role="button"
           tabIndex={0}
@@ -101,126 +125,90 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
 
   const stop = (e: React.MouseEvent | React.KeyboardEvent) => e.stopPropagation();
 
-  const metaRow = () => {
-    const hasMeta = project.developmentTime || project.githubLink || project.link;
-    if (!hasMeta) return null;
-    return (
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 md:mt-5">
-        {project.developmentTime && (
-          <span className="inline-flex items-center gap-1.5 text-body text-xs">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-            Built in {project.developmentTime}
-          </span>
-        )}
-        {project.githubLink && (
-          <a
-            href={project.githubLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={stop}
-            className="inline-flex items-center gap-1.5 text-ink text-xs hover:text-accent-dark transition-colors"
-            aria-label={`View ${project.title} source on GitHub`}
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.2 1.77 1.2 1.04 1.78 2.72 1.27 3.39.97.1-.75.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .98-.31 3.2 1.18a11.1 11.1 0 0 1 5.84 0c2.22-1.49 3.2-1.18 3.2-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.27 5.68.42.36.79 1.07.79 2.16v3.2c0 .31.21.68.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
-            </svg>
-            Code
-          </a>
-        )}
-        {project.link && (
-          <a
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={stop}
-            className="inline-flex items-center gap-1.5 text-accent-dark text-xs hover:text-accent-darker transition-colors"
-            aria-label={`Open ${project.title} live demo`}
-          >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-            Live demo
-          </a>
-        )}
-      </div>
-    );
-  };
-
-  // Featured: stacked on mobile (image on top), 2-col grid on md+ (image right, content left).
+  // Featured: square card with compact project overview.
   return (
     <>
-      <article className="bg-white rounded-2xl overflow-hidden border border-rule md:grid md:grid-cols-2 md:max-w-[1200px]">
-        {/* Image — first in DOM so mobile reads it on top; placed in the right column on md+. */}
-        <div className="aspect-video md:aspect-auto md:min-h-[260px] md:col-start-2 bg-ink-deep relative overflow-hidden">
-          <img
-            alt={project.title}
-            className="absolute inset-0 w-full h-full object-cover"
-            src={project.image}
-          />
-          {/* Subtle overlay for polish — only on md+. */}
-          <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-transparent to-black/10 pointer-events-none" />
-        </div>
+      <article className="bg-white overflow-hidden border border-rule w-full max-w-[860px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-[180px_minmax(0,1fr)] gap-3 md:gap-5 p-4 md:p-5">
+          <div className="border border-rule-soft overflow-hidden p-0 flex items-center justify-center">
+            <img
+              alt={project.title}
+              className="h-[170px] md:h-[220px] w-full object-contain"
+              src={project.image}
+            />
+          </div>
 
-        {/* Content — placed in the left column on md+, same row as the image. */}
-        <div className="p-5 md:p-8 lg:p-9 md:col-start-1 md:row-start-1 md:flex md:flex-col md:justify-between">
-          <div>
-            <span className="inline-block px-3 py-1.5 bg-accent-soft text-accent-dark text-xs rounded-md mb-4 md:mb-5">
-              {project.category}
-            </span>
-
-            <h3 className="text-ink text-xl md:text-2xl font-medium tracking-tight mb-2 md:mb-3">
+          <div className="min-h-0 flex flex-col gap-3 md:gap-4">
+            <h3 className="text-xl md:text-2xl font-light tracking-tight text-ink text-left text-pretty leading-tight">
               {project.title}
             </h3>
 
-            {project.description && (
-              <p className="text-muted text-sm md:text-[15px] leading-relaxed md:leading-[1.65] mb-2 md:mb-0">
-                {project.description}
+            <p className="text-sm md:text-base font-light tracking-tight text-muted leading-relaxed line-clamp-4">
+              {project.description}
+            </p>
+
+            <div className="space-y-1.5">
+              <p className="text-[10px] md:text-[11px] font-medium tracking-[0.18em] uppercase text-faint">Technologies</p>
+              <p className="text-xs md:text-sm text-body leading-relaxed">
+                {project.technologies.join(" • ")}
               </p>
-            )}
+            </div>
 
-            {metaRow()}
+            <div className="space-y-1.5">
+              <p className="text-[10px] md:text-[11px] font-medium tracking-[0.18em] uppercase text-faint">Tags</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-accent-soft text-accent-dark text-[11px] md:text-xs">
+                  {project.category}
+                </span>
+                <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-rule-soft text-body text-[11px] md:text-xs uppercase">
+                  {project.projectType}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <p className="text-[10px] md:text-[11px] font-medium tracking-[0.18em] uppercase text-faint">Dates</p>
+              <p className="text-xs md:text-sm text-body">{datesLabel()}</p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <button
+                type="button"
+                onClick={openModal}
+                aria-label={`Explore ${project.title}`}
+                className={cn(buttonVariants({ variant: "link", size: "sm" }))}
+              >
+                Explore project
+                <span className="text-xs">→</span>
+              </button>
+
+              {project.githubLink && (
+                <a
+                  href={project.githubLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={stop}
+                  className="inline-flex items-center gap-1.5 text-ink text-xs hover:text-accent-dark transition-colors"
+                  aria-label={`View ${project.title} source on GitHub`}
+                >
+                  Code
+                </a>
+              )}
+
+              {project.link && (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={stop}
+                  className="inline-flex items-center gap-1.5 text-accent-dark text-xs hover:text-accent-darker transition-colors"
+                  aria-label={`Open ${project.title} live demo`}
+                >
+                  Live demo
+                </a>
+              )}
+            </div>
           </div>
-
-          <button
-            type="button"
-            onClick={openModal}
-            aria-label={`Explore ${project.title}`}
-            className="inline-flex items-center gap-2 text-accent-dark text-sm hover:text-accent-darker transition-colors mt-5 md:mt-7"
-          >
-            Explore project
-            <span className="text-xs">→</span>
-          </button>
         </div>
       </article>
 

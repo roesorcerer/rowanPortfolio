@@ -10,9 +10,23 @@ export type Project = {
   category: string;
   description: string;
   image: string;
+  media?: {
+    type: "image" | "video";
+    src: string;
+    alt?: string;
+    poster?: string;
+    caption?: string;
+  }[];
   link?: string;
   githubLink?: string;
+  relatedResearchLink?: string;
   developmentTime?: string;
+  collaborators?: {
+    name: string;
+    role?: string;
+    socialLink: string;
+    socialLabel?: string;
+  }[];
   technologies: string[];
   featured: boolean;
   projectType: "featured" | "research" | "practice";
@@ -27,9 +41,23 @@ type ProjectDoc = {
   category: string;
   description: string;
   image: string;
+  media?: {
+    type: "image" | "video";
+    src: string;
+    alt?: string;
+    poster?: string;
+    caption?: string;
+  }[];
   link?: string;
   githubLink?: string;
+  relatedResearchLink?: string;
   developmentTime?: string;
+  collaborators?: {
+    name: string;
+    role?: string;
+    socialLink: string;
+    socialLabel?: string;
+  }[];
   technologies?: string[];
   featured?: boolean;
   projectType: Project["projectType"];
@@ -45,9 +73,12 @@ function toProject(doc: ProjectDoc): Project {
     category: doc.category,
     description: doc.description,
     image: doc.image,
+    media: doc.media ?? [],
     link: doc.link,
     githubLink: doc.githubLink,
+    relatedResearchLink: doc.relatedResearchLink,
     developmentTime: doc.developmentTime,
+    collaborators: doc.collaborators ?? [],
     technologies: doc.technologies ?? [],
     featured: doc.featured ?? false,
     projectType: doc.projectType,

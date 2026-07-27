@@ -5,15 +5,34 @@ import { LIMITS } from "../validators/limits";
 // It extends Mongoose's Document type, which adds _id, __v,
 // save(), remove(), and other Mongoose methods.
 export type ProjectType = "featured" | "research" | "practice";
+export type ProjectMediaType = "image" | "video";
+
+export interface ProjectMedia {
+  type: ProjectMediaType;
+  src: string;
+  alt?: string;
+  poster?: string;
+  caption?: string;
+}
+
+export interface ProjectCollaborator {
+  name: string;
+  role?: string;
+  socialLink: string;
+  socialLabel?: string;
+}
 
 export interface IProject extends Document {
   title: string;
   category: string;
   description: string;
   image: string;
+  media: ProjectMedia[];
   link?: string;
   githubLink?: string;
+  relatedResearchLink?: string;
   developmentTime?: string;
+  collaborators: ProjectCollaborator[];
   technologies: string[];
   featured: boolean;
   projectType: ProjectType;
@@ -44,6 +63,35 @@ const projectSchema = new Schema<IProject>(
       type: String,
       required: [true, "Project image path is required"],
     },
+    media: {
+      type: [
+        {
+          type: {
+            type: String,
+            enum: ["image", "video"],
+            required: true,
+          },
+          src: {
+            type: String,
+            required: true,
+            trim: true,
+          },
+          alt: {
+            type: String,
+            trim: true,
+          },
+          poster: {
+            type: String,
+            trim: true,
+          },
+          caption: {
+            type: String,
+            trim: true,
+          },
+        },
+      ],
+      default: [],
+    },
     link: {
       type: String,
       trim: true,
@@ -52,10 +100,39 @@ const projectSchema = new Schema<IProject>(
       type: String,
       trim: true,
     },
+    relatedResearchLink: {
+      type: String,
+      trim: true,
+    },
     developmentTime: {
       type: String,
       trim: true,
       maxlength: [LIMITS.project.devTimeMax, `Development time cannot exceed ${LIMITS.project.devTimeMax} characters`],
+    },
+    collaborators: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: true,
+            trim: true,
+          },
+          role: {
+            type: String,
+            trim: true,
+          },
+          socialLink: {
+            type: String,
+            required: true,
+            trim: true,
+          },
+          socialLabel: {
+            type: String,
+            trim: true,
+          },
+        },
+      ],
+      default: [],
     },
     technologies: {
       type: [String],

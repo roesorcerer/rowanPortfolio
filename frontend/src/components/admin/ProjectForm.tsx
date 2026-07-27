@@ -3,6 +3,8 @@ import type { Project, ProjectType } from "../../types";
 import { ApiError } from "../../api/client";
 import { useCreateProject, useUpdateProject } from "../../hooks/useProjects";
 import { useProjectFormState } from "../../hooks/useProjectFormState";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface ProjectFormProps {
   initialProject: Project | null; // null = new project
@@ -16,6 +18,56 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
   const create = useCreateProject();
   const update = useUpdateProject();
   const saving = create.isPending || update.isPending;
+
+  const addMediaItem = () => {
+    setField("media", [
+      ...form.media,
+      { type: "image", src: "", alt: "", poster: "", caption: "" },
+    ]);
+  };
+
+  const removeMediaItem = (index: number) => {
+    setField(
+      "media",
+      form.media.filter((_, i) => i !== index)
+    );
+  };
+
+  const setMediaField = (
+    index: number,
+    key: "type" | "src" | "alt" | "poster" | "caption",
+    value: string
+  ) => {
+    setField(
+      "media",
+      form.media.map((item, i) => (i === index ? { ...item, [key]: value } : item))
+    );
+  };
+
+  const addCollaborator = () => {
+    setField("collaborators", [
+      ...form.collaborators,
+      { name: "", role: "", socialLink: "", socialLabel: "" },
+    ]);
+  };
+
+  const removeCollaborator = (index: number) => {
+    setField(
+      "collaborators",
+      form.collaborators.filter((_, i) => i !== index)
+    );
+  };
+
+  const setCollaboratorField = (
+    index: number,
+    key: "name" | "role" | "socialLink" | "socialLabel",
+    value: string
+  ) => {
+    setField(
+      "collaborators",
+      form.collaborators.map((item, i) => (i === index ? { ...item, [key]: value } : item))
+    );
+  };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -125,6 +177,16 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
             />
           </Field>
 
+          <Field label="Related research link (optional)">
+            <input
+              value={form.relatedResearchLink}
+              onChange={(e) => setField("relatedResearchLink", e.target.value)}
+              className={inputCls}
+              placeholder="https://paper-or-study.example.com"
+              type="url"
+            />
+          </Field>
+
           <Field label="Development time (optional)">
             <input
               value={form.developmentTime}
@@ -142,6 +204,158 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
               placeholder="React, Node.js, MongoDB"
             />
           </Field>
+
+          <section className="border border-rule rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-ink text-sm font-medium">Media carousel</h3>
+              <button
+                type="button"
+                onClick={addMediaItem}
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                + Add media
+              </button>
+            </div>
+
+            {form.media.length === 0 && (
+              <p className="text-faint text-xs">No media items yet. Add images or videos for the modal carousel.</p>
+            )}
+
+            {form.media.map((item, index) => (
+              <div key={`media-${index}`} className="border border-rule-soft rounded-lg p-3 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-body text-xs font-medium">Item {index + 1}</p>
+                  <button
+                    type="button"
+                    onClick={() => removeMediaItem(index)}
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field label="Type">
+                    <select
+                      value={item.type}
+                      onChange={(e) => setMediaField(index, "type", e.target.value)}
+                      className={inputCls}
+                    >
+                      <option value="image">Image</option>
+                      <option value="video">Video</option>
+                    </select>
+                  </Field>
+                  <Field label="Source URL/path" required>
+                    <input
+                      value={item.src}
+                      onChange={(e) => setMediaField(index, "src", e.target.value)}
+                      className={inputCls}
+                      placeholder="/assets/project-shot.png or https://..."
+                    />
+                  </Field>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field label="Alt text (optional)">
+                    <input
+                      value={item.alt}
+                      onChange={(e) => setMediaField(index, "alt", e.target.value)}
+                      className={inputCls}
+                      placeholder="Describe this image"
+                    />
+                  </Field>
+                  <Field label="Video poster (optional)">
+                    <input
+                      value={item.poster}
+                      onChange={(e) => setMediaField(index, "poster", e.target.value)}
+                      className={inputCls}
+                      placeholder="/assets/video-poster.png"
+                    />
+                  </Field>
+                </div>
+
+                <Field label="Caption (optional)">
+                  <input
+                    value={item.caption}
+                    onChange={(e) => setMediaField(index, "caption", e.target.value)}
+                    className={inputCls}
+                    placeholder="What this media item shows"
+                  />
+                </Field>
+              </div>
+            ))}
+          </section>
+
+          <section className="border border-rule rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-ink text-sm font-medium">Collaborators</h3>
+              <button
+                type="button"
+                onClick={addCollaborator}
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                + Add collaborator
+              </button>
+            </div>
+
+            {form.collaborators.length === 0 && (
+              <p className="text-faint text-xs">No collaborators listed. Add names and social links to show in the modal.</p>
+            )}
+
+            {form.collaborators.map((person, index) => (
+              <div key={`collab-${index}`} className="border border-rule-soft rounded-lg p-3 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-body text-xs font-medium">Person {index + 1}</p>
+                  <button
+                    type="button"
+                    onClick={() => removeCollaborator(index)}
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field label="Name" required>
+                    <input
+                      value={person.name}
+                      onChange={(e) => setCollaboratorField(index, "name", e.target.value)}
+                      className={inputCls}
+                      placeholder="Jane Doe"
+                    />
+                  </Field>
+                  <Field label="Role (optional)">
+                    <input
+                      value={person.role}
+                      onChange={(e) => setCollaboratorField(index, "role", e.target.value)}
+                      className={inputCls}
+                      placeholder="Designer"
+                    />
+                  </Field>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field label="Social link" required>
+                    <input
+                      value={person.socialLink}
+                      onChange={(e) => setCollaboratorField(index, "socialLink", e.target.value)}
+                      className={inputCls}
+                      placeholder="https://linkedin.com/in/..."
+                      type="url"
+                    />
+                  </Field>
+                  <Field label="Social label (optional)">
+                    <input
+                      value={person.socialLabel}
+                      onChange={(e) => setCollaboratorField(index, "socialLabel", e.target.value)}
+                      className={inputCls}
+                      placeholder="LinkedIn"
+                    />
+                  </Field>
+                </div>
+              </div>
+            ))}
+          </section>
 
           <div className="grid grid-cols-2 gap-4">
             <Field label="Display order">
@@ -171,7 +385,7 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2.5 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors disabled:opacity-50"
+              className={cn(buttonVariants({ size: "sm" }), "flex-1")}
             >
               {saving
                 ? "Saving…"
@@ -182,7 +396,7 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2.5 border border-rule text-muted text-sm rounded-lg hover:border-ink hover:text-ink transition-colors"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
             >
               Cancel
             </button>

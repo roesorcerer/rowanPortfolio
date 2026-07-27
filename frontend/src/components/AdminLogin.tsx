@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isAuthenticated, login } from "../api/auth";
 import { ApiError } from "../api/client";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -109,7 +111,7 @@ function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors disabled:opacity-50"
+            className={cn(buttonVariants({ size: "lg" }), "w-full")}
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>

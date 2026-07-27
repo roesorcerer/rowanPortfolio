@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Project } from "../types";
 import { useAnalytics } from "../analytics";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface ProjectModalProps {
   project: Project;
@@ -9,6 +11,56 @@ interface ProjectModalProps {
 
 function ProjectModal({ project, onClose }: ProjectModalProps) {
   const analytics = useAnalytics();
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+
+  const mediaItems = useMemo(() => {
+    if (project.media && project.media.length > 0) {
+      return project.media;
+    }
+
+    return [
+      {
+        type: "image" as const,
+        src: project.image,
+        alt: project.title,
+      },
+    ];
+  }, [project.image, project.media, project.title]);
+
+  const activeMedia = mediaItems[activeMediaIndex] ?? mediaItems[0];
+
+  const formatDate = (value: string) => {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return null;
+    return parsed.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const datesLabel = () => {
+    if (project.developmentTime?.trim()) return project.developmentTime;
+
+    const created = formatDate(project.createdAt);
+    const updated = formatDate(project.updatedAt);
+
+    if (created && updated && created !== updated) {
+      return `${created} - ${updated}`;
+    }
+
+    return updated ?? created ?? "Not specified";
+  };
+
+  const showCarouselControls = mediaItems.length > 1;
+
+  const goPrev = () => {
+    setActiveMediaIndex((current) => (current - 1 + mediaItems.length) % mediaItems.length);
+  };
+
+  const goNext = () => {
+    setActiveMediaIndex((current) => (current + 1) % mediaItems.length);
+  };
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -23,6 +75,10 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
       document.body.style.overflow = prevOverflow;
     };
   }, [onClose]);
+
+  useEffect(() => {
+    setActiveMediaIndex(0);
+  }, [project._id]);
 
   return (
     <div
@@ -39,108 +95,202 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
       />
 
       {/* Dialog */}
-      <div className="relative bg-paper w-full max-w-[900px] max-h-[90vh] rounded-2xl overflow-hidden border border-rule shadow-2xl flex flex-col">
+      <div className="relative bg-paper w-full max-w-[980px] max-h-[92vh] overflow-hidden border border-rule shadow-2xl flex flex-col">
         {/* Close button */}
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 hover:bg-white border border-rule flex items-center justify-center text-ink transition-colors"
+          className={cn(buttonVariants({ variant: "outline", size: "icon" }), "absolute top-4 right-4 z-20")}
         >
           <span className="text-lg leading-none">×</span>
         </button>
 
         <div className="overflow-y-auto">
-          {/* Image */}
-          <div className="aspect-video bg-ink-deep relative overflow-hidden">
-            <img
-              alt={project.title}
-              src={project.image}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+          {/* Media */}
+          <div className="border-b border-rule bg-white">
+            <div className="relative h-[280px] sm:h-[360px] md:h-[440px] lg:h-[500px] overflow-hidden flex items-center justify-center p-3 md:p-5">
+              {activeMedia.type === "video" ? (
+                <video
+                  key={activeMedia.src}
+                  src={activeMedia.src}
+                  poster={activeMedia.poster}
+                  controls
+                  playsInline
+                  className="max-w-full max-h-full object-contain"
+                />
+              ) : (
+                <img
+                  key={activeMedia.src}
+                  alt={activeMedia.alt ?? project.title}
+                  src={activeMedia.src}
+                  className="max-w-full max-h-full object-contain"
+                />
+              )}
+
+              {showCarouselControls && (
+                <>
+                  <button
+                    type="button"
+                    onClick={goPrev}
+                    aria-label="Previous media"
+                    className="absolute left-3 md:left-4 h-9 w-9 bg-black/60 text-white border border-white/20 hover:bg-black/70 transition-colors"
+                  >
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    aria-label="Next media"
+                    className="absolute right-3 md:right-4 h-9 w-9 bg-black/60 text-white border border-white/20 hover:bg-black/70 transition-colors"
+                  >
+                    →
+                  </button>
+                </>
+              )}
+            </div>
+
+            {showCarouselControls && (
+              <div className="px-4 md:px-6 pb-4 md:pb-5">
+                <div className="flex flex-wrap gap-2">
+                  {mediaItems.map((media, index) => (
+                    <button
+                      key={`${media.src}-${index}`}
+                      type="button"
+                      onClick={() => setActiveMediaIndex(index)}
+                      className={cn(
+                        "px-2.5 py-1 text-xs border transition-colors",
+                        index === activeMediaIndex
+                          ? "border-accent-dark text-accent-dark bg-accent-soft"
+                          : "border-rule text-body bg-paper hover:border-accent"
+                      )}
+                      aria-label={`Show media ${index + 1}`}
+                    >
+                      {media.type === "video" ? `Video ${index + 1}` : `Image ${index + 1}`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Content */}
           <div className="p-6 md:p-10">
-            <span className="inline-block px-3 py-1.5 bg-accent-soft text-accent-dark text-xs rounded-md mb-5">
-              {project.category}
-            </span>
+            <div className="max-w-4xl">
+              <span className="inline-block px-3 py-1.5 bg-accent-soft text-accent-dark text-xs mb-4">
+                {project.category}
+              </span>
 
-            <h2
-              id={`project-modal-title-${project._id}`}
-              className="text-ink text-2xl md:text-3xl font-medium tracking-tight mb-5"
-            >
-              {project.title}
-            </h2>
+              <h2
+                id={`project-modal-title-${project._id}`}
+                className="text-ink text-2xl md:text-3xl font-medium tracking-tight mb-4"
+              >
+                {project.title}
+              </h2>
 
-            {project.description && (
-              <p className="text-body text-[15px] md:text-base leading-[1.75] mb-7 whitespace-pre-line">
-                {project.description}
-              </p>
-            )}
+              {project.description && (
+                <p className="text-body text-[15px] md:text-base leading-[1.7] mb-6 whitespace-pre-line">
+                  {project.description}
+                </p>
+              )}
 
-            {project.technologies && project.technologies.length > 0 && (
-              <div className="mb-7">
-                <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-3">
-                  Built with
-                </h3>
-                <ul className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech) => (
-                    <li
-                      key={tech}
-                      className="px-3 py-1.5 bg-white border border-rule text-ink text-xs rounded-md"
-                    >
-                      {tech}
-                    </li>
-                  ))}
-                </ul>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <section className="border border-rule bg-white p-4">
+                  <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-2">Dates</h3>
+                  <p className="text-body text-sm">{datesLabel()}</p>
+                </section>
+
+                <section className="border border-rule bg-white p-4">
+                  <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-2">Technologies used</h3>
+                  {project.technologies && project.technologies.length > 0 ? (
+                    <ul className="flex flex-wrap gap-2">
+                      {project.technologies.map((tech) => (
+                        <li key={tech} className="px-2.5 py-1 border border-rule-soft text-ink text-xs bg-paper">
+                          {tech}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-body text-sm">Not listed</p>
+                  )}
+                </section>
+
+                <section className="border border-rule bg-white p-4">
+                  <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-3">Worked on by</h3>
+                  {project.collaborators && project.collaborators.length > 0 ? (
+                    <ul className="flex flex-wrap gap-2">
+                      {project.collaborators.map((collaborator) => (
+                        <li key={`${collaborator.name}-${collaborator.socialLink}`}>
+                          <a
+                            href={collaborator.socialLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 border border-rule-soft text-ink text-xs hover:border-accent transition-colors"
+                          >
+                            <span>{collaborator.name}</span>
+                            {collaborator.role && <span className="text-muted">({collaborator.role})</span>}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-body text-sm">Not listed</p>
+                  )}
+                </section>
+
+                <section className="border border-rule bg-white p-4">
+                  <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-3">Project links</h3>
+                  {(project.link || project.githubLink || project.relatedResearchLink) ? (
+                    <div className="flex flex-wrap gap-2.5">
+                      {project.link && (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => analytics.linkClick(project, "demo")}
+                          className={buttonVariants({ size: "sm" })}
+                        >
+                          Live demo
+                          <span className="text-xs">→</span>
+                        </a>
+                      )}
+                      {project.githubLink && (
+                        <a
+                          href={project.githubLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => analytics.linkClick(project, "github")}
+                          className={buttonVariants({ variant: "outline", size: "sm" })}
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.2 1.77 1.2 1.04 1.78 2.72 1.27 3.39.97.1-.75.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .98-.31 3.2 1.18a11.1 11.1 0 0 1 5.84 0c2.22-1.49 3.2-1.18 3.2-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.27 5.68.42.36.79 1.07.79 2.16v3.2c0 .31.21.68.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
+                          </svg>
+                          View source
+                        </a>
+                      )}
+                      {project.relatedResearchLink && (
+                        <a
+                          href={project.relatedResearchLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={buttonVariants({ variant: "outline", size: "sm" })}
+                        >
+                          Related research
+                          <span className="text-xs">→</span>
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-body text-sm">No external links yet</p>
+                  )}
+                </section>
               </div>
-            )}
-
-            {project.developmentTime && (
-              <div className="mb-7">
-                <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-2">
-                  Development time
-                </h3>
-                <p className="text-body text-sm">{project.developmentTime}</p>
-              </div>
-            )}
-
-            {(project.link || project.githubLink) && (
-              <div className="flex flex-wrap gap-3">
-                {project.link && (
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => analytics.linkClick(project, "demo")}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors"
-                  >
-                    Live demo
-                    <span className="text-xs">→</span>
-                  </a>
-                )}
-                {project.githubLink && (
-                  <a
-                    href={project.githubLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => analytics.linkClick(project, "github")}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-rule text-ink text-sm rounded-lg hover:border-ink transition-colors"
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.2 1.77 1.2 1.04 1.78 2.72 1.27 3.39.97.1-.75.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .98-.31 3.2 1.18a11.1 11.1 0 0 1 5.84 0c2.22-1.49 3.2-1.18 3.2-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.27 5.68.42.36.79 1.07.79 2.16v3.2c0 .31.21.68.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
-                    </svg>
-                    View source
-                  </a>
-                )}
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import { FormEvent, useState } from "react";
 import { useContact } from "../hooks/useContact";
 import { ApiError } from "../api/client";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // --- Contact Section ---
 // Scroll target: #contact
@@ -135,7 +137,7 @@ function ContactForm({
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center px-6 py-3 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors disabled:opacity-60 disabled:cursor-not-allowed self-start"
+          className={cn(buttonVariants({ variant: "outline", size: "lg" }), "self-start")}
         >
           {isPending ? "Sending..." : "Send message"}
         </button>

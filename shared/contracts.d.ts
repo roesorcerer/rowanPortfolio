@@ -23,15 +23,35 @@ export interface ApiResponse<T = unknown> {
 
 export type ProjectType = "featured" | "research" | "practice";
 
+export type ProjectMediaType = "image" | "video";
+
+export interface ProjectMedia {
+  type: ProjectMediaType;
+  src: string;
+  alt?: string;
+  poster?: string;
+  caption?: string;
+}
+
+export interface ProjectCollaborator {
+  name: string;
+  role?: string;
+  socialLink: string;
+  socialLabel?: string;
+}
+
 export interface Project {
   _id: string;
   title: string;
   category: string;
   description: string;
   image: string;
+  media?: ProjectMedia[];
   link?: string;
   githubLink?: string;
+  relatedResearchLink?: string;
   developmentTime?: string;
+  collaborators?: ProjectCollaborator[];
   technologies: string[];
   featured: boolean;
   projectType: ProjectType;
@@ -45,9 +65,12 @@ export interface ProjectPayload {
   category: string;
   description: string;
   image: string;
+  media?: ProjectMedia[];
   link?: string;
   githubLink?: string;
+  relatedResearchLink?: string;
   developmentTime?: string;
+  collaborators?: ProjectCollaborator[];
   technologies: string[];
   projectType: ProjectType;
   featured: boolean;

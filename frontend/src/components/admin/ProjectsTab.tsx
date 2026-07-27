@@ -3,6 +3,7 @@ import type { Project, ProjectType } from "../../types";
 import { useDeleteProject, useProjects } from "../../hooks/useProjects";
 import LoadingPulse from "../LoadingPulse";
 import ProjectForm from "./ProjectForm";
+import { buttonVariants } from "@/components/ui/button";
 
 const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
   featured: "Featured",
@@ -46,7 +47,7 @@ function ProjectsTab() {
         <button
           type="button"
           onClick={() => setEditing(undefined)}
-          className="px-4 py-2 bg-ink text-paper text-sm rounded-lg hover:bg-ink-deep transition-colors"
+          className={buttonVariants({ size: "sm" })}
         >
           + New project
         </button>
@@ -86,7 +87,7 @@ function ProjectsTab() {
                 <button
                   type="button"
                   onClick={() => setEditing(project)}
-                  className="text-accent-dark text-sm hover:text-accent-darker transition-colors"
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
                 >
                   Edit
                 </button>
@@ -97,7 +98,7 @@ function ProjectsTab() {
                     deleteProject.isPending &&
                     deleteProject.variables === project._id
                   }
-                  className="text-muted text-sm hover:text-red-500 transition-colors disabled:opacity-40"
+                  className={buttonVariants({ variant: "destructive", size: "sm" })}
                 >
                   {deleteProject.isPending &&
                   deleteProject.variables === project._id
