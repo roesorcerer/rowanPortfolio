@@ -1,12 +1,14 @@
 import app from "./app";
 import config from "./config";
 import { connectDatabase, disconnectDatabase } from "./config/database";
+import { createAdmin } from "./scripts/createAdmin";
 
 // Connect to MongoDB FIRST, then start accepting HTTP requests.
 // This ensures no request hits a controller before the database
 // is ready. If the DB connection fails, the server never starts.
 async function start() {
   await connectDatabase();
+  await createAdmin();
 
   const server = app.listen(config.port, () => {
     console.log(

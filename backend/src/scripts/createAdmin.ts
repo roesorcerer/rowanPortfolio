@@ -20,25 +20,25 @@ import { hashPassword } from "../utils/auth.utils";
 // Run from the backend/ directory:
 //   npm run admin
 
-async function createAdmin() {
+export async function createAdmin(): Promise<void> {
   const mongoUri = process.env.MONGODB_URI;
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
   const name = process.env.ADMIN_NAME ?? "Admin";
 
   if (!mongoUri) {
-    console.error("MONGODB_URI not set in .env");
-    process.exit(1);
+    console.warn("Skipping admin bootstrap: MONGODB_URI is not set.");
+    return;
   }
   if (!email || !password) {
-    console.error(
-      "ADMIN_EMAIL and ADMIN_PASSWORD must both be set (env or .env)."
+    console.warn(
+      "Skipping admin bootstrap: ADMIN_EMAIL and ADMIN_PASSWORD must both be set."
     );
-    process.exit(1);
+    return;
   }
   if (password.length < 8) {
-    console.error("ADMIN_PASSWORD must be at least 8 characters.");
-    process.exit(1);
+    console.warn("Skipping admin bootstrap: ADMIN_PASSWORD must be at least 8 characters.");
+    return;
   }
 
   try {
@@ -57,11 +57,12 @@ async function createAdmin() {
     console.log(`Admin user ready: ${result.email} (${result._id})`);
   } catch (error) {
     console.error("createAdmin failed:", error);
-    process.exit(1);
   } finally {
     await mongoose.connection.close();
     console.log("Done.");
   }
 }
 
-createAdmin();
+if (require.main === module) {
+  void createAdmin();
+}
