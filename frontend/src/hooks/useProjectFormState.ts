@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import type { Project, ProjectType } from "../types";
+import type { Project, ProjectType, ResearchStatus } from "../types";
 import type { ProjectPayload } from "../api/projects";
 
 // Owns the Project ↔ form ↔ payload marshalling.
@@ -34,6 +34,14 @@ export interface FormState {
   }[];
   projectType: ProjectType;
   featured: boolean;
+  researchStatus: ResearchStatus | "";
+  researchVenue: string;
+  researchYear: string;
+  rejectedVenue: string;
+  improvedIntoTitle: string;
+  improvedIntoLink: string;
+  improvementSummary: string;
+  practicePurpose: string;
   order: number;
 }
 
@@ -51,6 +59,14 @@ export const EMPTY_FORM: FormState = {
   collaborators: [],
   projectType: "practice",
   featured: false,
+  researchStatus: "",
+  researchVenue: "",
+  researchYear: "",
+  rejectedVenue: "",
+  improvedIntoTitle: "",
+  improvedIntoLink: "",
+  improvementSummary: "",
+  practicePurpose: "",
   order: 0,
 };
 
@@ -80,6 +96,14 @@ export function fromProject(project: Project): FormState {
     })),
     projectType: project.projectType,
     featured: project.featured,
+    researchStatus: project.researchStatus ?? "",
+    researchVenue: project.researchVenue ?? "",
+    researchYear: project.researchYear ? String(project.researchYear) : "",
+    rejectedVenue: project.rejectedVenue ?? "",
+    improvedIntoTitle: project.improvedIntoTitle ?? "",
+    improvedIntoLink: project.improvedIntoLink ?? "",
+    improvementSummary: project.improvementSummary ?? "",
+    practicePurpose: project.practicePurpose ?? "",
     order: project.order,
   };
 }
@@ -117,6 +141,14 @@ export function toPayload(form: FormState): ProjectPayload {
       .filter((c) => c.name.length > 0 && c.socialLink.length > 0),
     projectType: form.projectType,
     featured: form.featured,
+    researchStatus: form.researchStatus || undefined,
+    researchVenue: form.researchVenue.trim() || undefined,
+    researchYear: form.researchYear.trim() ? Number(form.researchYear) : undefined,
+    rejectedVenue: form.rejectedVenue.trim() || undefined,
+    improvedIntoTitle: form.improvedIntoTitle.trim() || undefined,
+    improvedIntoLink: form.improvedIntoLink.trim() || undefined,
+    improvementSummary: form.improvementSummary.trim() || undefined,
+    practicePurpose: form.practicePurpose.trim() || undefined,
     order: form.order,
   };
 }

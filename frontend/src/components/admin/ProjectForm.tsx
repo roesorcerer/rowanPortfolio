@@ -132,6 +132,8 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
                 <option value="featured">Featured</option>
                 <option value="research">Research</option>
                 <option value="practice">Practice</option>
+                <option value="gameDev">Game Development</option>
+                <option value="art">Art</option>
               </select>
             </Field>
           </div>
@@ -186,6 +188,106 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
               type="url"
             />
           </Field>
+
+          {form.projectType === "research" && (
+            <section className="border border-rule rounded-lg p-4 space-y-3">
+              <h3 className="text-ink text-sm font-medium">Research metadata</h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Field label="Status">
+                  <select
+                    value={form.researchStatus}
+                    onChange={(e) =>
+                      setField(
+                        "researchStatus",
+                        e.target.value as "" | "published" | "rejected"
+                      )
+                    }
+                    className={inputCls}
+                  >
+                    <option value="">Select status</option>
+                    <option value="published">Published</option>
+                    <option value="rejected">Developing manuscript</option>
+                  </select>
+                </Field>
+
+                <Field label="Publication year (optional)">
+                  <input
+                    value={form.researchYear}
+                    onChange={(e) => setField("researchYear", e.target.value)}
+                    className={inputCls}
+                    placeholder="2026"
+                    type="number"
+                    min={1900}
+                    max={2100}
+                  />
+                </Field>
+              </div>
+
+              <Field label="Venue (optional)">
+                <input
+                  value={form.researchVenue}
+                  onChange={(e) => setField("researchVenue", e.target.value)}
+                  className={inputCls}
+                  placeholder="e.g. CHI EA 2026"
+                />
+              </Field>
+
+              <Field label="Original submission venue (optional)">
+                <input
+                  value={form.rejectedVenue}
+                  onChange={(e) => setField("rejectedVenue", e.target.value)}
+                  className={inputCls}
+                  placeholder="e.g. CSCW 2025"
+                />
+              </Field>
+
+              <Field label="Improved into manuscript title (optional)">
+                <input
+                  value={form.improvedIntoTitle}
+                  onChange={(e) => setField("improvedIntoTitle", e.target.value)}
+                  className={inputCls}
+                  placeholder="Revised manuscript title"
+                />
+              </Field>
+
+              <Field label="Improved manuscript link (optional)">
+                <input
+                  value={form.improvedIntoLink}
+                  onChange={(e) => setField("improvedIntoLink", e.target.value)}
+                  className={inputCls}
+                  placeholder="https://new-manuscript.example.com"
+                  type="url"
+                />
+              </Field>
+
+              <Field label="Improvement summary (optional)">
+                <textarea
+                  rows={3}
+                  value={form.improvementSummary}
+                  onChange={(e) => setField("improvementSummary", e.target.value)}
+                  className={inputCls}
+                  placeholder="How reviewer feedback was incorporated"
+                />
+              </Field>
+            </section>
+          )}
+
+          {form.projectType === "practice" && (
+            <section className="border border-rule rounded-lg p-4 space-y-3">
+              <h3 className="text-ink text-sm font-medium">Practice learning context</h3>
+
+              <Field label="What this practice project is for">
+                <textarea
+                  rows={3}
+                  value={form.practicePurpose}
+                  onChange={(e) => setField("practicePurpose", e.target.value)}
+                  className={inputCls}
+                  placeholder="e.g. Build fluency with distributed systems patterns through a small production-like service"
+                />
+              </Field>
+            </section>
+          )}
 
           <Field label="Development time (optional)">
             <input

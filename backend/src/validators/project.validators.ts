@@ -51,7 +51,15 @@ export const createProjectSchema = z.object({
   media: z.array(mediaItemSchema).default([]),
   collaborators: z.array(collaboratorSchema).default([]),
   featured: z.boolean().default(false),
-  projectType: z.enum(["featured", "research", "practice"]).default("practice"),
+  projectType: z.enum(["featured", "research", "practice", "gameDev", "art"]).default("practice"),
+  researchStatus: z.enum(["published", "rejected"]).optional(),
+  researchVenue: z.string().trim().optional(),
+  researchYear: z.number().int().min(1900).max(2100).optional(),
+  rejectedVenue: z.string().trim().optional(),
+  improvedIntoTitle: z.string().trim().optional(),
+  improvedIntoLink: z.string().url("Improved manuscript link must be a valid URL").optional(),
+  improvementSummary: z.string().trim().optional(),
+  practicePurpose: z.string().trim().optional(),
   order: z.number().int().default(0),
 });
 

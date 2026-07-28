@@ -25,8 +25,9 @@ export async function createAdmin(): Promise<void> {
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
   const name = process.env.ADMIN_NAME ?? "Admin";
+  const shouldManageConnection = mongoose.connection.readyState === 0;
 
-  if (!mongoUri) {
+  if (shouldManageConnection && !mongoUri) {
     console.warn("Skipping admin bootstrap: MONGODB_URI is not set.");
     return;
   }
@@ -42,8 +43,10 @@ export async function createAdmin(): Promise<void> {
   }
 
   try {
-    await mongoose.connect(mongoUri);
-    console.log("Connected to MongoDB.");
+    if (shouldManageConnection) {
+      await mongoose.connect(mongoUri as string);
+      console.log("Connected to MongoDB.");
+    }
 
     const hashed = await hashPassword(password);
     const lowerEmail = email.trim().toLowerCase();
@@ -51,15 +54,17 @@ export async function createAdmin(): Promise<void> {
     const result = await UserModel.findOneAndUpdate(
       { email: lowerEmail },
       { email: lowerEmail, password: hashed, name, role: "admin" },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
 
     console.log(`Admin user ready: ${result.email} (${result._id})`);
   } catch (error) {
     console.error("createAdmin failed:", error);
   } finally {
-    await mongoose.connection.close();
-    console.log("Done.");
+    if (shouldManageConnection) {
+      await mongoose.connection.close();
+      console.log("Done.");
+    }
   }
 }
 

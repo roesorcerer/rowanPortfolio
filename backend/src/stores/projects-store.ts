@@ -29,7 +29,15 @@ export type Project = {
   }[];
   technologies: string[];
   featured: boolean;
-  projectType: "featured" | "research" | "practice";
+  projectType: "featured" | "research" | "practice" | "gameDev" | "art";
+  researchStatus?: "published" | "rejected";
+  researchVenue?: string;
+  researchYear?: number;
+  rejectedVenue?: string;
+  improvedIntoTitle?: string;
+  improvedIntoLink?: string;
+  improvementSummary?: string;
+  practicePurpose?: string;
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -61,6 +69,14 @@ type ProjectDoc = {
   technologies?: string[];
   featured?: boolean;
   projectType: Project["projectType"];
+  researchStatus?: Project["researchStatus"];
+  researchVenue?: string;
+  researchYear?: number;
+  rejectedVenue?: string;
+  improvedIntoTitle?: string;
+  improvedIntoLink?: string;
+  improvementSummary?: string;
+  practicePurpose?: string;
   order?: number;
   createdAt: Date;
   updatedAt: Date;
@@ -82,6 +98,14 @@ function toProject(doc: ProjectDoc): Project {
     technologies: doc.technologies ?? [],
     featured: doc.featured ?? false,
     projectType: doc.projectType,
+    researchStatus: doc.researchStatus,
+    researchVenue: doc.researchVenue,
+    researchYear: doc.researchYear,
+    rejectedVenue: doc.rejectedVenue,
+    improvedIntoTitle: doc.improvedIntoTitle,
+    improvedIntoLink: doc.improvedIntoLink,
+    improvementSummary: doc.improvementSummary,
+    practicePurpose: doc.practicePurpose,
     order: doc.order ?? 0,
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,

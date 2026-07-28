@@ -13,6 +13,14 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
   const analytics = useAnalytics();
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
+  const researchStatus: "published" | "rejected" | null =
+    project.projectType === "research"
+      ? project.researchStatus ??
+        (project.rejectedVenue || project.improvedIntoTitle || project.improvedIntoLink || project.improvementSummary
+          ? "rejected"
+          : "published")
+      : null;
+
   const mediaItems = useMemo(() => {
     if (project.media && project.media.length > 0) {
       return project.media;
@@ -187,6 +195,12 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                 {project.title}
               </h2>
 
+              {researchStatus && (
+                <p className="text-xs uppercase tracking-[0.2em] text-faint mb-4">
+                  {researchStatus === "published" ? "Published work" : "Developing manuscript"}
+                </p>
+              )}
+
               {project.description && (
                 <p className="text-body text-[15px] md:text-base leading-[1.7] mb-6 whitespace-pre-line">
                   {project.description}
@@ -213,6 +227,59 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                     <p className="text-body text-sm">Not listed</p>
                   )}
                 </section>
+
+                {project.projectType === "research" && (
+                  <section className="border border-rule bg-white p-4">
+                    <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-2">Publication details</h3>
+                    <div className="space-y-1">
+                      <p className="text-body text-sm">
+                        Status: {researchStatus === "rejected" ? "Developing manuscript" : "Published"}
+                      </p>
+                      <p className="text-body text-sm">Venue: {project.researchVenue?.trim() || "Not listed"}</p>
+                      <p className="text-body text-sm">
+                        Year: {project.researchYear ? String(project.researchYear) : "Not listed"}
+                      </p>
+                    </div>
+                  </section>
+                )}
+
+                {project.projectType === "research" && researchStatus === "rejected" && (
+                  <section className="border border-amber-200 bg-amber-50/40 p-4">
+                    <h3 className="text-amber-900 text-xs uppercase tracking-widest font-medium mb-2">Revision trail</h3>
+                    <div className="space-y-1">
+                      <p className="text-body text-sm">
+                        Original submission: {project.rejectedVenue?.trim() || "Not listed"}
+                      </p>
+                      <p className="text-body text-sm">
+                        Improved into:{" "}
+                        {project.improvedIntoLink ? (
+                          <a
+                            href={project.improvedIntoLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-accent-dark hover:text-accent-darker"
+                          >
+                            {project.improvedIntoTitle?.trim() || "Revised manuscript"}
+                          </a>
+                        ) : (
+                          <span>{project.improvedIntoTitle?.trim() || "Not listed"}</span>
+                        )}
+                      </p>
+                      {project.improvementSummary?.trim() && (
+                        <p className="text-muted text-sm">{project.improvementSummary}</p>
+                      )}
+                    </div>
+                  </section>
+                )}
+
+                {project.projectType === "practice" && (
+                  <section className="border border-rule bg-white p-4 md:col-span-2">
+                    <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-3">Practice purpose</h3>
+                    <p className="text-body text-sm leading-relaxed">
+                      {project.practicePurpose?.trim() || project.description || "Not listed"}
+                    </p>
+                  </section>
+                )}
 
                 <section className="border border-rule bg-white p-4">
                   <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-3">Worked on by</h3>

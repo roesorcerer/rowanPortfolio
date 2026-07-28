@@ -9,12 +9,16 @@ const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
   featured: "Featured",
   research: "Research",
   practice: "Practice",
+  gameDev: "Game Development",
+  art: "Art",
 };
 
 const PROJECT_TYPE_COLORS: Record<ProjectType, string> = {
   featured: "bg-accent-soft text-accent-dark",
   research: "bg-[#EEF0FF] text-[#3D4EBF]",
   practice: "bg-[#F5F0E1] text-[#8A6A00]",
+  gameDev: "bg-[#EAF7F4] text-[#0E6E58]",
+  art: "bg-[#FFF1E9] text-[#A84B12]",
 };
 
 function ProjectsTab() {

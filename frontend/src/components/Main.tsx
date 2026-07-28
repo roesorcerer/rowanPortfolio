@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { useProjects } from "../hooks/useProjects";
-import type { ProjectType } from "../types";
+import type { Project, ProjectType } from "../types";
 import ProjectCard from "./ProjectCard";
 import AboutSection from "./AboutSection";
 import ContactSection from "./ContactSection";
@@ -192,6 +192,8 @@ const TAB_LABELS: { type: ProjectType; label: string; description: string }[] = 
   { type: "featured", label: "Featured", description: "Selected work" },
   { type: "research", label: "Research", description: "Papers & studies" },
   { type: "practice", label: "Practice", description: "Experiments & builds" },
+  { type: "gameDev", label: "Game Dev", description: "Playable systems" },
+  { type: "art", label: "Art", description: "Visual explorations" },
 ];
 
 function ProjectsFilter({
@@ -290,13 +292,36 @@ function Main() {
   const { data: projects, isLoading, error } = useProjects();
   const [activeTab, setActiveTab] = useState<ProjectType>("featured");
 
+  const getResearchStatus = (project: Project): "published" | "rejected" => {
+    if (project.researchStatus) return project.researchStatus;
+    if (
+      project.rejectedVenue ||
+      project.improvedIntoTitle ||
+      project.improvedIntoLink ||
+      project.improvementSummary
+    ) {
+      return "rejected";
+    }
+    return "published";
+  };
+
   const counts: Record<ProjectType, number> = {
     featured: projects?.filter((p) => p.projectType === "featured").length ?? 0,
     research: projects?.filter((p) => p.projectType === "research").length ?? 0,
     practice: projects?.filter((p) => p.projectType === "practice").length ?? 0,
+    gameDev: projects?.filter((p) => p.projectType === "gameDev").length ?? 0,
+    art: projects?.filter((p) => p.projectType === "art").length ?? 0,
   };
 
   const visibleProjects = projects?.filter((p) => p.projectType === activeTab) ?? [];
+  const publishedResearch =
+    activeTab === "research"
+      ? visibleProjects.filter((project) => getResearchStatus(project) === "published")
+      : [];
+  const rejectedResearch =
+    activeTab === "research"
+      ? visibleProjects.filter((project) => getResearchStatus(project) === "rejected")
+      : [];
 
   return (
     <main className="flex flex-col bg-paper min-h-screen">
@@ -333,17 +358,61 @@ function Main() {
             )}
 
             {activeTab === "research" && (
-              <div className="px-5 md:px-10 space-y-3">
-                {visibleProjects.map((project, index) => (
-                  <ProjectCard key={project._id} project={project} index={index} variant="research" />
-                ))}
+              <div className="px-5 md:px-10 space-y-8">
+                <section>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h3 className="text-ink text-xs uppercase tracking-[0.2em]">Published works</h3>
+                    <span className="text-faint text-xs">{publishedResearch.length}</span>
+                  </div>
+                  <div className="space-y-3">
+                    {publishedResearch.map((project, index) => (
+                      <ProjectCard key={project._id} project={project} index={index} variant="research" />
+                    ))}
+                    {publishedResearch.length === 0 && (
+                      <p className="text-faint text-sm border border-rule bg-white p-4">No published works added yet.</p>
+                    )}
+                  </div>
+                </section>
+
+                <section>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h3 className="text-ink text-xs uppercase tracking-[0.2em]">Developing manuscripts</h3>
+                    <span className="text-faint text-xs">{rejectedResearch.length}</span>
+                  </div>
+                  <div className="space-y-3">
+                    {rejectedResearch.map((project, index) => (
+                      <ProjectCard key={project._id} project={project} index={index} variant="research" />
+                    ))}
+                    {rejectedResearch.length === 0 && (
+                      <p className="text-faint text-sm border border-rule bg-white p-4">
+                        No developing manuscripts added yet. Add one with a revision trail to show where it was submitted and how it evolved.
+                      </p>
+                    )}
+                  </div>
+                </section>
               </div>
             )}
 
             {activeTab === "practice" && (
-              <div className="px-5 md:px-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="px-5 md:px-10 space-y-6">
                 {visibleProjects.map((project, index) => (
                   <ProjectCard key={project._id} project={project} index={index} variant="practice" />
+                ))}
+              </div>
+            )}
+
+            {activeTab === "gameDev" && (
+              <div className="px-5 md:px-10 space-y-6">
+                {visibleProjects.map((project, index) => (
+                  <ProjectCard key={project._id} project={project} index={index} variant="gameDev" />
+                ))}
+              </div>
+            )}
+
+            {activeTab === "art" && (
+              <div className="px-5 md:px-10 space-y-6">
+                {visibleProjects.map((project, index) => (
+                  <ProjectCard key={project._id} project={project} index={index} variant="art" />
                 ))}
               </div>
             )}

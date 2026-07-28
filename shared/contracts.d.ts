@@ -21,7 +21,8 @@ export interface ApiResponse<T = unknown> {
 
 // ---- Projects ----
 
-export type ProjectType = "featured" | "research" | "practice";
+export type ProjectType = "featured" | "research" | "practice" | "gameDev" | "art";
+export type ResearchStatus = "published" | "rejected";
 
 export type ProjectMediaType = "image" | "video";
 
@@ -55,6 +56,14 @@ export interface Project {
   technologies: string[];
   featured: boolean;
   projectType: ProjectType;
+  researchStatus?: ResearchStatus;
+  researchVenue?: string;
+  researchYear?: number;
+  rejectedVenue?: string;
+  improvedIntoTitle?: string;
+  improvedIntoLink?: string;
+  improvementSummary?: string;
+  practicePurpose?: string;
   order: number;
   createdAt: string;
   updatedAt: string;
@@ -74,6 +83,14 @@ export interface ProjectPayload {
   technologies: string[];
   projectType: ProjectType;
   featured: boolean;
+  researchStatus?: ResearchStatus;
+  researchVenue?: string;
+  researchYear?: number;
+  rejectedVenue?: string;
+  improvedIntoTitle?: string;
+  improvedIntoLink?: string;
+  improvementSummary?: string;
+  practicePurpose?: string;
   order: number;
 }
 

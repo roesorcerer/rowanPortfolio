@@ -4,7 +4,8 @@ import { LIMITS } from "../validators/limits";
 // This interface represents a Project document in MongoDB.
 // It extends Mongoose's Document type, which adds _id, __v,
 // save(), remove(), and other Mongoose methods.
-export type ProjectType = "featured" | "research" | "practice";
+export type ProjectType = "featured" | "research" | "practice" | "gameDev" | "art";
+export type ResearchStatus = "published" | "rejected";
 export type ProjectMediaType = "image" | "video";
 
 export interface ProjectMedia {
@@ -36,6 +37,14 @@ export interface IProject extends Document {
   technologies: string[];
   featured: boolean;
   projectType: ProjectType;
+  researchStatus?: ResearchStatus;
+  researchVenue?: string;
+  researchYear?: number;
+  rejectedVenue?: string;
+  improvedIntoTitle?: string;
+  improvedIntoLink?: string;
+  improvementSummary?: string;
+  practicePurpose?: string;
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -144,9 +153,43 @@ const projectSchema = new Schema<IProject>(
     },
     projectType: {
       type: String,
-      enum: ["featured", "research", "practice"],
+      enum: ["featured", "research", "practice", "gameDev", "art"],
       required: [true, "Project type is required"],
       default: "practice",
+    },
+    researchStatus: {
+      type: String,
+      enum: ["published", "rejected"],
+      trim: true,
+    },
+    researchVenue: {
+      type: String,
+      trim: true,
+    },
+    researchYear: {
+      type: Number,
+      min: 1900,
+      max: 2100,
+    },
+    rejectedVenue: {
+      type: String,
+      trim: true,
+    },
+    improvedIntoTitle: {
+      type: String,
+      trim: true,
+    },
+    improvedIntoLink: {
+      type: String,
+      trim: true,
+    },
+    improvementSummary: {
+      type: String,
+      trim: true,
+    },
+    practicePurpose: {
+      type: String,
+      trim: true,
     },
     order: {
       type: Number,
