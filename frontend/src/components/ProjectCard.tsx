@@ -1,14 +1,20 @@
 import { useState } from "react";
-import type { Project, ProjectType } from "../types";
+import type { Project, ProjectType, ResearchStatus } from "../types";
 import ProjectModal from "./ProjectModal";
 import { useAnalytics } from "../analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+/**
+ * "featured" is a layout, not a type — it's the large hero card the Featured
+ * tab uses. Product-typed projects fall through to the same layout.
+ */
+export type ProjectCardVariant = ProjectType | "featured";
+
 interface ProjectCardProps {
   project: Project;
   index: number;
-  variant?: ProjectType;
+  variant?: ProjectCardVariant;
 }
 
 function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
@@ -16,7 +22,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
   const analytics = useAnalytics();
   const stop = (e: React.MouseEvent | React.KeyboardEvent) => e.stopPropagation();
 
-  const getResearchStatus = (): "published" | "rejected" => {
+  const getResearchStatus = (): ResearchStatus => {
     if (project.researchStatus) return project.researchStatus;
     if (
       project.rejectedVenue ||
@@ -24,10 +30,13 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
       project.improvedIntoLink ||
       project.improvementSummary
     ) {
-      return "rejected";
+      return "in-revision";
     }
     return "published";
   };
+
+  /** category is a tag list now; most card slots have room for one line of them. */
+  const tagLabel = () => (project.category ?? []).join(" · ");
 
   const citationYear = () => {
     if (project.researchYear) return project.researchYear;
@@ -77,7 +86,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
   if (variant === "research") {
     const status = getResearchStatus();
     const year = citationYear();
-    const venue = project.researchVenue?.trim() || project.category;
+    const venue = project.researchVenue?.trim() || tagLabel();
     const statusClass =
       status === "published"
         ? "bg-emerald-50 text-emerald-700 border-emerald-200"
@@ -113,7 +122,7 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
 
             {project.description && <p className="text-muted text-sm leading-relaxed mt-3">{project.description}</p>}
 
-            {status === "rejected" && (
+            {status === "in-revision" && (
               <div className="mt-4 border border-amber-200 bg-amber-50/40 p-3 space-y-1.5">
                 <p className="text-amber-900 text-xs uppercase tracking-wider">Revision trail</p>
                 <p className="text-body text-sm">
@@ -201,9 +210,14 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
                 <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-[#F5F0E1] text-[#8A6A00] text-[11px] md:text-xs uppercase tracking-[0.12em]">
                   Practice
                 </span>
-                <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-accent-soft text-accent-dark text-[11px] md:text-xs">
-                  {project.category}
-                </span>
+                {(project.category ?? []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex w-fit px-2.5 py-1 rounded-md bg-accent-soft text-accent-dark text-[11px] md:text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
 
               <h3 className="text-xl md:text-2xl font-light tracking-tight text-ink text-left text-pretty leading-tight">
@@ -296,9 +310,14 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
                 <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-[#EAF7F4] text-[#0E6E58] text-[11px] md:text-xs uppercase tracking-[0.12em]">
                   Game Development
                 </span>
-                <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-accent-soft text-accent-dark text-[11px] md:text-xs">
-                  {project.category}
-                </span>
+                {(project.category ?? []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex w-fit px-2.5 py-1 rounded-md bg-accent-soft text-accent-dark text-[11px] md:text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
 
               <h3 className="text-xl md:text-2xl font-light tracking-tight text-ink text-pretty leading-tight">
@@ -394,9 +413,14 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
                 <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-[#FFF1E9] text-[#A84B12] text-[11px] md:text-xs uppercase tracking-[0.12em]">
                   Art
                 </span>
-                <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-rule-soft text-body text-[11px] md:text-xs">
-                  {project.category}
-                </span>
+                {(project.category ?? []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex w-fit px-2.5 py-1 rounded-md bg-rule-soft text-body text-[11px] md:text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
 
               <h3 className="text-xl md:text-2xl font-light tracking-tight text-ink text-pretty leading-tight">
@@ -486,9 +510,14 @@ function ProjectCard({ project, variant = "featured" }: ProjectCardProps) {
             <div className="space-y-1.5">
               <p className="text-[10px] md:text-[11px] font-medium tracking-[0.18em] uppercase text-faint">Tags</p>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-accent-soft text-accent-dark text-[11px] md:text-xs">
-                  {project.category}
-                </span>
+                {(project.category ?? []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex w-fit px-2.5 py-1 rounded-md bg-accent-soft text-accent-dark text-[11px] md:text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
                 <span className="inline-flex w-fit px-2.5 py-1 rounded-md bg-rule-soft text-body text-[11px] md:text-xs uppercase">
                   {project.projectType}
                 </span>

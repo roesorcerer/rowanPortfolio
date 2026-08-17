@@ -13,3 +13,6 @@ docs/
 CONTEXT.md
 .gitignore
 
+
+# Local DB dumps from backup:projects — never commit production data.
+backups/

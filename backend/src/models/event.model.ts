@@ -7,7 +7,9 @@ export interface IEvent extends Document {
   eventType: string;       // "project_view" | "link_click"
   projectId?: string;      // MongoDB ObjectId string, if applicable
   projectTitle?: string;
-  projectType?: string;    // "featured" | "research" | "practice"
+  // Free string on purpose: historical rows keep whatever the taxonomy was
+  // when the event fired (including the retired "featured" type).
+  projectType?: string;    // "product" | "research" | "practice" | "gameDev" | "art"
   linkType?: string;       // "demo" | "github"
   referrer: string;
   userAgent: string;

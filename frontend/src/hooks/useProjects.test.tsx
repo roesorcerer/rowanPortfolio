@@ -2,25 +2,39 @@ import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   useProjects,
+  useAllProjects,
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
+  useReorderProjects,
 } from "./useProjects";
 import * as projectsApi from "../api/projects";
-import type { Project } from "../types";
+import type { Project, ProjectPayload } from "../types";
 
 const project: Project = {
   _id: "p1",
   title: "Hello",
-  category: "Web",
+  category: ["Web"],
   description: "",
   image: "/x.png",
   technologies: [],
   order: 0,
   featured: false,
-  projectType: "featured",
+  projectType: "product",
+  status: "published",
   createdAt: "",
   updatedAt: "",
+};
+
+const payload: ProjectPayload = {
+  title: "x",
+  category: ["x"],
+  description: "x",
+  image: "/x",
+  technologies: [],
+  projectType: "product",
+  featured: false,
+  status: "draft",
 };
 
 function wrapper() {
@@ -53,16 +67,7 @@ describe("useProjects + mutations", () => {
 
     const { result } = renderHook(() => useCreateProject(), { wrapper: Wrap });
     await act(async () => {
-      await result.current.mutateAsync({
-        title: "x",
-        category: "x",
-        description: "x",
-        image: "/x",
-        technologies: [],
-        projectType: "featured",
-        featured: false,
-        order: 0,
-      });
+      await result.current.mutateAsync(payload);
     });
 
     expect(projectsApi.createProject).toHaveBeenCalledTimes(1);
@@ -74,16 +79,6 @@ describe("useProjects + mutations", () => {
     vi.spyOn(projectsApi, "updateProject").mockResolvedValue(project);
     const { Wrap } = wrapper();
     const { result } = renderHook(() => useUpdateProject(), { wrapper: Wrap });
-    const payload = {
-      title: "x",
-      category: "x",
-      description: "x",
-      image: "/x",
-      technologies: [],
-      projectType: "featured" as const,
-      featured: false,
-      order: 0,
-    };
     await act(async () => {
       await result.current.mutateAsync({ id: "p1", payload });
     });
@@ -102,5 +97,69 @@ describe("useProjects + mutations", () => {
 
     expect(projectsApi.deleteProject).toHaveBeenCalledWith("p1");
     expect(qc.getQueryState(["projects"])?.isInvalidated).toBe(true);
+  });
+
+  it("useAllProjects reads the admin endpoint under its own key", async () => {
+    const draft: Project = { ...project, _id: "p2", status: "draft" };
+    vi.spyOn(projectsApi, "getAllProjects").mockResolvedValue([project, draft]);
+    const { qc, Wrap } = wrapper();
+
+    const { result } = renderHook(() => useAllProjects(), { wrapper: Wrap });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toEqual([project, draft]);
+    // The public key must stay untouched, or a draft could leak into the site.
+    expect(qc.getQueryData(["projects"])).toBeUndefined();
+  });
+});
+
+describe("useReorderProjects", () => {
+  const a: Project = { ...project, _id: "a", order: 0 };
+  const b: Project = { ...project, _id: "b", order: 1 };
+  const c: Project = { ...project, _id: "c", order: 2 };
+
+  it("applies the new order to the admin cache before the request resolves", async () => {
+    let resolveRequest: (value: { reordered: number }) => void = () => {};
+    vi.spyOn(projectsApi, "reorderProjects").mockReturnValue(
+      new Promise((resolve) => {
+        resolveRequest = resolve;
+      })
+    );
+
+    const { qc, Wrap } = wrapper();
+    qc.setQueryData(["projects", "admin"], [a, b, c]);
+
+    const { result } = renderHook(() => useReorderProjects(), { wrapper: Wrap });
+    act(() => {
+      result.current.mutate(["c", "a", "b"]);
+    });
+
+    await waitFor(() => {
+      const cached = qc.getQueryData<Project[]>(["projects", "admin"]);
+      expect(cached?.map((p) => [p._id, p.order])).toEqual([
+        ["a", 1],
+        ["b", 2],
+        ["c", 0],
+      ]);
+    });
+
+    await act(async () => {
+      resolveRequest({ reordered: 3 });
+    });
+    expect(projectsApi.reorderProjects).toHaveBeenCalledWith(["c", "a", "b"]);
+  });
+
+  it("rolls the cache back when the request fails", async () => {
+    vi.spyOn(projectsApi, "reorderProjects").mockRejectedValue(new Error("nope"));
+    const { qc, Wrap } = wrapper();
+    qc.setQueryData(["projects", "admin"], [a, b, c]);
+
+    const { result } = renderHook(() => useReorderProjects(), { wrapper: Wrap });
+    await act(async () => {
+      result.current.mutate(["c", "a", "b"]);
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(qc.getQueryData<Project[]>(["projects", "admin"])).toEqual([a, b, c]);
   });
 });

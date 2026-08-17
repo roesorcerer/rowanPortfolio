@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { useProjects } from "../hooks/useProjects";
-import type { Project, ProjectType } from "../types";
+import type { Project, ProjectType, ResearchStatus } from "../types";
 import ProjectCard from "./ProjectCard";
 import AboutSection from "./AboutSection";
 import ContactSection from "./ContactSection";
@@ -188,8 +188,13 @@ function Hero1(props: Hero1Props) {
   );
 }
 
-const TAB_LABELS: { type: ProjectType; label: string; description: string }[] = [
+// "featured" is a promotion, not a type — the Featured tab reads the boolean.
+// A promoted project therefore appears here and under its own type.
+type TabKey = "featured" | ProjectType;
+
+const TAB_LABELS: { type: TabKey; label: string; description: string }[] = [
   { type: "featured", label: "Featured", description: "Selected work" },
+  { type: "product", label: "Product", description: "Shipped applications" },
   { type: "research", label: "Research", description: "Papers & studies" },
   { type: "practice", label: "Practice", description: "Experiments & builds" },
   { type: "gameDev", label: "Game Dev", description: "Playable systems" },
@@ -201,9 +206,9 @@ function ProjectsFilter({
   counts,
   onChange,
 }: {
-  activeTab: ProjectType;
-  counts: Record<ProjectType, number>;
-  onChange: (t: ProjectType) => void;
+  activeTab: TabKey;
+  counts: Record<TabKey, number>;
+  onChange: (t: TabKey) => void;
 }) {
   return (
     <div className="px-5 md:px-10 mb-7">
@@ -290,9 +295,9 @@ function SiteFooter() {
 
 function Main() {
   const { data: projects, isLoading, error } = useProjects();
-  const [activeTab, setActiveTab] = useState<ProjectType>("featured");
+  const [activeTab, setActiveTab] = useState<TabKey>("featured");
 
-  const getResearchStatus = (project: Project): "published" | "rejected" => {
+  const getResearchStatus = (project: Project): ResearchStatus => {
     if (project.researchStatus) return project.researchStatus;
     if (
       project.rejectedVenue ||
@@ -300,27 +305,32 @@ function Main() {
       project.improvedIntoLink ||
       project.improvementSummary
     ) {
-      return "rejected";
+      return "in-revision";
     }
     return "published";
   };
 
-  const counts: Record<ProjectType, number> = {
-    featured: projects?.filter((p) => p.projectType === "featured").length ?? 0,
-    research: projects?.filter((p) => p.projectType === "research").length ?? 0,
-    practice: projects?.filter((p) => p.projectType === "practice").length ?? 0,
-    gameDev: projects?.filter((p) => p.projectType === "gameDev").length ?? 0,
-    art: projects?.filter((p) => p.projectType === "art").length ?? 0,
-  };
+  // A tab is either the promotion flag or one taxonomy value. Type counts
+  // include promoted work, so they stay honest about how much of each there is.
+  const inTab = (project: Project, tab: TabKey) =>
+    tab === "featured" ? project.featured : project.projectType === tab;
 
-  const visibleProjects = projects?.filter((p) => p.projectType === activeTab) ?? [];
+  const counts = TAB_LABELS.reduce(
+    (acc, { type }) => {
+      acc[type] = projects?.filter((p) => inTab(p, type)).length ?? 0;
+      return acc;
+    },
+    {} as Record<TabKey, number>
+  );
+
+  const visibleProjects = projects?.filter((p) => inTab(p, activeTab)) ?? [];
   const publishedResearch =
     activeTab === "research"
       ? visibleProjects.filter((project) => getResearchStatus(project) === "published")
       : [];
-  const rejectedResearch =
+  const inRevisionResearch =
     activeTab === "research"
-      ? visibleProjects.filter((project) => getResearchStatus(project) === "rejected")
+      ? visibleProjects.filter((project) => getResearchStatus(project) === "in-revision")
       : [];
 
   return (
@@ -349,7 +359,9 @@ function Main() {
           <>
             <ProjectsFilter activeTab={activeTab} counts={counts} onChange={setActiveTab} />
 
-            {activeTab === "featured" && (
+            {/* Product shares the large hero layout with Featured — the same
+                kind of work, just not promoted. */}
+            {(activeTab === "featured" || activeTab === "product") && (
               <div className="px-5 md:px-10 space-y-6">
                 {visibleProjects.map((project, index) => (
                   <ProjectCard key={project._id} project={project} index={index} variant="featured" />
@@ -377,13 +389,13 @@ function Main() {
                 <section>
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <h3 className="text-ink text-xs uppercase tracking-[0.2em]">Developing manuscripts</h3>
-                    <span className="text-faint text-xs">{rejectedResearch.length}</span>
+                    <span className="text-faint text-xs">{inRevisionResearch.length}</span>
                   </div>
                   <div className="space-y-3">
-                    {rejectedResearch.map((project, index) => (
+                    {inRevisionResearch.map((project, index) => (
                       <ProjectCard key={project._id} project={project} index={index} variant="research" />
                     ))}
-                    {rejectedResearch.length === 0 && (
+                    {inRevisionResearch.length === 0 && (
                       <p className="text-faint text-sm border border-rule bg-white p-4">
                         No developing manuscripts added yet. Add one with a revision trail to show where it was submitted and how it evolved.
                       </p>

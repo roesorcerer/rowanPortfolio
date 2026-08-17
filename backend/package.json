@@ -11,6 +11,9 @@
     "lint:fix": "eslint src/ --fix",
     "seed": "ts-node src/scripts/seed.ts",
     "admin": "ts-node src/scripts/createAdmin.ts",
+    "migrate:projects": "ts-node src/scripts/migrate-projects.ts",
+    "backup:projects": "ts-node src/scripts/backup-projects.ts",
+    "restore:projects": "ts-node src/scripts/restore-projects.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },

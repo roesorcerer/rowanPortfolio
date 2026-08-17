@@ -10,7 +10,7 @@ import type { Project } from "../types";
 const project: Project = {
   _id: "p1",
   title: "Hello",
-  category: "Web",
+  category: ["Web", "Mobile"],
   description: "A description",
   image: "/x.png",
   media: [
@@ -40,7 +40,8 @@ const project: Project = {
   technologies: ["React", "Node.js", "MongoDB"],
   order: 2,
   featured: true,
-  projectType: "featured",
+  projectType: "product",
+  status: "published",
   createdAt: "",
   updatedAt: "",
 };
@@ -140,7 +141,7 @@ describe("useProjectFormState", () => {
     const { result } = renderHook(() => useProjectFormState(project));
     act(() => result.current.setField("title", "Renamed"));
     expect(result.current.form.title).toBe("Renamed");
-    expect(result.current.form.category).toBe("Web");
+    expect(result.current.form.category).toEqual(["Web", "Mobile"]);
   });
 
   it("payload reflects the current form state", () => {

@@ -5,13 +5,14 @@ import type { Project } from "../types";
 const mockProject: Project = {
   _id: "abc123",
   title: "Test Project",
-  category: "Web App",
+  category: ["Web App"],
   description: "A test project",
   image: "/assets/test.png",
   technologies: ["React", "Node.js"],
   order: 1,
   featured: true,
-  projectType: "featured",
+  projectType: "product",
+  status: "published",
   createdAt: "2024-01-01T00:00:00.000Z",
   updatedAt: "2024-01-01T00:00:00.000Z",
 };

@@ -11,13 +11,14 @@ import type { Project } from "../types";
 const project: Project = {
   _id: "p1",
   title: "Hello",
-  category: "Web",
+  category: ["Web"],
   description: "",
   image: "/x.png",
   technologies: [],
   order: 0,
   featured: false,
-  projectType: "featured",
+  projectType: "product",
+  status: "published",
   createdAt: "",
   updatedAt: "",
 };
@@ -70,7 +71,7 @@ describe("analytics", () => {
           referrer: "",
           projectId: "p1",
           projectTitle: "Hello",
-          projectType: "featured",
+          projectType: "product",
         },
       ]);
     });
@@ -138,7 +139,7 @@ describe("analytics", () => {
           referrer: "",
           projectId: "p1",
           projectTitle: "Hello",
-          projectType: "featured",
+          projectType: "product",
         });
         const call = fetchSpy.mock.calls[0];
         expect(call[0]).toBe("/api/analytics/event");
@@ -147,7 +148,7 @@ describe("analytics", () => {
           eventType: "project_view",
           projectId: "p1",
           projectTitle: "Hello",
-          projectType: "featured",
+          projectType: "product",
           path: "/",
         });
       } finally {

@@ -9,58 +9,66 @@ import { ProjectModel } from "../models/project.model";
 // Seed data — your portfolio projects.
 // Update these with your real content.
 const projects = [
+  // `order` is scoped to the display group — featured, or the projectType —
+  // so each group counts from 0 independently.
   {
     title: "The Archive - Stories to explore stress",
-    category: "Mental Health Application",
+    category: ["Mental Health", "Mobile App"],
     description:
       "A mental health application designed through human-centered design principles.",
     image: "/assets/thearchive_1.png",
     technologies: ["React", "Node.js", "MongoDB"],
     featured: true,
-    projectType: "featured",
-    order: 1,
+    projectType: "product",
+    status: "published",
+    order: 0,
   },
   {
     title: "Food Forward Time Management - NGO",
-    category: "Application Co-Design",
+    category: ["Co-Design", "Web App"],
     description:
       "An application built through co-design methods for time management.",
     image: "/assets/ff9.png",
     technologies: ["React", "Express", "PostgreSQL"],
     featured: true,
-    projectType: "featured",
-    order: 2,
+    projectType: "product",
+    status: "published",
+    order: 1,
   },
   {
     title: "Stress through Story: Co-Design through a board game!",
-    category: "Research Paper",
+    category: ["Research Paper", "Co-Design"],
     description:
       "A research paper exploring co-design board games for stress management.",
     image: "/assets/cscwscreenshot.png",
     technologies: ["Research", "HCI", "Co-Design"],
     featured: true,
     projectType: "research",
-    order: 3,
+    researchStatus: "published",
+    status: "published",
+    order: 2,
   },
   {
     title: "Spam SVM Detection: Filtering Spam Data with ML",
-    category: "Spam SVM Detection",
+    category: ["Machine Learning"],
     description: "A machine learning project for spam detection using SVM.",
     image: "/assets/spamproject.png",
     technologies: ["Python", "scikit-learn", "NLP"],
     featured: false,
     projectType: "practice",
-    order: 4,
+    status: "published",
+    order: 0,
   },
   {
     title: "Itasca Trails: Community Trails through exploration",
-    category: "Web Apps",
+    category: ["Web App"],
     description: "Web application for community trail exploration.",
     image: "/assets/ie1.png",
     technologies: ["React", "Node.js", "Maps API"],
     featured: false,
     projectType: "practice",
-    order: 5,
+    status: "published",
+    order: 1,
   },
 ];
 

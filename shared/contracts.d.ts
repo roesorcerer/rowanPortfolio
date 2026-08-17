@@ -21,8 +21,16 @@ export interface ApiResponse<T = unknown> {
 
 // ---- Projects ----
 
-export type ProjectType = "featured" | "research" | "practice" | "gameDev" | "art";
-export type ResearchStatus = "published" | "rejected";
+// projectType is a pure taxonomy: exactly one per project, and it never
+// encodes promotion. Promotion is the `featured` boolean, and nothing else.
+// Anything that used to be projectType: "featured" is now
+// projectType: "product" + featured: true.
+export type ProjectType = "product" | "research" | "practice" | "gameDev" | "art";
+export type ResearchStatus = "published" | "in-revision";
+
+// Publication state of the admin record itself, independent of research
+// publication state. Drafts are invisible to the public API.
+export type ProjectStatus = "draft" | "published";
 
 export type ProjectMediaType = "image" | "video";
 
@@ -44,7 +52,8 @@ export interface ProjectCollaborator {
 export interface Project {
   _id: string;
   title: string;
-  category: string;
+  /** Free-form tags, rendered as chips. Autocompleted from existing values. */
+  category: string[];
   description: string;
   image: string;
   media?: ProjectMedia[];
@@ -64,6 +73,13 @@ export interface Project {
   improvedIntoLink?: string;
   improvementSummary?: string;
   practicePurpose?: string;
+  status: ProjectStatus;
+  /**
+   * Position within the project's display group, where the group is
+   * `featured ? "featured" : projectType`. Contiguous from 0 within a group;
+   * meaningless across groups. Written by the reorder endpoint, never typed
+   * in by hand.
+   */
   order: number;
   createdAt: string;
   updatedAt: string;
@@ -71,7 +87,7 @@ export interface Project {
 
 export interface ProjectPayload {
   title: string;
-  category: string;
+  category: string[];
   description: string;
   image: string;
   media?: ProjectMedia[];
@@ -91,7 +107,18 @@ export interface ProjectPayload {
   improvedIntoLink?: string;
   improvementSummary?: string;
   practicePurpose?: string;
-  order: number;
+  status: ProjectStatus;
+  /**
+   * Omit it and the backend appends the project to the end of its display
+   * group. The admin form never sends it — reordering goes through
+   * `PUT /api/projects/reorder` instead.
+   */
+  order?: number;
+}
+
+/** Body of `PUT /api/projects/reorder` — array index becomes the new order. */
+export interface ProjectReorderPayload {
+  ids: string[];
 }
 
 // ---- Contact ----

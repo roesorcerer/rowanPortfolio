@@ -1,18 +1,27 @@
 import { useState } from "react";
-import type { Project, ProjectType } from "../../types";
+import type { Project, ProjectStatus, ProjectType } from "../../types";
 import { ApiError } from "../../api/client";
 import { useCreateProject, useUpdateProject } from "../../hooks/useProjects";
 import { useProjectFormState } from "../../hooks/useProjectFormState";
+import TagInput from "./projects/TagInput";
+import { PROJECT_TYPE_LABELS, PROJECT_TYPES } from "./projects/projectTaxonomy";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface ProjectFormProps {
   initialProject: Project | null; // null = new project
+  /** Tags already used elsewhere, offered as autocomplete. */
+  knownTags: string[];
   onSaved: () => void;
   onCancel: () => void;
 }
 
-function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
+function ProjectForm({
+  initialProject,
+  knownTags,
+  onSaved,
+  onCancel,
+}: ProjectFormProps) {
   const { form, setField, payload } = useProjectFormState(initialProject);
   const [error, setError] = useState<string | null>(null);
   const create = useCreateProject();
@@ -111,16 +120,7 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
             />
           </Field>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Category" required>
-              <input
-                required
-                value={form.category}
-                onChange={(e) => setField("category", e.target.value)}
-                className={inputCls}
-                placeholder="e.g. Web App"
-              />
-            </Field>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Type" required>
               <select
                 value={form.projectType}
@@ -129,14 +129,35 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
                 }
                 className={inputCls}
               >
-                <option value="featured">Featured</option>
-                <option value="research">Research</option>
-                <option value="practice">Practice</option>
-                <option value="gameDev">Game Development</option>
-                <option value="art">Art</option>
+                {PROJECT_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {PROJECT_TYPE_LABELS[type]}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Visibility" required>
+              <select
+                value={form.status}
+                onChange={(e) =>
+                  setField("status", e.target.value as ProjectStatus)
+                }
+                className={inputCls}
+              >
+                <option value="draft">Draft — hidden from the site</option>
+                <option value="published">Published — live on the site</option>
               </select>
             </Field>
           </div>
+
+          <Field label="Tags">
+            <TagInput
+              value={form.category}
+              onChange={(tags) => setField("category", tags)}
+              suggestions={knownTags}
+              placeholder="e.g. Web App — press Enter to add"
+            />
+          </Field>
 
           <Field label="Description" required>
             <textarea
@@ -200,14 +221,14 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
                     onChange={(e) =>
                       setField(
                         "researchStatus",
-                        e.target.value as "" | "published" | "rejected"
+                        e.target.value as "" | "published" | "in-revision"
                       )
                     }
                     className={inputCls}
                   >
                     <option value="">Select status</option>
                     <option value="published">Published</option>
-                    <option value="rejected">Developing manuscript</option>
+                    <option value="in-revision">In revision</option>
                   </select>
                 </Field>
 
@@ -459,27 +480,26 @@ function ProjectForm({ initialProject, onSaved, onCancel }: ProjectFormProps) {
             ))}
           </section>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Display order">
+          {/* No display-order input: order is scoped to a display group and
+              set by dragging rows in the list. */}
+          <Field label="Featured">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="number"
-                value={form.order}
-                onChange={(e) => setField("order", Number(e.target.value))}
-                className={inputCls}
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) => setField("featured", e.target.checked)}
+                className="w-4 h-4 accent-accent"
               />
-            </Field>
-            <Field label="Featured">
-              <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.featured}
-                  onChange={(e) => setField("featured", e.target.checked)}
-                  className="w-4 h-4 accent-accent"
-                />
-                <span className="text-body text-sm">Mark as featured</span>
-              </label>
-            </Field>
-          </div>
+              <span className="text-body text-sm">
+                Promote to the Featured section
+              </span>
+            </label>
+            <p className="text-faint text-xs mt-1.5">
+              Promoting moves this project to the end of the Featured group; it
+              still appears under {PROJECT_TYPE_LABELS[form.projectType]} on the
+              site.
+            </p>
+          </Field>
 
           {error && <p className="text-red-500 text-xs">{error}</p>}
 

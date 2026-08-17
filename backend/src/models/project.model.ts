@@ -4,9 +4,31 @@ import { LIMITS } from "../validators/limits";
 // This interface represents a Project document in MongoDB.
 // It extends Mongoose's Document type, which adds _id, __v,
 // save(), remove(), and other Mongoose methods.
-export type ProjectType = "featured" | "research" | "practice" | "gameDev" | "art";
-export type ResearchStatus = "published" | "rejected";
+// projectType is a pure taxonomy — one type per project, never a promotion
+// flag. `featured` is the only way something gets promoted.
+export type ProjectType = "product" | "research" | "practice" | "gameDev" | "art";
+export const PROJECT_TYPES: ProjectType[] = [
+  "product",
+  "research",
+  "practice",
+  "gameDev",
+  "art",
+];
+export type ResearchStatus = "published" | "in-revision";
+export type ProjectStatus = "draft" | "published";
 export type ProjectMediaType = "image" | "video";
+
+/**
+ * `order` is scoped to a display group, not global. Featured projects are
+ * hoisted into their own group so a promoted project keeps one position in
+ * the admin list rather than two.
+ */
+export function orderGroupKey(project: {
+  featured?: boolean;
+  projectType: ProjectType;
+}): string {
+  return project.featured ? "featured" : project.projectType;
+}
 
 export interface ProjectMedia {
   type: ProjectMediaType;
@@ -25,7 +47,7 @@ export interface ProjectCollaborator {
 
 export interface IProject extends Document {
   title: string;
-  category: string;
+  category: string[];
   description: string;
   image: string;
   media: ProjectMedia[];
@@ -45,6 +67,7 @@ export interface IProject extends Document {
   improvedIntoLink?: string;
   improvementSummary?: string;
   practicePurpose?: string;
+  status: ProjectStatus;
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -59,9 +82,8 @@ const projectSchema = new Schema<IProject>(
       maxlength: [LIMITS.project.titleMax, `Title cannot exceed ${LIMITS.project.titleMax} characters`],
     },
     category: {
-      type: String,
-      required: [true, "Project category is required"],
-      trim: true,
+      type: [String],
+      default: [],
     },
     description: {
       type: String,
@@ -153,13 +175,13 @@ const projectSchema = new Schema<IProject>(
     },
     projectType: {
       type: String,
-      enum: ["featured", "research", "practice", "gameDev", "art"],
+      enum: PROJECT_TYPES,
       required: [true, "Project type is required"],
       default: "practice",
     },
     researchStatus: {
       type: String,
-      enum: ["published", "rejected"],
+      enum: ["published", "in-revision"],
       trim: true,
     },
     researchVenue: {
@@ -191,6 +213,13 @@ const projectSchema = new Schema<IProject>(
       type: String,
       trim: true,
     },
+    // New projects start as drafts so a half-finished entry can be saved
+    // without appearing on the public site.
+    status: {
+      type: String,
+      enum: ["draft", "published"],
+      default: "draft",
+    },
     order: {
       type: Number,
       default: 0,
@@ -204,10 +233,11 @@ const projectSchema = new Schema<IProject>(
   }
 );
 
-// Index on 'order' for sorted queries, and 'featured' for filtering.
+// `order` is only meaningful within a display group, so the useful index is
+// the compound one the public tabs and the admin list both sort by.
 // Indexes make these queries fast even with thousands of documents.
-projectSchema.index({ order: 1 });
-projectSchema.index({ featured: 1 });
-projectSchema.index({ projectType: 1 });
+projectSchema.index({ projectType: 1, featured: -1, order: 1 });
+projectSchema.index({ status: 1 });
+projectSchema.index({ featured: 1, order: 1 });
 
 export const ProjectModel = mongoose.model<IProject>("Project", projectSchema);

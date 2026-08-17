@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Project } from "../types";
+import type { Project, ResearchStatus } from "../types";
 import { useAnalytics } from "../analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,11 +13,11 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
   const analytics = useAnalytics();
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
-  const researchStatus: "published" | "rejected" | null =
+  const researchStatus: ResearchStatus | null =
     project.projectType === "research"
       ? project.researchStatus ??
         (project.rejectedVenue || project.improvedIntoTitle || project.improvedIntoLink || project.improvementSummary
-          ? "rejected"
+          ? "in-revision"
           : "published")
       : null;
 
@@ -184,9 +184,16 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
           {/* Content */}
           <div className="p-6 md:p-10">
             <div className="max-w-4xl">
-              <span className="inline-block px-3 py-1.5 bg-accent-soft text-accent-dark text-xs mb-4">
-                {project.category}
-              </span>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {(project.category ?? []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-block px-3 py-1.5 bg-accent-soft text-accent-dark text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
 
               <h2
                 id={`project-modal-title-${project._id}`}
@@ -233,7 +240,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                     <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-2">Publication details</h3>
                     <div className="space-y-1">
                       <p className="text-body text-sm">
-                        Status: {researchStatus === "rejected" ? "Developing manuscript" : "Published"}
+                        Status: {researchStatus === "in-revision" ? "Developing manuscript" : "Published"}
                       </p>
                       <p className="text-body text-sm">Venue: {project.researchVenue?.trim() || "Not listed"}</p>
                       <p className="text-body text-sm">
@@ -243,7 +250,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                   </section>
                 )}
 
-                {project.projectType === "research" && researchStatus === "rejected" && (
+                {project.projectType === "research" && researchStatus === "in-revision" && (
                   <section className="border border-amber-200 bg-amber-50/40 p-4">
                     <h3 className="text-amber-900 text-xs uppercase tracking-widest font-medium mb-2">Revision trail</h3>
                     <div className="space-y-1">

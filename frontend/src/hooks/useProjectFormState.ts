@@ -1,5 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
-import type { Project, ProjectType, ResearchStatus } from "../types";
+import type {
+  Project,
+  ProjectStatus,
+  ProjectType,
+  ResearchStatus,
+} from "../types";
 import type { ProjectPayload } from "../api/projects";
 
 // Owns the Project ↔ form ↔ payload marshalling.
@@ -8,10 +13,14 @@ import type { ProjectPayload } from "../api/projects";
 // than undefined, technologies is a CSV rather than string[]. The hook
 // converts a Project into that shape, and converts it back into the
 // ProjectPayload the API expects.
+//
+// `order` is deliberately absent: it's scoped to a display group and written
+// by drag-to-reorder, never typed in.
 
 export interface FormState {
   title: string;
-  category: string;
+  /** Tags, edited as chips rather than a single free-text field. */
+  category: string[];
   description: string;
   image: string;
   link: string;
@@ -42,12 +51,12 @@ export interface FormState {
   improvedIntoLink: string;
   improvementSummary: string;
   practicePurpose: string;
-  order: number;
+  status: ProjectStatus;
 }
 
 export const EMPTY_FORM: FormState = {
   title: "",
-  category: "",
+  category: [],
   description: "",
   image: "",
   link: "",
@@ -67,13 +76,15 @@ export const EMPTY_FORM: FormState = {
   improvedIntoLink: "",
   improvementSummary: "",
   practicePurpose: "",
-  order: 0,
+  // New projects start as drafts — a half-finished entry is savable without
+  // going live.
+  status: "draft",
 };
 
 export function fromProject(project: Project): FormState {
   return {
     title: project.title,
-    category: project.category,
+    category: project.category ?? [],
     description: project.description,
     image: project.image,
     link: project.link ?? "",
@@ -104,14 +115,14 @@ export function fromProject(project: Project): FormState {
     improvedIntoLink: project.improvedIntoLink ?? "",
     improvementSummary: project.improvementSummary ?? "",
     practicePurpose: project.practicePurpose ?? "",
-    order: project.order,
+    status: project.status ?? "published",
   };
 }
 
 export function toPayload(form: FormState): ProjectPayload {
   return {
     title: form.title,
-    category: form.category,
+    category: normalizeTags(form.category),
     description: form.description,
     image: form.image,
     link: form.link || undefined,
@@ -149,8 +160,30 @@ export function toPayload(form: FormState): ProjectPayload {
     improvedIntoLink: form.improvedIntoLink.trim() || undefined,
     improvementSummary: form.improvementSummary.trim() || undefined,
     practicePurpose: form.practicePurpose.trim() || undefined,
-    order: form.order,
+    status: form.status,
+    // No `order` — the backend appends new projects to the end of their
+    // display group, and moving one is a drag, not a number.
   };
+}
+
+/**
+ * Trims, drops blanks, and de-duplicates case-insensitively while keeping the
+ * casing you first typed. Stops "Web App" and "web app" becoming two tags.
+ */
+export function normalizeTags(tags: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const tag of tags) {
+    const trimmed = tag.trim();
+    if (!trimmed) continue;
+    const key = trimmed.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(trimmed);
+  }
+
+  return result;
 }
 
 export interface UseProjectFormState {

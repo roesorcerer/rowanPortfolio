@@ -40,13 +40,27 @@ beforeEach(async () => {
   await clearDatabase();
 });
 
+// Published by default: most cases here assert what the public list does,
+// and a draft would simply be invisible.
 const validProject = {
   title: "Test Project",
   category: "Web App",
   description: "A test project",
   image: "/assets/test.png",
   technologies: ["React"],
+  status: "published",
 };
+
+async function createProject(
+  token: string,
+  overrides: Record<string, unknown> = {}
+) {
+  const res = await request(app)
+    .post("/api/projects")
+    .set("Authorization", `Bearer ${token}`)
+    .send({ ...validProject, ...overrides });
+  return res.body.data;
+}
 
 describe("GET /api/projects", () => {
   it("returns an empty array when no projects exist", async () => {
@@ -60,20 +74,123 @@ describe("GET /api/projects", () => {
   it("returns projects sorted by order", async () => {
     const token = await getAdminToken();
 
-    await request(app)
-      .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ ...validProject, title: "Second", order: 2 });
-    await request(app)
-      .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ ...validProject, title: "First", order: 1 });
+    await createProject(token, { title: "Second", order: 2 });
+    await createProject(token, { title: "First", order: 1 });
 
     const res = await request(app).get("/api/projects");
 
     expect(res.body.data).toHaveLength(2);
     expect(res.body.data[0].title).toBe("First");
     expect(res.body.data[1].title).toBe("Second");
+  });
+
+  it("sorts featured projects ahead of the rest", async () => {
+    const token = await getAdminToken();
+
+    await createProject(token, { title: "Plain", order: 0 });
+    await createProject(token, { title: "Promoted", featured: true, order: 5 });
+
+    const res = await request(app).get("/api/projects");
+
+    // `order` is scoped per group, so promotion has to win over the raw number.
+    expect(res.body.data.map((p: { title: string }) => p.title)).toEqual([
+      "Promoted",
+      "Plain",
+    ]);
+  });
+
+  it("hides drafts from the public list", async () => {
+    const token = await getAdminToken();
+
+    await createProject(token, { title: "Live", status: "published" });
+    await createProject(token, { title: "Half-finished", status: "draft" });
+
+    const res = await request(app).get("/api/projects");
+
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].title).toBe("Live");
+  });
+
+  it("returns category as an array of tags", async () => {
+    const token = await getAdminToken();
+    await createProject(token, { category: ["Web App", "Research"] });
+
+    const res = await request(app).get("/api/projects");
+
+    expect(res.body.data[0].category).toEqual(["Web App", "Research"]);
+  });
+});
+
+describe("GET /api/projects/all", () => {
+  it("includes drafts for an admin", async () => {
+    const token = await getAdminToken();
+
+    await createProject(token, { title: "Live", status: "published" });
+    await createProject(token, { title: "Half-finished", status: "draft" });
+
+    const res = await request(app)
+      .get("/api/projects/all")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(2);
+  });
+
+  it("rejects without auth", async () => {
+    const res = await request(app).get("/api/projects/all");
+    expect(res.status).toBe(401);
+  });
+
+  it("rejects a non-admin user", async () => {
+    const token = await getUserToken();
+    const res = await request(app)
+      .get("/api/projects/all")
+      .set("Authorization", `Bearer ${token}`);
+    expect(res.status).toBe(403);
+  });
+});
+
+describe("PUT /api/projects/reorder", () => {
+  it("rewrites the whole group's indices in one call", async () => {
+    const token = await getAdminToken();
+
+    const a = await createProject(token, { title: "A" });
+    const b = await createProject(token, { title: "B" });
+    const c = await createProject(token, { title: "C" });
+
+    // Created without an explicit order, so they append 0, 1, 2.
+    expect([a.order, b.order, c.order]).toEqual([0, 1, 2]);
+
+    const res = await request(app)
+      .put("/api/projects/reorder")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ ids: [c._id, a._id, b._id] });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.reordered).toBe(3);
+
+    const list = await request(app).get("/api/projects");
+    expect(list.body.data.map((p: { title: string }) => p.title)).toEqual([
+      "C",
+      "A",
+      "B",
+    ]);
+  });
+
+  it("rejects without auth", async () => {
+    const res = await request(app)
+      .put("/api/projects/reorder")
+      .send({ ids: ["000000000000000000000000"] });
+    expect(res.status).toBe(401);
+  });
+
+  it("rejects an empty id list", async () => {
+    const token = await getAdminToken();
+    const res = await request(app)
+      .put("/api/projects/reorder")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ ids: [] });
+    expect(res.status).toBe(400);
   });
 });
 
@@ -118,6 +235,36 @@ describe("POST /api/projects", () => {
     expect(res.status).toBe(201);
     expect(res.body.data.title).toBe("Test Project");
     expect(res.body.data._id).toBeTypeOf("string");
+  });
+
+  it("defaults to a draft when status is omitted", async () => {
+    const token = await getAdminToken();
+    const { status, ...withoutStatus } = validProject;
+
+    const res = await request(app)
+      .post("/api/projects")
+      .set("Authorization", `Bearer ${token}`)
+      .send(withoutStatus);
+
+    expect(res.body.data.status).toBe("draft");
+  });
+
+  it("appends to the end of its own display group", async () => {
+    const token = await getAdminToken();
+
+    await createProject(token, { title: "Practice 1", projectType: "practice" });
+    const secondPractice = await createProject(token, {
+      title: "Practice 2",
+      projectType: "practice",
+    });
+    // A different group counts from 0 again rather than continuing globally.
+    const firstResearch = await createProject(token, {
+      title: "Research 1",
+      projectType: "research",
+    });
+
+    expect(secondPractice.order).toBe(1);
+    expect(firstResearch.order).toBe(0);
   });
 
   it("rejects without auth", async () => {
@@ -168,7 +315,41 @@ describe("PUT /api/projects/:id", () => {
     expect(res.status).toBe(200);
     expect(res.body.data.title).toBe("Updated Title");
     // Other fields should remain unchanged
-    expect(res.body.data.category).toBe("Web App");
+    expect(res.body.data.category).toEqual(["Web App"]);
+    expect(res.body.data.technologies).toEqual(["React"]);
+    expect(res.body.data.status).toBe("published");
+  });
+
+  it("re-appends a project that changes display group", async () => {
+    const token = await getAdminToken();
+
+    // Two featured projects already occupy the featured group at 0 and 1.
+    await createProject(token, { title: "Featured 1", featured: true });
+    await createProject(token, { title: "Featured 2", featured: true });
+    const plain = await createProject(token, { title: "Plain", order: 0 });
+
+    const res = await request(app)
+      .put(`/api/projects/${plain._id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ featured: true });
+
+    // Keeping order 0 would have collided with "Featured 1".
+    expect(res.body.data.order).toBe(2);
+  });
+
+  it("leaves order alone when the group doesn't change", async () => {
+    const token = await getAdminToken();
+
+    await createProject(token, { title: "First" });
+    const second = await createProject(token, { title: "Second" });
+    expect(second.order).toBe(1);
+
+    const res = await request(app)
+      .put(`/api/projects/${second._id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ title: "Renamed" });
+
+    expect(res.body.data.order).toBe(1);
   });
 
   it("returns 404 for non-existent project", async () => {

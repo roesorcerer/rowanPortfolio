@@ -5,6 +5,9 @@
 export type {
   ApiResponse,
   Project,
+  ProjectPayload,
+  ProjectReorderPayload,
+  ProjectStatus,
   ProjectType,
   ResearchStatus,
 } from "../../../shared/contracts";

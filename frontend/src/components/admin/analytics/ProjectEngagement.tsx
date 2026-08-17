@@ -1,13 +1,15 @@
 import type { EngagementSummary } from "../../../api/analytics";
+import { PROJECT_TYPE_COLORS } from "../projects/projectTaxonomy";
 
 interface Props {
   engagement: EngagementSummary;
 }
 
 const TYPE_COLORS: Record<string, string> = {
+  ...PROJECT_TYPE_COLORS,
+  // Events recorded before projectType stopped meaning "promoted" still say
+  // "featured". They're historical rows, so colour them rather than rewrite them.
   featured: "bg-accent-soft text-accent-dark",
-  research: "bg-[#EEF0FF] text-[#3D4EBF]",
-  practice: "bg-[#F5F0E1] text-[#8A6A00]",
 };
 
 function ProjectEngagement({ engagement }: Props) {
