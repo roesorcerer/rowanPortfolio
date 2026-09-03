@@ -9,6 +9,7 @@ import type { Project } from "../types";
 
 const project: Project = {
   _id: "p1",
+  slug: "hello",
   title: "Hello",
   category: ["Web", "Mobile"],
   description: "A description",
@@ -25,9 +26,11 @@ const project: Project = {
       poster: "/assets/poster.png",
     },
   ],
-  link: "https://demo.example.com",
-  githubLink: "https://github.com/x/y",
-  relatedResearchLink: "https://doi.org/example",
+  links: [
+    { kind: "demo", url: "https://demo.example.com" },
+    { kind: "github", url: "https://github.com/x/y" },
+    { kind: "research", url: "https://doi.org/example", label: "The paper" },
+  ],
   developmentTime: "3 weeks",
   collaborators: [
     {
@@ -37,7 +40,7 @@ const project: Project = {
       socialLabel: "LinkedIn",
     },
   ],
-  technologies: ["React", "Node.js", "MongoDB"],
+  details: [],
   order: 2,
   featured: true,
   projectType: "product",
@@ -47,49 +50,48 @@ const project: Project = {
 };
 
 describe("fromProject / toPayload", () => {
-  it("fromProject joins technologies as a CSV string", () => {
+  it("fromProject carries links across, blanking the absent label", () => {
     const form = fromProject(project);
-    expect(form.technologies).toBe("React, Node.js, MongoDB");
+    expect(form.links).toEqual([
+      { kind: "demo", url: "https://demo.example.com", label: "" },
+      { kind: "github", url: "https://github.com/x/y", label: "" },
+      { kind: "research", url: "https://doi.org/example", label: "The paper" },
+    ]);
   });
 
   it("fromProject coerces missing optionals to empty strings", () => {
     const sparse: Project = {
       ...project,
-      link: undefined,
-      githubLink: undefined,
-      relatedResearchLink: undefined,
+      links: [],
       developmentTime: undefined,
-      media: undefined,
-      collaborators: undefined,
+      media: [],
+      collaborators: [],
     };
     const form = fromProject(sparse);
-    expect(form.link).toBe("");
-    expect(form.githubLink).toBe("");
-    expect(form.relatedResearchLink).toBe("");
+    expect(form.links).toEqual([]);
     expect(form.developmentTime).toBe("");
     expect(form.media).toEqual([]);
     expect(form.collaborators).toEqual([]);
   });
 
-  it("toPayload splits the CSV, trims, and drops empties", () => {
+  it("toPayload lowercases link kinds and drops rows with no URL", () => {
     const payload = toPayload({
       ...EMPTY_FORM,
-      technologies: "React,  Node.js , , MongoDB",
+      links: [
+        { kind: "GitHub", url: " https://github.com/x/y ", label: "" },
+        // Added then abandoned — not a link.
+        { kind: "demo", url: "   ", label: "" },
+        { kind: "itch", url: "https://x.itch.io/y", label: " Play on itch.io " },
+      ],
     });
-    expect(payload.technologies).toEqual(["React", "Node.js", "MongoDB"]);
+    expect(payload.links).toEqual([
+      { kind: "github", url: "https://github.com/x/y", label: undefined },
+      { kind: "itch", url: "https://x.itch.io/y", label: "Play on itch.io" },
+    ]);
   });
 
   it("toPayload converts empty optional strings to undefined", () => {
-    const payload = toPayload({
-      ...EMPTY_FORM,
-      link: "",
-      githubLink: "",
-      relatedResearchLink: "",
-      developmentTime: "",
-    });
-    expect(payload.link).toBeUndefined();
-    expect(payload.githubLink).toBeUndefined();
-    expect(payload.relatedResearchLink).toBeUndefined();
+    const payload = toPayload({ ...EMPTY_FORM, developmentTime: "" });
     expect(payload.developmentTime).toBeUndefined();
   });
 
@@ -134,7 +136,7 @@ describe("useProjectFormState", () => {
   it("starts populated from the initial project", () => {
     const { result } = renderHook(() => useProjectFormState(project));
     expect(result.current.form.title).toBe("Hello");
-    expect(result.current.form.technologies).toBe("React, Node.js, MongoDB");
+    expect(result.current.form.links).toHaveLength(3);
   });
 
   it("setField updates one field without clobbering the rest", () => {
@@ -146,9 +148,9 @@ describe("useProjectFormState", () => {
 
   it("payload reflects the current form state", () => {
     const { result } = renderHook(() => useProjectFormState(project));
-    act(() => result.current.setField("link", ""));
-    act(() => result.current.setField("technologies", "Vue, Pinia"));
-    expect(result.current.payload.link).toBeUndefined();
-    expect(result.current.payload.technologies).toEqual(["Vue", "Pinia"]);
+    act(() => result.current.setField("links", []));
+    act(() => result.current.setField("category", ["Vue", "Pinia"]));
+    expect(result.current.payload.links).toEqual([]);
+    expect(result.current.payload.category).toEqual(["Vue", "Pinia"]);
   });
 });

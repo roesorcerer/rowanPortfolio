@@ -25,8 +25,17 @@ export function reorderProjects(ids: string[]): Promise<{ reordered: number }> {
   return api.put<{ reordered: number }>("/api/projects/reorder", { ids });
 }
 
-export function getProjectById(id: string): Promise<Project> {
-  return api.get<Project>(`/api/projects/${id}`);
+/**
+ * Public permalink read — accepts the slug a resume prints or a raw id.
+ * Drafts 404 here; use `getProjectForAdmin` to preview one.
+ */
+export function getProjectByIdOrSlug(idOrSlug: string): Promise<Project> {
+  return api.get<Project>(`/api/projects/${encodeURIComponent(idOrSlug)}`);
+}
+
+/** The same lookup with drafts visible. Requires an admin session. */
+export function getProjectForAdmin(idOrSlug: string): Promise<Project> {
+  return api.get<Project>(`/api/projects/all/${encodeURIComponent(idOrSlug)}`);
 }
 
 export function createProject(payload: ProjectPayload): Promise<Project> {

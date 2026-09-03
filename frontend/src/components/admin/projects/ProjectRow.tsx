@@ -1,7 +1,8 @@
-import type { CSSProperties, HTMLAttributes } from "react";
+import { useState, type CSSProperties, type HTMLAttributes } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Project } from "../../../types";
+import { projectPath, projectUrl } from "../../../lib/projectLinks";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -51,6 +52,20 @@ export function ProjectRow({
   const meta = projectMetaParts(project);
   const gaps = projectGaps(project);
   const draggable = handleProps !== undefined;
+  const [copied, setCopied] = useState(false);
+
+  // The resume workflow: find the project here, copy its URL, paste it into
+  // the document. Copying the absolute URL rather than the path because
+  // that's what a PDF needs.
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(projectUrl(project));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard permission can be refused; the View link is still there.
+    }
+  };
 
   return (
     <div
@@ -132,6 +147,23 @@ export function ProjectRow({
       {/* Kept mounted rather than hover-only so the row stays reachable by
           keyboard and on touch; it just recedes until you're on the row. */}
       <div className="flex items-center gap-1 shrink-0 opacity-60 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+        <a
+          href={projectPath(project)}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={`Open ${projectUrl(project)}`}
+          className={buttonVariants({ variant: "ghost", size: "xs" })}
+        >
+          View
+        </a>
+        <button
+          type="button"
+          onClick={copyLink}
+          title="Copy this project's link for your resume"
+          className={buttonVariants({ variant: "ghost", size: "xs" })}
+        >
+          {copied ? "Copied" : "Link"}
+        </button>
         <button
           type="button"
           onClick={() => onEdit(project)}

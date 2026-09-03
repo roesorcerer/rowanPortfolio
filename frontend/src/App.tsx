@@ -7,6 +7,7 @@ import ProjectsTab from "./components/admin/ProjectsTab";
 import AnalyticsTab from "./components/admin/AnalyticsTab";
 import MessagesTab from "./components/admin/MessagesTab";
 import RequireAdmin from "./components/admin/RequireAdmin";
+import ProjectPage from "./components/ProjectPage";
 import Resume from "./components/Resume";
 import { AnalyticsProvider, fetchAnalyticsAdapter } from "./analytics";
 
@@ -22,6 +23,9 @@ function AppRoutes() {
           </>
         }
       />
+      {/* The permalink a resume links to. Slug-based so the URL reads as the
+          project's name, and stable across renames. */}
+      <Route path="/projects/:slug" element={<ProjectPage />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin" element={<RequireAdmin />}>
         <Route element={<AdminDashboard />}>

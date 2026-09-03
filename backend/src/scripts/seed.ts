@@ -5,6 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 import mongoose from "mongoose";
 import { ProjectModel } from "../models/project.model";
+import { slugify } from "../utils/slug";
 
 // Seed data — your portfolio projects.
 // Update these with your real content.
@@ -13,11 +14,10 @@ const projects = [
   // so each group counts from 0 independently.
   {
     title: "The Archive - Stories to explore stress",
-    category: ["Mental Health", "Mobile App"],
+    category: ["Mental Health", "Mobile App", "React", "Node.js", "MongoDB"],
     description:
       "A mental health application designed through human-centered design principles.",
     image: "/assets/thearchive_1.png",
-    technologies: ["React", "Node.js", "MongoDB"],
     featured: true,
     projectType: "product",
     status: "published",
@@ -25,11 +25,10 @@ const projects = [
   },
   {
     title: "Food Forward Time Management - NGO",
-    category: ["Co-Design", "Web App"],
+    category: ["Co-Design", "Web App", "React", "Express", "PostgreSQL"],
     description:
       "An application built through co-design methods for time management.",
     image: "/assets/ff9.png",
-    technologies: ["React", "Express", "PostgreSQL"],
     featured: true,
     projectType: "product",
     status: "published",
@@ -37,11 +36,10 @@ const projects = [
   },
   {
     title: "Stress through Story: Co-Design through a board game!",
-    category: ["Research Paper", "Co-Design"],
+    category: ["Research Paper", "Co-Design", "Research", "HCI"],
     description:
       "A research paper exploring co-design board games for stress management.",
     image: "/assets/cscwscreenshot.png",
-    technologies: ["Research", "HCI", "Co-Design"],
     featured: true,
     projectType: "research",
     researchStatus: "published",
@@ -50,10 +48,9 @@ const projects = [
   },
   {
     title: "Spam SVM Detection: Filtering Spam Data with ML",
-    category: ["Machine Learning"],
+    category: ["Machine Learning", "Python", "scikit-learn", "NLP"],
     description: "A machine learning project for spam detection using SVM.",
     image: "/assets/spamproject.png",
-    technologies: ["Python", "scikit-learn", "NLP"],
     featured: false,
     projectType: "practice",
     status: "published",
@@ -61,10 +58,9 @@ const projects = [
   },
   {
     title: "Itasca Trails: Community Trails through exploration",
-    category: ["Web App"],
+    category: ["Web App", "React", "Node.js", "Maps API"],
     description: "Web application for community trail exploration.",
     image: "/assets/ie1.png",
-    technologies: ["React", "Node.js", "Maps API"],
     featured: false,
     projectType: "practice",
     status: "published",
@@ -89,11 +85,16 @@ async function seed() {
     await ProjectModel.deleteMany({});
     console.log("Cleared existing projects.");
 
-    const inserted = await ProjectModel.insertMany(projects);
+    // Slugs are normally assigned by the projects store; seeding writes
+    // through the model directly, so it derives them the same way here rather
+    // than leaving a fresh dev database needing the backfill script.
+    const inserted = await ProjectModel.insertMany(
+      projects.map((project) => ({ ...project, slug: slugify(project.title) }))
+    );
     console.log(`Seeded ${inserted.length} projects.`);
 
     for (const p of inserted) {
-      console.log(`  - ${p.title} (${p._id})`);
+      console.log(`  - ${p.title} (/projects/${p.slug})`);
     }
   } catch (error) {
     console.error("Seed failed:", error);

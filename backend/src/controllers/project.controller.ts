@@ -3,14 +3,39 @@ import { ApiResponse } from "../types";
 import { UpdateProjectInput } from "../validators/project.validators";
 import * as projectsStore from "../stores/projects-store";
 
-// GET /api/projects/:id
-export async function getProjectById(
-  req: Request<{ id: string }>,
+// GET /api/projects/:idOrSlug — the public case-study permalink.
+//
+// Drafts 404 here exactly as they're absent from the list: an unpublished
+// project has no public URL, guessable or otherwise.
+export async function getProjectByIdOrSlug(
+  req: Request<{ idOrSlug: string }>,
   res: Response<ApiResponse>,
   next: NextFunction
 ): Promise<void> {
   try {
-    const project = await projectsStore.findById(req.params.id);
+    const project = await projectsStore.findByIdOrSlug(req.params.idOrSlug);
+    if (!project) {
+      res.status(404).json({ success: false, error: "Project not found" });
+      return;
+    }
+    res.json({ success: true, data: project });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// GET /api/projects/all/:idOrSlug (auth required) — the same lookup with
+// drafts visible, so a case study can be proofread at its real URL before it
+// goes live.
+export async function getProjectForAdmin(
+  req: Request<{ idOrSlug: string }>,
+  res: Response<ApiResponse>,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const project = await projectsStore.findByIdOrSlug(req.params.idOrSlug, {
+      publishedOnly: false,
+    });
     if (!project) {
       res.status(404).json({ success: false, error: "Project not found" });
       return;

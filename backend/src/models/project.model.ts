@@ -1,22 +1,43 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { LIMITS } from "../validators/limits";
+import { projectFields } from "../validators/project.validators";
+import type {
+  ProjectCaseStudy,
+  ProjectCaseStudySection,
+  ProjectDetail,
+  ProjectLink,
+  ProjectMedia,
+  ProjectRecord,
+  ProjectType,
+} from "../validators/project.validators";
 
-// This interface represents a Project document in MongoDB.
-// It extends Mongoose's Document type, which adds _id, __v,
-// save(), remove(), and other Mongoose methods.
-// projectType is a pure taxonomy — one type per project, never a promotion
-// flag. `featured` is the only way something gets promoted.
-export type ProjectType = "product" | "research" | "practice" | "gameDev" | "art";
-export const PROJECT_TYPES: ProjectType[] = [
-  "product",
-  "research",
-  "practice",
-  "gameDev",
-  "art",
-];
-export type ResearchStatus = "published" | "in-revision";
-export type ProjectStatus = "draft" | "published";
-export type ProjectMediaType = "image" | "video";
+// The document's *shape* is not declared here — it is inferred from the Zod
+// validators, which are the one place a Project field is described. What lives
+// in this file is everything Zod cannot express: storage types, indexes,
+// Mongoose-level defaults, and the enum/length constraints the database
+// enforces on its own.
+//
+// Re-exported so callers keep importing project vocabulary from the model.
+export type {
+  ProjectCaseStudy,
+  ProjectCaseStudySection,
+  ProjectCollaborator,
+  ProjectDetail,
+  ProjectDetailKind,
+  ProjectLink,
+  ProjectMedia,
+  ProjectMediaType,
+  ProjectRecord,
+  ProjectStatus,
+  ProjectType,
+  ResearchStatus,
+} from "../validators/project.validators";
+
+/**
+ * The taxonomy values, taken from the validator's enum rather than restated.
+ * Adding a sixth project type is now a one-line change in one file.
+ */
+export const PROJECT_TYPES: ProjectType[] = [...projectFields.projectType.options];
 
 /**
  * `order` is scoped to a display group, not global. Featured projects are
@@ -30,57 +51,133 @@ export function orderGroupKey(project: {
   return project.featured ? "featured" : project.projectType;
 }
 
-export interface ProjectMedia {
-  type: ProjectMediaType;
-  src: string;
-  alt?: string;
-  poster?: string;
-  caption?: string;
-}
-
-export interface ProjectCollaborator {
-  name: string;
-  role?: string;
-  socialLink: string;
-  socialLabel?: string;
-}
-
-export interface IProject extends Document {
-  title: string;
-  category: string[];
-  description: string;
-  image: string;
-  media: ProjectMedia[];
-  link?: string;
-  githubLink?: string;
-  relatedResearchLink?: string;
-  developmentTime?: string;
-  collaborators: ProjectCollaborator[];
-  technologies: string[];
-  featured: boolean;
-  projectType: ProjectType;
-  researchStatus?: ResearchStatus;
-  researchVenue?: string;
-  researchYear?: number;
-  rejectedVenue?: string;
-  improvedIntoTitle?: string;
-  improvedIntoLink?: string;
-  improvementSummary?: string;
-  practicePurpose?: string;
-  status: ProjectStatus;
-  order: number;
+/**
+ * A Project document. Every field comes from `ProjectRecord`; this adds only
+ * what Mongoose contributes — the Document methods and the timestamps it
+ * manages. A field added to the validators appears here automatically.
+ */
+export interface IProject extends Document, ProjectRecord {
   createdAt: Date;
   updatedAt: Date;
 }
 
+// Declared as real sub-schemas rather than inline object literals: an inline
+// `{ type: { ... } }` is ambiguous to Mongoose, which reads a nested `type`
+// key as a SchemaType rather than a path named "type".
+// One media item. Declared once and reused by the project carousel and by
+// case-study steps, so a wireframe gallery inside a step accepts exactly what
+// the top-level carousel does.
+const mediaItemSchema = new Schema<ProjectMedia>(
+  {
+    type: { type: String, enum: ["image", "video"], required: true },
+    src: { type: String, required: true, trim: true },
+    alt: { type: String, trim: true },
+    poster: { type: String, trim: true },
+    caption: { type: String, trim: true },
+  },
+  { _id: false }
+);
+
+// A short named fact: "Venue", "Engine", "Medium". Free-form by design — the
+// enum that used to live here was the whole problem.
+const detailSchema = new Schema<ProjectDetail>(
+  {
+    key: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      maxlength: [LIMITS.project.detailKeyMax, `Detail key cannot exceed ${LIMITS.project.detailKeyMax} characters`],
+    },
+    label: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: [LIMITS.project.detailLabelMax, `Detail label cannot exceed ${LIMITS.project.detailLabelMax} characters`],
+    },
+    value: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: [LIMITS.project.detailValueMax, `Detail value cannot exceed ${LIMITS.project.detailValueMax} characters`],
+    },
+    kind: { type: String, enum: ["text", "url", "date"], default: "text" },
+  },
+  { _id: false }
+);
+
+// An outbound link. `kind` is free-form for the same reason `detail.key` is:
+// the UI knows "demo", "github" and "research" by name, and anything else
+// still renders and still tracks.
+const linkSchema = new Schema<ProjectLink>(
+  {
+    kind: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      maxlength: [LIMITS.project.linkKindMax, `Link kind cannot exceed ${LIMITS.project.linkKindMax} characters`],
+    },
+    url: { type: String, required: true, trim: true },
+    label: {
+      type: String,
+      trim: true,
+      maxlength: [LIMITS.project.linkLabelMax, `Link label cannot exceed ${LIMITS.project.linkLabelMax} characters`],
+    },
+  },
+  { _id: false }
+);
+
+const caseStudySectionSchema = new Schema<ProjectCaseStudySection>(
+  {
+    heading: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: [
+        LIMITS.project.caseStudyHeadingMax,
+        `Section heading cannot exceed ${LIMITS.project.caseStudyHeadingMax} characters`,
+      ],
+    },
+    body: { type: String, required: true, trim: true },
+    media: { type: [mediaItemSchema], default: [] },
+  },
+  { _id: false }
+);
+
+// The long-form process record. Everything inside is optional, so a project
+// can carry only a summary and still render as a case study.
+const caseStudySchema = new Schema<ProjectCaseStudy>(
+  {
+    summary: { type: String, trim: true },
+    role: { type: String, trim: true },
+    problem: { type: String, trim: true },
+    sections: { type: [caseStudySectionSchema], default: [] },
+    outcomes: { type: [String], default: [] },
+    lessons: { type: [String], default: [] },
+  },
+  { _id: false }
+);
+
 const projectSchema = new Schema<IProject>(
   {
+    // The resume-facing permalink. Always present — the store derives one from
+    // the title on create and never moves it on rename.
+    slug: {
+      type: String,
+      required: [true, "Project slug is required"],
+      trim: true,
+      lowercase: true,
+      maxlength: [LIMITS.project.slugMax, `Slug cannot exceed ${LIMITS.project.slugMax} characters`],
+    },
     title: {
       type: String,
       required: [true, "Project title is required"],
       trim: true,
       maxlength: [LIMITS.project.titleMax, `Title cannot exceed ${LIMITS.project.titleMax} characters`],
     },
+    // Carries both the domain tags and the stack that `technologies` used to
+    // hold separately.
     category: {
       type: [String],
       default: [],
@@ -95,45 +192,12 @@ const projectSchema = new Schema<IProject>(
       required: [true, "Project image path is required"],
     },
     media: {
-      type: [
-        {
-          type: {
-            type: String,
-            enum: ["image", "video"],
-            required: true,
-          },
-          src: {
-            type: String,
-            required: true,
-            trim: true,
-          },
-          alt: {
-            type: String,
-            trim: true,
-          },
-          poster: {
-            type: String,
-            trim: true,
-          },
-          caption: {
-            type: String,
-            trim: true,
-          },
-        },
-      ],
+      type: [mediaItemSchema],
       default: [],
     },
-    link: {
-      type: String,
-      trim: true,
-    },
-    githubLink: {
-      type: String,
-      trim: true,
-    },
-    relatedResearchLink: {
-      type: String,
-      trim: true,
+    links: {
+      type: [linkSchema],
+      default: [],
     },
     developmentTime: {
       type: String,
@@ -165,10 +229,6 @@ const projectSchema = new Schema<IProject>(
       ],
       default: [],
     },
-    technologies: {
-      type: [String],
-      default: [],
-    },
     featured: {
       type: Boolean,
       default: false,
@@ -184,34 +244,13 @@ const projectSchema = new Schema<IProject>(
       enum: ["published", "in-revision"],
       trim: true,
     },
-    researchVenue: {
-      type: String,
-      trim: true,
+    details: {
+      type: [detailSchema],
+      default: [],
     },
-    researchYear: {
-      type: Number,
-      min: 1900,
-      max: 2100,
-    },
-    rejectedVenue: {
-      type: String,
-      trim: true,
-    },
-    improvedIntoTitle: {
-      type: String,
-      trim: true,
-    },
-    improvedIntoLink: {
-      type: String,
-      trim: true,
-    },
-    improvementSummary: {
-      type: String,
-      trim: true,
-    },
-    practicePurpose: {
-      type: String,
-      trim: true,
+    caseStudy: {
+      type: caseStudySchema,
+      default: undefined,
     },
     // New projects start as drafts so a half-finished entry can be saved
     // without appearing on the public site.
@@ -239,5 +278,10 @@ const projectSchema = new Schema<IProject>(
 projectSchema.index({ projectType: 1, featured: -1, order: 1 });
 projectSchema.index({ status: 1 });
 projectSchema.index({ featured: 1, order: 1 });
+// Permalink lookups hit this on every case-study page load. Still declared
+// sparse: every document now has a slug, so sparse and non-sparse behave
+// identically here, and Mongoose will not rebuild an existing index just
+// because the spec changed. Left as-is rather than requiring a manual reindex.
+projectSchema.index({ slug: 1 }, { unique: true, sparse: true });
 
 export const ProjectModel = mongoose.model<IProject>("Project", projectSchema);

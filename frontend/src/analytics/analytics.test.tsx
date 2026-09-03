@@ -10,11 +10,15 @@ import type { Project } from "../types";
 
 const project: Project = {
   _id: "p1",
+  slug: "hello",
   title: "Hello",
   category: ["Web"],
   description: "",
   image: "/x.png",
-  technologies: [],
+  links: [],
+  media: [],
+  collaborators: [],
+  details: [],
   order: 0,
   featured: false,
   projectType: "product",

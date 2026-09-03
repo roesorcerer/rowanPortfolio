@@ -5,6 +5,13 @@
 export type {
   ApiResponse,
   Project,
+  ProjectCaseStudy,
+  ProjectCaseStudySection,
+  ProjectCollaborator,
+  ProjectDetail,
+  ProjectDetailKind,
+  ProjectLink,
+  ProjectMedia,
   ProjectPayload,
   ProjectReorderPayload,
   ProjectStatus,

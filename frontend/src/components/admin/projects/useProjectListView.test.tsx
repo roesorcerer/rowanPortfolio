@@ -7,11 +7,15 @@ import type { Project } from "../../../types";
 function makeProject(overrides: Partial<Project> = {}): Project {
   return {
     _id: Math.random().toString(36).slice(2),
+    slug: "a-project",
     title: "A project",
     category: ["Web App"],
     description: "Something",
     image: "/x.png",
-    technologies: ["React"],
+    links: [],
+    media: [],
+    collaborators: [],
+    details: [],
     featured: false,
     projectType: "practice",
     status: "published",
@@ -26,8 +30,7 @@ const atrium = makeProject({
   _id: "atrium",
   title: "The Atrium",
   projectType: "product",
-  category: ["Mobile app"],
-  technologies: ["React Native", "Django"],
+  category: ["Mobile app", "React Native", "Django"],
   featured: true,
   order: 0,
 });
@@ -55,8 +58,10 @@ const stress = makeProject({
   projectType: "research",
   category: ["Research paper"],
   researchStatus: "published",
-  researchVenue: "CSCW",
-  researchYear: 2026,
+  details: [
+    { key: "venue", label: "Venue", value: "CSCW" },
+    { key: "year", label: "Year", value: "2026" },
+  ],
   order: 0,
 });
 const vantage = makeProject({
@@ -65,7 +70,9 @@ const vantage = makeProject({
   projectType: "research",
   category: ["Research paper"],
   researchStatus: "in-revision",
-  rejectedVenue: "CHI EA 2025",
+  details: [
+    { key: "originalvenue", label: "Originally submitted to", value: "CHI EA 2025" },
+  ],
   order: 1,
 });
 const spam = makeProject({
@@ -182,11 +189,15 @@ describe("search", () => {
 });
 
 describe("tag filter", () => {
-  it("offers every tag in use, de-duplicated", () => {
+  // Since `technologies` merged into `category`, the stack is filterable too —
+  // "show me everything built with Django" is now a tag filter.
+  it("offers every tag in use, stack included, de-duplicated", () => {
     const { result } = view();
     expect(result.current.availableTags).toEqual([
+      "Django",
       "Machine learning",
       "Mobile app",
+      "React Native",
       "Research paper",
       "Web app",
     ]);
@@ -322,16 +333,38 @@ describe("row derivations", () => {
     expect(projectMetaParts(vantage)).toEqual(["originally CHI EA 2025"]);
   });
 
-  it("reads other rows as tags then tech", () => {
-    expect(projectMetaParts(atrium)).toEqual([
-      "Mobile app",
-      "React Native, Django",
-    ]);
+  it("reads other rows as one run of tags", () => {
+    // Two comma-separated runs would now be the same run twice.
+    expect(projectMetaParts(atrium)).toEqual(["Mobile app, React Native, Django"]);
   });
 
   it("surfaces what a half-finished entry is missing", () => {
     expect(projectGaps(itasca)).toContain("missing description");
-    expect(projectGaps(atrium)).toEqual([]);
+    // Otherwise complete, but with no process write-up behind its permalink.
+    expect(projectGaps(atrium)).toEqual(["no case study"]);
+  });
+
+  it("stops flagging a case study once one is written", () => {
+    const written = makeProject({
+      ...atrium,
+      caseStudy: {
+        summary: "How the atrium came together.",
+        sections: [],
+        outcomes: [],
+        lessons: [],
+      },
+    });
+
+    expect(projectGaps(written)).toEqual([]);
+  });
+
+  it("ignores a case study that exists but says nothing", () => {
+    const hollow = makeProject({
+      ...atrium,
+      caseStudy: { sections: [], outcomes: [], lessons: [] },
+    });
+
+    expect(projectGaps(hollow)).toEqual(["no case study"]);
   });
 });
 

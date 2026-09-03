@@ -9,11 +9,15 @@ import type { Project } from "../../types";
 function makeProject(overrides: Partial<Project> = {}): Project {
   return {
     _id: "id",
+    slug: "a-project",
     title: "A project",
     category: ["Web app"],
     description: "Something",
     image: "/x.png",
-    technologies: ["React"],
+    links: [],
+    media: [],
+    collaborators: [],
+    details: [],
     featured: false,
     projectType: "practice",
     status: "published",
@@ -29,8 +33,7 @@ const projects: Project[] = [
     _id: "atrium",
     title: "The Atrium",
     projectType: "product",
-    category: ["Mobile app"],
-    technologies: ["React Native", "Django"],
+    category: ["Mobile app", "React Native", "Django"],
     featured: true,
     order: 0,
   }),
@@ -49,8 +52,10 @@ const projects: Project[] = [
     projectType: "research",
     category: ["Research paper"],
     researchStatus: "published",
-    researchVenue: "CSCW",
-    researchYear: 2026,
+    details: [
+      { key: "venue", label: "Venue", value: "CSCW" },
+      { key: "year", label: "Year", value: "2026" },
+    ],
     order: 0,
   }),
 ];
@@ -201,7 +206,7 @@ describe("ProjectsTab", () => {
     await user.click(screen.getByRole("button", { name: "+ New project" }));
 
     expect(screen.getByText("New project")).toBeInTheDocument();
-    expect(screen.getByText("Tags")).toBeInTheDocument();
+    expect(screen.getByText("Tags and stack")).toBeInTheDocument();
     // Suggestions are drawn from the loaded projects.
     expect(screen.getByRole("button", { name: "+ Mobile app" })).toBeInTheDocument();
   });

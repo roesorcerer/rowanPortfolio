@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
-  getProjectById,
+  getProjectByIdOrSlug,
+  getProjectForAdmin,
   updateProject,
   deleteProject,
 } from "../controllers/project.controller";
@@ -21,11 +22,16 @@ const router = Router();
 // Public — anyone can read published projects (this is a portfolio site).
 router.get("/", respond(() => projectsStore.list()));
 
-// Admin read — the same list plus drafts. Declared before "/:id" so "all"
-// isn't swallowed as an id.
+// Admin read — the same list plus drafts. Declared before "/:idOrSlug" so
+// "all" isn't swallowed as an id.
 router.get("/all", requireAuth, requireAdmin, respond(() => projectsStore.listAll()));
 
-router.get("/:id", getProjectById);
+// Admin single-project read — drafts included, for previewing an unpublished
+// case study at its permalink.
+router.get("/all/:idOrSlug", requireAuth, requireAdmin, getProjectForAdmin);
+
+// Public permalink. Accepts either the slug a resume prints or a raw id.
+router.get("/:idOrSlug", getProjectByIdOrSlug);
 
 // Protected — only admins can modify projects.
 router.post(

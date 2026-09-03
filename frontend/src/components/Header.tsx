@@ -23,6 +23,8 @@ function Navigation() {
         </Link>
       </div>
 
+      {/* Root-relative hashes, not bare "#about": the header also renders on
+          project permalinks, where those sections aren't on the page. */}
       <nav className="flex gap-6 md:gap-8 text-sm">
         <a
           href="/"
@@ -31,13 +33,13 @@ function Navigation() {
           Work
         </a>
         <a
-          href="#about"
+          href="/#about"
           className="text-body hover:text-ink transition-colors"
         >
           About
         </a>
         <a
-          href="#contact"
+          href="/#contact"
           className="text-body hover:text-ink transition-colors"
         >
           Contact

@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { useProjects } from "../hooks/useProjects";
+import { projectPath, projectUrl } from "../lib/projectLinks";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +34,40 @@ function Row({
       <div className={leftClass}>{left}</div>
       <div className={rightClass}>{right}</div>
     </div>
+  );
+}
+
+/**
+ * A project name on the resume, linked to its case study when the site has
+ * one under that title.
+ *
+ * Matched by title rather than a hardcoded slug so the link can't drift: if a
+ * project is renamed, its permalink stays put and this keeps resolving; if
+ * it's deleted, the name degrades to plain text instead of a dead link.
+ *
+ * Printed, the URL is spelled out after the name — a PDF has no hyperlinks a
+ * reader can hover, and the whole point is that the address survives paper.
+ */
+function ProjectLink({ title }: { title: string }) {
+  const { data: projects } = useProjects();
+  const project = projects?.find(
+    (candidate) => candidate.title.toLowerCase() === title.toLowerCase()
+  );
+
+  if (!project) return <>{title}</>;
+
+  return (
+    <>
+      <Link
+        to={projectPath(project)}
+        className="text-inherit underline decoration-[#0F6E56] decoration-1 underline-offset-2 hover:text-[#0F6E56] transition-colors print:no-underline"
+      >
+        {title}
+      </Link>
+      <span className="hidden print:inline font-normal not-italic text-[11px] ml-1.5">
+        ({projectUrl(project)})
+      </span>
+    </>
   );
 }
 
@@ -198,7 +234,7 @@ function Resume() {
         <SectionHeader title="Projects" />
 
         <div className="mt-2">
-          <Row left="Food Forward" right="React Native, TypeScript, Express, SQLite" />
+          <Row left={<ProjectLink title="Food Forward" />} right="React Native, TypeScript, Express, SQLite" />
           <ul className="list-disc pl-6 mt-1 space-y-1">
             <li>
               Built and delivered a time management mobile application for food service employees,
@@ -212,7 +248,7 @@ function Resume() {
         </div>
 
         <div className="mt-3">
-          <Row left="Itasca Trails" right="React, TypeScript, Vite, Google Maps API" />
+          <Row left={<ProjectLink title="Itasca Trails" />} right="React, TypeScript, Vite, Google Maps API" />
           <ul className="list-disc pl-6 mt-1 space-y-1">
             <li>
               Built a community trail information site with geolocation features using the Google
@@ -227,7 +263,7 @@ function Resume() {
 
         <div className="mt-3">
           <Row
-            left="Portfolio Site"
+            left={<ProjectLink title="Portfolio Site" />}
             right="React, TypeScript, Three.js, GSAP, Framer Motion, Tailwind"
           />
           <ul className="list-disc pl-6 mt-1 space-y-1">

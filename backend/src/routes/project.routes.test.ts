@@ -47,7 +47,7 @@ const validProject = {
   category: "Web App",
   description: "A test project",
   image: "/assets/test.png",
-  technologies: ["React"],
+  links: [{ kind: "github", url: "https://github.com/x/y" }],
   status: "published",
 };
 
@@ -194,7 +194,7 @@ describe("PUT /api/projects/reorder", () => {
   });
 });
 
-describe("GET /api/projects/:id", () => {
+describe("GET /api/projects/:idOrSlug", () => {
   it("returns a project by ID", async () => {
     const token = await getAdminToken();
 
@@ -220,6 +220,166 @@ describe("GET /api/projects/:id", () => {
   it("returns 404 for invalid ID format", async () => {
     const res = await request(app).get("/api/projects/not-an-id");
     expect(res.status).toBe(404);
+  });
+
+  it("resolves a project by its slug", async () => {
+    const token = await getAdminToken();
+    await createProject(token, { title: "Food Forward" });
+
+    const res = await request(app).get("/api/projects/food-forward");
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.title).toBe("Food Forward");
+  });
+
+  // The permalink is what a resume prints, so a draft must not be one URL
+  // guess away from being readable.
+  it("returns 404 for a draft, by slug or by id", async () => {
+    const token = await getAdminToken();
+    const draft = await createProject(token, {
+      title: "Unfinished",
+      status: "draft",
+    });
+
+    expect((await request(app).get("/api/projects/unfinished")).status).toBe(404);
+    expect((await request(app).get(`/api/projects/${draft._id}`)).status).toBe(404);
+  });
+
+  it("serves a draft to an admin at the same permalink", async () => {
+    const token = await getAdminToken();
+    await createProject(token, { title: "Unfinished", status: "draft" });
+
+    const res = await request(app)
+      .get("/api/projects/all/unfinished")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.title).toBe("Unfinished");
+  });
+
+  it("refuses the draft-visible lookup without an admin session", async () => {
+    const token = await getAdminToken();
+    await createProject(token, { title: "Unfinished", status: "draft" });
+
+    const res = await request(app).get("/api/projects/all/unfinished");
+
+    expect(res.status).toBe(401);
+  });
+});
+
+describe("project slugs", () => {
+  it("derives a slug from the title on create", async () => {
+    const token = await getAdminToken();
+    const project = await createProject(token, { title: "Food Forward" });
+
+    expect(project.slug).toBe("food-forward");
+  });
+
+  it("suffixes a slug that is already taken", async () => {
+    const token = await getAdminToken();
+    await createProject(token, { title: "Portfolio Site" });
+    const second = await createProject(token, { title: "Portfolio Site" });
+
+    expect(second.slug).toBe("portfolio-site-2");
+  });
+
+  // The whole point of a stored slug: a resume already carries the old link.
+  it("keeps the slug when the title changes", async () => {
+    const token = await getAdminToken();
+    const project = await createProject(token, { title: "Food Forward" });
+
+    const res = await request(app)
+      .put(`/api/projects/${project._id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ title: "Food Forward v2" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.slug).toBe("food-forward");
+  });
+
+  it("moves the slug only when one is sent explicitly", async () => {
+    const token = await getAdminToken();
+    const project = await createProject(token, { title: "Food Forward" });
+
+    const res = await request(app)
+      .put(`/api/projects/${project._id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ slug: "Food Forward Mobile" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.slug).toBe("food-forward-mobile");
+  });
+
+  it("never hands out a slug that shadows a sibling route", async () => {
+    const token = await getAdminToken();
+    const project = await createProject(token, { title: "All" });
+
+    expect(project.slug).toBe("all-2");
+  });
+});
+
+describe("project case studies", () => {
+  const caseStudy = {
+    summary: "How it came together.",
+    role: "Sole developer",
+    problem: "Shift handovers were being lost on paper.",
+    sections: [
+      { heading: "Shadowing a shift", body: "Watched two full services." },
+      { heading: "Building the API", body: "Express and SQLite." },
+    ],
+    outcomes: ["Delivered to the client"],
+    lessons: ["Ship the schema first"],
+  };
+
+  it("round-trips a case study through create and read", async () => {
+    const token = await getAdminToken();
+    await createProject(token, { title: "Food Forward", caseStudy });
+
+    const res = await request(app).get("/api/projects/food-forward");
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.caseStudy.summary).toBe("How it came together.");
+    expect(res.body.data.caseStudy.sections).toHaveLength(2);
+    expect(res.body.data.caseStudy.sections[0].heading).toBe("Shadowing a shift");
+    expect(res.body.data.caseStudy.outcomes).toEqual(["Delivered to the client"]);
+  });
+
+  it("stores no case study when every field is blank", async () => {
+    const token = await getAdminToken();
+    const project = await createProject(token, {
+      title: "Food Forward",
+      caseStudy: { sections: [], outcomes: [], lessons: [] },
+    });
+
+    expect(project.caseStudy).toBeUndefined();
+  });
+
+  // An emptied form has to erase the stored text, not read as "unchanged".
+  it("clears a stored case study when an empty one is sent", async () => {
+    const token = await getAdminToken();
+    const project = await createProject(token, { title: "Food Forward", caseStudy });
+
+    const res = await request(app)
+      .put(`/api/projects/${project._id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ caseStudy: { sections: [], outcomes: [], lessons: [] } });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.caseStudy).toBeUndefined();
+  });
+
+  it("rejects a section missing its body", async () => {
+    const token = await getAdminToken();
+
+    const res = await request(app)
+      .post("/api/projects")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        ...validProject,
+        caseStudy: { sections: [{ heading: "Only a heading" }] },
+      });
+
+    expect(res.status).toBe(400);
   });
 });
 
@@ -316,7 +476,9 @@ describe("PUT /api/projects/:id", () => {
     expect(res.body.data.title).toBe("Updated Title");
     // Other fields should remain unchanged
     expect(res.body.data.category).toEqual(["Web App"]);
-    expect(res.body.data.technologies).toEqual(["React"]);
+    expect(res.body.data.links).toEqual([
+      { kind: "github", url: "https://github.com/x/y" },
+    ]);
     expect(res.body.data.status).toBe("published");
   });
 

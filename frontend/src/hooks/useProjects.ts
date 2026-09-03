@@ -3,11 +3,15 @@ import {
   createProject,
   deleteProject,
   getAllProjects,
+  getProjectByIdOrSlug,
+  getProjectForAdmin,
   getProjects,
   reorderProjects,
   updateProject,
   type ProjectPayload,
 } from "../api/projects";
+import { ApiError } from "../api/client";
+import { isAuthenticated } from "../api/auth";
 import type { Project } from "../types";
 
 const PROJECTS_KEY = ["projects"] as const;
@@ -32,6 +36,34 @@ export function useAllProjects() {
   return useQuery({
     queryKey: ADMIN_PROJECTS_KEY,
     queryFn: getAllProjects,
+  });
+}
+
+/**
+ * A single project by permalink — the slug a resume links to, or a raw id.
+ *
+ * Signed in as an admin, a 404 is retried against the draft-visible endpoint,
+ * so an unpublished case study can be proofread at its real URL. Signed out,
+ * a draft stays a 404.
+ */
+export function useProject(idOrSlug: string | undefined) {
+  return useQuery({
+    queryKey: ["projects", "detail", idOrSlug] as const,
+    enabled: Boolean(idOrSlug),
+    queryFn: async () => {
+      const key = idOrSlug as string;
+      try {
+        return await getProjectByIdOrSlug(key);
+      } catch (error) {
+        const missing = error instanceof ApiError && error.status === 404;
+        if (missing && isAuthenticated()) return getProjectForAdmin(key);
+        throw error;
+      }
+    },
+    // A missing slug is a typo in a printed link, not a blip — retrying it
+    // four times just delays the "no such project" message.
+    retry: (failureCount, error) =>
+      error instanceof ApiError && error.status === 404 ? false : failureCount < 2,
   });
 }
 

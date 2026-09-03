@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { useProjects } from "../hooks/useProjects";
-import type { Project, ProjectType, ResearchStatus } from "../types";
+import type { Project, ProjectType } from "../types";
 import ProjectCard from "./ProjectCard";
+import { researchStatusOf } from "./project/projectFacts";
 import AboutSection from "./AboutSection";
 import ContactSection from "./ContactSection";
 
@@ -243,6 +244,34 @@ function ProjectsFilter({
   );
 }
 
+/** A titled, counted run of cards. Only the research tab needs more than one. */
+function ProjectGroup({
+  heading,
+  projects,
+  emptyText,
+}: {
+  heading: string;
+  projects: Project[];
+  emptyText: string;
+}) {
+  return (
+    <section>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="text-ink text-xs uppercase tracking-[0.2em]">{heading}</h3>
+        <span className="text-faint text-xs">{projects.length}</span>
+      </div>
+      <div className="space-y-3">
+        {projects.map((project) => (
+          <ProjectCard key={project._id} project={project} />
+        ))}
+        {projects.length === 0 && (
+          <p className="text-faint text-sm border border-rule bg-white p-4">{emptyText}</p>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function Closing() {
   return (
     <footer className="px-5 md:px-10 py-16 md:py-20 border-t border-rule md:w-full">
@@ -297,19 +326,6 @@ function Main() {
   const { data: projects, isLoading, error } = useProjects();
   const [activeTab, setActiveTab] = useState<TabKey>("featured");
 
-  const getResearchStatus = (project: Project): ResearchStatus => {
-    if (project.researchStatus) return project.researchStatus;
-    if (
-      project.rejectedVenue ||
-      project.improvedIntoTitle ||
-      project.improvedIntoLink ||
-      project.improvementSummary
-    ) {
-      return "in-revision";
-    }
-    return "published";
-  };
-
   // A tab is either the promotion flag or one taxonomy value. Type counts
   // include promoted work, so they stay honest about how much of each there is.
   const inTab = (project: Project, tab: TabKey) =>
@@ -326,11 +342,11 @@ function Main() {
   const visibleProjects = projects?.filter((p) => inTab(p, activeTab)) ?? [];
   const publishedResearch =
     activeTab === "research"
-      ? visibleProjects.filter((project) => getResearchStatus(project) === "published")
+      ? visibleProjects.filter((project) => researchStatusOf(project) === "published")
       : [];
   const inRevisionResearch =
     activeTab === "research"
-      ? visibleProjects.filter((project) => getResearchStatus(project) === "in-revision")
+      ? visibleProjects.filter((project) => researchStatusOf(project) === "in-revision")
       : [];
 
   return (
@@ -359,72 +375,28 @@ function Main() {
           <>
             <ProjectsFilter activeTab={activeTab} counts={counts} onChange={setActiveTab} />
 
-            {/* Product shares the large hero layout with Featured — the same
-                kind of work, just not promoted. */}
-            {(activeTab === "featured" || activeTab === "product") && (
-              <div className="px-5 md:px-10 space-y-6">
-                {visibleProjects.map((project, index) => (
-                  <ProjectCard key={project._id} project={project} index={index} variant="featured" />
-                ))}
-              </div>
-            )}
-
-            {activeTab === "research" && (
+            {/* One list for every tab. The card picks its own layout from the
+                project's type, so a tab doesn't need to know what its projects
+                look like — a promoted paper in the Featured tab still reads as
+                a citation. Research is the one tab that splits, because
+                published work and work in revision are different claims. */}
+            {activeTab === "research" ? (
               <div className="px-5 md:px-10 space-y-8">
-                <section>
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <h3 className="text-ink text-xs uppercase tracking-[0.2em]">Published works</h3>
-                    <span className="text-faint text-xs">{publishedResearch.length}</span>
-                  </div>
-                  <div className="space-y-3">
-                    {publishedResearch.map((project, index) => (
-                      <ProjectCard key={project._id} project={project} index={index} variant="research" />
-                    ))}
-                    {publishedResearch.length === 0 && (
-                      <p className="text-faint text-sm border border-rule bg-white p-4">No published works added yet.</p>
-                    )}
-                  </div>
-                </section>
-
-                <section>
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <h3 className="text-ink text-xs uppercase tracking-[0.2em]">Developing manuscripts</h3>
-                    <span className="text-faint text-xs">{inRevisionResearch.length}</span>
-                  </div>
-                  <div className="space-y-3">
-                    {inRevisionResearch.map((project, index) => (
-                      <ProjectCard key={project._id} project={project} index={index} variant="research" />
-                    ))}
-                    {inRevisionResearch.length === 0 && (
-                      <p className="text-faint text-sm border border-rule bg-white p-4">
-                        No developing manuscripts added yet. Add one with a revision trail to show where it was submitted and how it evolved.
-                      </p>
-                    )}
-                  </div>
-                </section>
+                <ProjectGroup
+                  heading="Published works"
+                  projects={publishedResearch}
+                  emptyText="No published works added yet."
+                />
+                <ProjectGroup
+                  heading="Developing manuscripts"
+                  projects={inRevisionResearch}
+                  emptyText="No developing manuscripts added yet. Add one with a revision trail to show where it was submitted and how it evolved."
+                />
               </div>
-            )}
-
-            {activeTab === "practice" && (
+            ) : (
               <div className="px-5 md:px-10 space-y-6">
-                {visibleProjects.map((project, index) => (
-                  <ProjectCard key={project._id} project={project} index={index} variant="practice" />
-                ))}
-              </div>
-            )}
-
-            {activeTab === "gameDev" && (
-              <div className="px-5 md:px-10 space-y-6">
-                {visibleProjects.map((project, index) => (
-                  <ProjectCard key={project._id} project={project} index={index} variant="gameDev" />
-                ))}
-              </div>
-            )}
-
-            {activeTab === "art" && (
-              <div className="px-5 md:px-10 space-y-6">
-                {visibleProjects.map((project, index) => (
-                  <ProjectCard key={project._id} project={project} index={index} variant="art" />
+                {visibleProjects.map((project) => (
+                  <ProjectCard key={project._id} project={project} />
                 ))}
               </div>
             )}

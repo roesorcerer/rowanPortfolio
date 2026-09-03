@@ -31,7 +31,7 @@ export type AnalyticsEvent =
       referrer: string;
       projectId: string;
       projectTitle: string;
-      linkType: "demo" | "github";
+      linkType?: string;
     };
 
 // ---- Adapter seam --------------------------------------------------------
@@ -96,7 +96,10 @@ function supportsBeacon(): boolean {
 
 export interface Analytics {
   projectView(project: Project): void;
-  linkClick(project: Project, linkType: "demo" | "github"): void;
+  // `linkType` is a free string, matching `Event.linkType` on the backend and
+  // the open `kind` on `project.links` — a new kind of destination tracks
+  // without a type change here.
+  linkClick(project: Project, linkType: string): void;
   pageview(): void;
 }
 

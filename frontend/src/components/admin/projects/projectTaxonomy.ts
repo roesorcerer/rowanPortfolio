@@ -1,4 +1,6 @@
 import type { Project, ProjectType, ResearchStatus } from "../../../types";
+import { hasCaseStudy } from "../../../lib/projectLinks";
+import { DETAIL_KEYS, detailValue, filledDetails } from "../../../lib/projectDetails";
 
 // One place for the vocabulary the admin list speaks, plus the derivations
 // that turn a Project into the handful of strings a dense row shows.
@@ -76,10 +78,13 @@ export function projectGaps(project: Project): string[] {
 
   if (project.projectType === "research") {
     if (!project.researchStatus) gaps.push("missing research status");
-    if (!project.researchVenue?.trim()) gaps.push("missing venue");
-  } else if (!project.technologies?.length) {
-    gaps.push("missing tech");
+    if (!detailValue(project, DETAIL_KEYS.venue)) gaps.push("missing venue");
   }
+
+  // Last, because it's the biggest thing to write and the least urgent to
+  // fix — a project without one still renders everywhere, it just has no
+  // story behind its permalink.
+  if (!hasCaseStudy(project.caseStudy)) gaps.push("no case study");
 
   return gaps;
 }
@@ -90,19 +95,22 @@ export function projectGaps(project: Project): string[] {
  */
 export function projectMetaParts(project: Project): string[] {
   if (project.projectType === "research") {
-    if (project.researchStatus === "in-revision" && project.rejectedVenue?.trim()) {
-      return [`originally ${project.rejectedVenue.trim()}`];
+    const originalVenue = detailValue(project, DETAIL_KEYS.originalVenue);
+    if (project.researchStatus === "in-revision" && originalVenue) {
+      return [`originally ${originalVenue}`];
     }
-    const citation = [project.researchVenue?.trim(), project.researchYear]
+    const citation = [
+      detailValue(project, DETAIL_KEYS.venue),
+      detailValue(project, DETAIL_KEYS.year),
+    ]
       .filter(Boolean)
       .join(" ");
     return citation ? [citation] : [];
   }
 
-  const parts: string[] = [];
-  if (project.category?.length) parts.push(project.category.join(", "));
-  if (project.technologies?.length) parts.push(project.technologies.join(", "));
-  return parts;
+  // One list since the tag and stack arrays merged — the row used to print
+  // them as two comma-separated runs, which now would be the same run twice.
+  return project.category?.length ? [project.category.join(", ")] : [];
 }
 
 /** Every tag in use, de-duplicated case-insensitively and sorted for the filter bar. */
@@ -127,11 +135,10 @@ export function searchHaystack(project: Project): string {
     project.title,
     project.description,
     ...(project.category ?? []),
-    ...(project.technologies ?? []),
     PROJECT_TYPE_LABELS[project.projectType],
-    project.researchVenue,
-    project.rejectedVenue,
-    project.improvedIntoTitle,
+    // Every detail, whatever it is. A fact added today is searchable today,
+    // without this function learning its name.
+    ...filledDetails(project).flatMap((detail) => [detail.label, detail.value]),
   ]
     .filter(Boolean)
     .join(" ")

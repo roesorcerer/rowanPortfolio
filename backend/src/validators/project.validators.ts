@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LIMITS } from "./limits";
+import { slugify } from "../utils/slug";
 
 const mediaItemSchema = z.object({
   type: z.enum(["image", "video"]),
@@ -9,6 +10,86 @@ const mediaItemSchema = z.object({
   caption: z.string().trim().optional(),
 });
 
+// Free-form by design. `key` is normalized so a fact typed as "Venue" and one
+// typed as "venue" are the same fact, which is what lets rendering code look
+// facts up by key without caring how the admin capitalized the label.
+const detailSchema = z.object({
+  key: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(1, "Detail key is required")
+    .max(
+      LIMITS.project.detailKeyMax,
+      `Detail key cannot exceed ${LIMITS.project.detailKeyMax} characters`
+    ),
+  label: z
+    .string()
+    .trim()
+    .min(1, "Detail label is required")
+    .max(
+      LIMITS.project.detailLabelMax,
+      `Detail label cannot exceed ${LIMITS.project.detailLabelMax} characters`
+    ),
+  value: z
+    .string()
+    .trim()
+    .min(1, "Detail value is required")
+    .max(
+      LIMITS.project.detailValueMax,
+      `Detail value cannot exceed ${LIMITS.project.detailValueMax} characters`
+    ),
+  kind: z.enum(["text", "url", "date"]).optional(),
+});
+
+const caseStudySectionSchema = z.object({
+  heading: z
+    .string()
+    .min(1, "Section heading is required")
+    .max(
+      LIMITS.project.caseStudyHeadingMax,
+      `Section heading cannot exceed ${LIMITS.project.caseStudyHeadingMax} characters`
+    )
+    .trim(),
+  body: z.string().min(1, "Section body is required").trim(),
+  media: z.array(mediaItemSchema).default([]),
+});
+
+// Every part is optional so a case study can be written incrementally — a
+// summary today, the process sections next week — without failing validation
+// in between.
+const caseStudySchema = z.object({
+  summary: z.string().trim().optional(),
+  role: z.string().trim().optional(),
+  problem: z.string().trim().optional(),
+  sections: z.array(caseStudySectionSchema).default([]),
+  outcomes: z.array(z.string().trim()).default([]),
+  lessons: z.array(z.string().trim()).default([]),
+});
+
+// Free-form `kind`, same reasoning as `detail.key`. The URL is validated
+// because a broken outbound link is worse than a missing one.
+const linkSchema = z.object({
+  kind: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(1, "Link kind is required")
+    .max(
+      LIMITS.project.linkKindMax,
+      `Link kind cannot exceed ${LIMITS.project.linkKindMax} characters`
+    ),
+  url: z.string().url("Link must be a valid URL"),
+  label: z
+    .string()
+    .trim()
+    .max(
+      LIMITS.project.linkLabelMax,
+      `Link label cannot exceed ${LIMITS.project.linkLabelMax} characters`
+    )
+    .optional(),
+});
+
 const collaboratorSchema = z.object({
   name: z.string().min(1, "Collaborator name is required").trim(),
   role: z.string().trim().optional(),
@@ -16,24 +97,39 @@ const collaboratorSchema = z.object({
   socialLabel: z.string().trim().optional(),
 });
 
-// Tags. Accepts a bare string too, so requests written against the old
-// single-string category still validate.
+// Tags — domain and stack in one list, de-duplicated case-insensitively so
+// "React" and "react" don't both become chips. Accepts a bare string too, so
+// requests written against the old single-string category still validate.
 const categorySchema = z
   .union([z.string(), z.array(z.string())])
-  .transform((value) =>
-    (typeof value === "string" ? [value] : value)
+  .transform((value) => {
+    const tags = (typeof value === "string" ? [value] : value)
       .map((tag) => tag.trim())
-      .filter(Boolean)
-  );
+      .filter(Boolean);
+    // Keeps the casing first typed, drops later case-variants.
+    const seen = new Map<string, string>();
+    for (const tag of tags) {
+      const key = tag.toLowerCase();
+      if (!seen.has(key)) seen.set(key, tag);
+    }
+    return [...seen.values()];
+  });
 
 // The field schemas, without defaults.
 //
 // Defaults are applied only in createProjectSchema below. They must not leak
 // into the update schema: `.partial()` does not strip a `.default()`, so a
 // PUT of `{ title: "x" }` against a defaulted field would parse to the
-// default and overwrite whatever was there — silently clearing technologies,
+// default and overwrite whatever was there — silently clearing the tags,
 // un-featuring the project, or flipping it back to a draft.
-const projectFields = {
+export const projectFields = {
+  // Normalized rather than rejected: the admin types a title-ish string into
+  // the slug box, and what gets stored is always canonical. Emptiness is
+  // filtered out here so the store falls back to deriving one from the title.
+  slug: z
+    .string()
+    .transform((value) => slugify(value))
+    .refine((value) => value.length > 0, "Slug must contain at least one letter or digit"),
   title: z
     .string({ error: "Title is required" })
     .min(1, "Title is required")
@@ -47,12 +143,12 @@ const projectFields = {
   image: z
     .string({ error: "Image path is required" })
     .min(1, "Image path is required"),
-  link: z.string().url("Link must be a valid URL").optional(),
-  githubLink: z.string().url("GitHub link must be a valid URL").optional(),
-  relatedResearchLink: z
-    .string()
-    .url("Related research link must be a valid URL")
-    .optional(),
+  links: z
+    .array(linkSchema)
+    .max(
+      LIMITS.project.linksMax,
+      `A project cannot have more than ${LIMITS.project.linksMax} links`
+    ),
   developmentTime: z
     .string()
     .max(
@@ -61,30 +157,85 @@ const projectFields = {
     )
     .trim()
     .optional(),
-  technologies: z.array(z.string().trim()),
   media: z.array(mediaItemSchema),
   collaborators: z.array(collaboratorSchema),
   featured: z.boolean(),
   projectType: z.enum(["product", "research", "practice", "gameDev", "art"]),
   researchStatus: z.enum(["published", "in-revision"]).optional(),
-  researchVenue: z.string().trim().optional(),
-  researchYear: z.number().int().min(1900).max(2100).optional(),
-  rejectedVenue: z.string().trim().optional(),
-  improvedIntoTitle: z.string().trim().optional(),
-  improvedIntoLink: z.string().url("Improved manuscript link must be a valid URL").optional(),
-  improvementSummary: z.string().trim().optional(),
-  practicePurpose: z.string().trim().optional(),
+  // Duplicate keys are collapsed last-wins rather than rejected: the admin
+  // renaming one fact into another's key is a merge, not a validation error.
+  details: z
+    .array(detailSchema)
+    .max(
+      LIMITS.project.detailsMax,
+      `A project cannot have more than ${LIMITS.project.detailsMax} details`
+    )
+    .transform((items) => [...new Map(items.map((d) => [d.key, d])).values()]),
+  caseStudy: caseStudySchema,
   status: z.enum(["draft", "published"]),
   // Omit it and the store appends to the end of the display group. The admin
   // form always omits it; reordering goes through reorderProjectsSchema.
   order: z.number().int().optional(),
 };
 
+/**
+ * The canonical object schema: every field, no defaults applied, nothing made
+ * partial. This is the source of truth for the Project *shape* — the Mongoose
+ * document interface and the store's types are inferred from it below rather
+ * than restated, so a field added here reaches storage and the API without
+ * being retyped in three dialects.
+ *
+ * The create/update schemas still branch off `projectFields` directly, because
+ * their difference is the point: `createProjectSchema` applies defaults and
+ * `updateProjectSchema` must not (see the comment above `projectFields`).
+ */
+export const projectShape = z.object(projectFields);
+
+/**
+ * The validated *output* of every field — post-transform, so `category` is
+ * already a de-duplicated array and `details` already collapsed on key.
+ */
+export type ProjectFields = z.infer<typeof projectShape>;
+
+/**
+ * What a stored project always holds.
+ *
+ * Two fields differ between what a request may send and what a document has,
+ * and both differences are real rather than oversights:
+ *   order      — omitted on create; the store appends to the display group,
+ *                so the document always has one even though the input may not.
+ *   caseStudy  — absent until someone writes one; the store unsets an emptied
+ *                one rather than storing a husk of blanks.
+ */
+export type ProjectRecord = Omit<ProjectFields, "order" | "caseStudy"> & {
+  order: number;
+  caseStudy?: ProjectFields["caseStudy"];
+};
+
+// The nested shapes, named for the places that need them (Mongoose sub-schemas,
+// the store's mappers). Derived rather than declared so they cannot drift from
+// the validators that produce them.
+export type ProjectMedia = ProjectFields["media"][number];
+export type ProjectDetail = ProjectFields["details"][number];
+export type ProjectLink = ProjectFields["links"][number];
+export type ProjectCollaborator = ProjectFields["collaborators"][number];
+export type ProjectCaseStudy = NonNullable<ProjectFields["caseStudy"]>;
+export type ProjectCaseStudySection = ProjectCaseStudy["sections"][number];
+export type ProjectType = ProjectFields["projectType"];
+export type ProjectStatus = ProjectFields["status"];
+export type ResearchStatus = NonNullable<ProjectFields["researchStatus"]>;
+export type ProjectMediaType = ProjectMedia["type"];
+export type ProjectDetailKind = NonNullable<ProjectDetail["kind"]>;
+
 export const createProjectSchema = z.object({
   ...projectFields,
+  // Omitted on create — the store derives it from the title.
+  slug: projectFields.slug.optional(),
+  caseStudy: projectFields.caseStudy.optional(),
   category: projectFields.category.default([]),
-  technologies: projectFields.technologies.default([]),
+  links: projectFields.links.default([]),
   media: projectFields.media.default([]),
+  details: projectFields.details.default([]),
   collaborators: projectFields.collaborators.default([]),
   featured: projectFields.featured.default(false),
   projectType: projectFields.projectType.default("practice"),

@@ -11,6 +11,19 @@ export const LIMITS = {
   project: {
     titleMax: 200,
     devTimeMax: 60,
+    // Long enough for a real title, short enough to stay printable on a
+    // resume next to the project name.
+    slugMax: 120,
+    caseStudyHeadingMax: 160,
+    // A detail is a short named fact, not a paragraph. The caps are what
+    // keeps `details` from becoming a second, unstructured case study.
+    detailKeyMax: 48,
+    detailLabelMax: 60,
+    detailValueMax: 500,
+    detailsMax: 24,
+    linkLabelMax: 60,
+    linkKindMax: 32,
+    linksMax: 12,
   },
   contact: {
     nameMax: 100,

@@ -3,6 +3,9 @@ import type { Project, ProjectStatus, ProjectType } from "../../types";
 import { ApiError } from "../../api/client";
 import { useCreateProject, useUpdateProject } from "../../hooks/useProjects";
 import { useProjectFormState } from "../../hooks/useProjectFormState";
+import CaseStudyFields from "./projects/CaseStudyFields";
+import DetailsFields from "./projects/DetailsFields";
+import LinksFields from "./projects/LinksFields";
 import TagInput from "./projects/TagInput";
 import { PROJECT_TYPE_LABELS, PROJECT_TYPES } from "./projects/projectTaxonomy";
 import { buttonVariants } from "@/components/ui/button";
@@ -120,6 +123,23 @@ function ProjectForm({
             />
           </Field>
 
+          <Field label="Permalink">
+            <div className="flex items-center gap-1.5">
+              <span className="text-faint text-sm shrink-0">/projects/</span>
+              <input
+                value={form.slug}
+                onChange={(e) => setField("slug", e.target.value)}
+                className={inputCls}
+                placeholder={initialProject ? "" : "derived from the title"}
+              />
+            </div>
+            <p className="text-faint text-xs mt-1.5">
+              {initialProject
+                ? "This is the URL on your resume. Editing it breaks any link already printed."
+                : "Leave blank to derive it from the title."}
+            </p>
+          </Field>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Type" required>
               <select
@@ -150,12 +170,14 @@ function ProjectForm({
             </Field>
           </div>
 
-          <Field label="Tags">
+          {/* One box for domain tags and stack alike — they were two fields
+              doing the same job, and are now one list. */}
+          <Field label="Tags and stack">
             <TagInput
               value={form.category}
               onChange={(tags) => setField("category", tags)}
               suggestions={knownTags}
-              placeholder="e.g. Web App — press Enter to add"
+              placeholder="e.g. Web App, React — press Enter to add"
             />
           </Field>
 
@@ -180,135 +202,40 @@ function ProjectForm({
             />
           </Field>
 
-          <Field label="Live demo link (optional)">
-            <input
-              value={form.link}
-              onChange={(e) => setField("link", e.target.value)}
-              className={inputCls}
-              placeholder="https://my-project.example.com"
-              type="url"
-            />
-          </Field>
+          <LinksFields
+            value={form.links}
+            projectType={form.projectType}
+            onChange={(next) => setField("links", next)}
+          />
 
-          <Field label="GitHub link (optional)">
-            <input
-              value={form.githubLink}
-              onChange={(e) => setField("githubLink", e.target.value)}
-              className={inputCls}
-              placeholder="https://github.com/user/repo"
-              type="url"
-            />
-          </Field>
-
-          <Field label="Related research link (optional)">
-            <input
-              value={form.relatedResearchLink}
-              onChange={(e) => setField("relatedResearchLink", e.target.value)}
-              className={inputCls}
-              placeholder="https://paper-or-study.example.com"
-              type="url"
-            />
-          </Field>
-
+          {/* Status stays a typed field rather than a detail: the public
+              Research tab splits on it and the card badges it, so it drives
+              layout. Everything else a paper needs — venue, year, the revision
+              trail — is now a detail like any other fact. */}
           {form.projectType === "research" && (
-            <section className="border border-rule rounded-lg p-4 space-y-3">
-              <h3 className="text-ink text-sm font-medium">Research metadata</h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <Field label="Status">
-                  <select
-                    value={form.researchStatus}
-                    onChange={(e) =>
-                      setField(
-                        "researchStatus",
-                        e.target.value as "" | "published" | "in-revision"
-                      )
-                    }
-                    className={inputCls}
-                  >
-                    <option value="">Select status</option>
-                    <option value="published">Published</option>
-                    <option value="in-revision">In revision</option>
-                  </select>
-                </Field>
-
-                <Field label="Publication year (optional)">
-                  <input
-                    value={form.researchYear}
-                    onChange={(e) => setField("researchYear", e.target.value)}
-                    className={inputCls}
-                    placeholder="2026"
-                    type="number"
-                    min={1900}
-                    max={2100}
-                  />
-                </Field>
-              </div>
-
-              <Field label="Venue (optional)">
-                <input
-                  value={form.researchVenue}
-                  onChange={(e) => setField("researchVenue", e.target.value)}
-                  className={inputCls}
-                  placeholder="e.g. CHI EA 2026"
-                />
-              </Field>
-
-              <Field label="Original submission venue (optional)">
-                <input
-                  value={form.rejectedVenue}
-                  onChange={(e) => setField("rejectedVenue", e.target.value)}
-                  className={inputCls}
-                  placeholder="e.g. CSCW 2025"
-                />
-              </Field>
-
-              <Field label="Improved into manuscript title (optional)">
-                <input
-                  value={form.improvedIntoTitle}
-                  onChange={(e) => setField("improvedIntoTitle", e.target.value)}
-                  className={inputCls}
-                  placeholder="Revised manuscript title"
-                />
-              </Field>
-
-              <Field label="Improved manuscript link (optional)">
-                <input
-                  value={form.improvedIntoLink}
-                  onChange={(e) => setField("improvedIntoLink", e.target.value)}
-                  className={inputCls}
-                  placeholder="https://new-manuscript.example.com"
-                  type="url"
-                />
-              </Field>
-
-              <Field label="Improvement summary (optional)">
-                <textarea
-                  rows={3}
-                  value={form.improvementSummary}
-                  onChange={(e) => setField("improvementSummary", e.target.value)}
-                  className={inputCls}
-                  placeholder="How reviewer feedback was incorporated"
-                />
-              </Field>
-            </section>
+            <Field label="Research status">
+              <select
+                value={form.researchStatus}
+                onChange={(e) =>
+                  setField(
+                    "researchStatus",
+                    e.target.value as "" | "published" | "in-revision"
+                  )
+                }
+                className={inputCls}
+              >
+                <option value="">Select status</option>
+                <option value="published">Published</option>
+                <option value="in-revision">In revision</option>
+              </select>
+            </Field>
           )}
 
-          {form.projectType === "practice" && (
-            <section className="border border-rule rounded-lg p-4 space-y-3">
-              <h3 className="text-ink text-sm font-medium">Practice learning context</h3>
-
-              <Field label="What this practice project is for">
-                <textarea
-                  rows={3}
-                  value={form.practicePurpose}
-                  onChange={(e) => setField("practicePurpose", e.target.value)}
-                  className={inputCls}
-                  placeholder="e.g. Build fluency with distributed systems patterns through a small production-like service"
-                />
-              </Field>
-            </section>
-          )}
+          <DetailsFields
+            value={form.details}
+            projectType={form.projectType}
+            onChange={(next) => setField("details", next)}
+          />
 
           <Field label="Development time (optional)">
             <input
@@ -319,14 +246,11 @@ function ProjectForm({
             />
           </Field>
 
-          <Field label="Technologies (comma-separated)">
-            <input
-              value={form.technologies}
-              onChange={(e) => setField("technologies", e.target.value)}
-              className={inputCls}
-              placeholder="React, Node.js, MongoDB"
-            />
-          </Field>
+          <CaseStudyFields
+            projectType={form.projectType}
+            value={form.caseStudy}
+            onChange={(caseStudy) => setField("caseStudy", caseStudy)}
+          />
 
           <section className="border border-rule rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">

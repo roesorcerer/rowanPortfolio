@@ -12,7 +12,7 @@ describe("createProjectSchema", () => {
     const result = createProjectSchema.parse(validProject);
     expect(result.title).toBe("Test Project");
     // Defaults should be applied
-    expect(result.technologies).toEqual([]);
+    expect(result.links).toEqual([]);
     expect(result.featured).toBe(false);
     // New projects start hidden rather than going live half-finished.
     expect(result.status).toBe("draft");
@@ -23,14 +23,14 @@ describe("createProjectSchema", () => {
   it("accepts all optional fields", () => {
     const result = createProjectSchema.parse({
       ...validProject,
-      link: "https://example.com",
-      technologies: ["React", "Node.js"],
+      links: [{ kind: "demo", url: "https://example.com" }],
+      category: ["Web App", "React"],
       featured: true,
       status: "published",
       order: 5,
     });
-    expect(result.link).toBe("https://example.com");
-    expect(result.technologies).toEqual(["React", "Node.js"]);
+    expect(result.links).toEqual([{ kind: "demo", url: "https://example.com" }]);
+    expect(result.category).toEqual(["Web App", "React"]);
     expect(result.featured).toBe(true);
     expect(result.status).toBe("published");
     expect(result.order).toBe(5);
@@ -75,7 +75,10 @@ describe("createProjectSchema", () => {
 
   it("rejects invalid link URL", () => {
     expect(() =>
-      createProjectSchema.parse({ ...validProject, link: "not-a-url" })
+      createProjectSchema.parse({
+        ...validProject,
+        links: [{ kind: "demo", url: "not-a-url" }],
+      })
     ).toThrow();
   });
 
@@ -111,7 +114,126 @@ describe("updateProjectSchema", () => {
 
   it("still validates provided fields", () => {
     expect(() =>
-      updateProjectSchema.parse({ link: "not-a-url" })
+      updateProjectSchema.parse({ links: [{ kind: "demo", url: "not-a-url" }] })
     ).toThrow();
+  });
+});
+
+describe("details", () => {
+  it("normalizes keys to lowercase so lookups by key are stable", () => {
+    const parsed = createProjectSchema.parse({
+      title: "T",
+      description: "D",
+      image: "/i.png",
+      details: [{ key: "Venue", label: "Venue", value: "CHI EA 2026" }],
+    });
+
+    expect(parsed.details[0].key).toBe("venue");
+  });
+
+  it("collapses duplicate keys last-wins rather than rejecting the save", () => {
+    const parsed = createProjectSchema.parse({
+      title: "T",
+      description: "D",
+      image: "/i.png",
+      details: [
+        { key: "venue", label: "Venue", value: "CSCW 2025" },
+        { key: "venue", label: "Published in", value: "CHI EA 2026" },
+      ],
+    });
+
+    expect(parsed.details).toEqual([
+      { key: "venue", label: "Published in", value: "CHI EA 2026" },
+    ]);
+  });
+
+  it("defaults to an empty list on create", () => {
+    const parsed = createProjectSchema.parse({
+      title: "T",
+      description: "D",
+      image: "/i.png",
+    });
+
+    expect(parsed.details).toEqual([]);
+  });
+
+  // The guard the file's own comment describes: a default leaking into the
+  // update schema would let a PUT of {title} silently wipe every detail.
+  it("does NOT default on update — an untouched field stays untouched", () => {
+    const parsed = updateProjectSchema.parse({ title: "Renamed" });
+
+    expect(parsed).not.toHaveProperty("details");
+  });
+
+  it("still writes an explicitly emptied list, so details can be cleared", () => {
+    const parsed = updateProjectSchema.parse({ details: [] });
+
+    expect(parsed.details).toEqual([]);
+  });
+
+  it("rejects a detail with no value", () => {
+    const result = createProjectSchema.safeParse({
+      title: "T",
+      description: "D",
+      image: "/i.png",
+      details: [{ key: "venue", label: "Venue", value: "" }],
+    });
+
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("links", () => {
+  const base = { title: "T", description: "D", image: "/i.png" };
+
+  it("normalizes kind to lowercase so lookups by kind are stable", () => {
+    const parsed = createProjectSchema.parse({
+      ...base,
+      links: [{ kind: "GitHub", url: "https://github.com/x/y" }],
+    });
+
+    expect(parsed.links[0].kind).toBe("github");
+  });
+
+  it("accepts a kind the UI has never heard of", () => {
+    // The point of an open kind: a new destination is data, not a migration.
+    const parsed = createProjectSchema.parse({
+      ...base,
+      links: [{ kind: "itch", url: "https://x.itch.io/y", label: "Play on itch.io" }],
+    });
+
+    expect(parsed.links[0]).toEqual({
+      kind: "itch",
+      url: "https://x.itch.io/y",
+      label: "Play on itch.io",
+    });
+  });
+
+  it("rejects a malformed URL", () => {
+    const result = createProjectSchema.safeParse({
+      ...base,
+      links: [{ kind: "demo", url: "not-a-url" }],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it("does NOT default on update — an untouched field stays untouched", () => {
+    expect(updateProjectSchema.parse({ title: "Renamed" })).not.toHaveProperty("links");
+  });
+});
+
+describe("merged category tags", () => {
+  const base = { title: "T", description: "D", image: "/i.png" };
+
+  it("de-duplicates case-insensitively, keeping the casing first typed", () => {
+    // The merge folds `technologies` into `category`, and the two overlapped —
+    // "Co-Design" and "Research" appeared in both on real records.
+    const parsed = createProjectSchema.parse({
+      ...base,
+      category: ["Co-Design", "React", "co-design", "REACT", "HCI"],
+    });
+
+    expect(parsed.category).toEqual(["Co-Design", "React", "HCI"]);
   });
 });
