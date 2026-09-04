@@ -24,6 +24,22 @@ export const LIMITS = {
     linkLabelMax: 60,
     linkKindMax: 32,
     linksMax: 12,
+    // Card blurb — one paragraph. The longest in the catalogue is ~1,350.
+    descriptionMax: 4000,
+    // A path ("/assets/x.png") or a URL. Deliberately far below what a
+    // base64 `data:` URI needs: an image pasted inline would be stored in
+    // Mongo and re-sent to every visitor on every project list, so it is
+    // rejected here with a field error rather than silently accepted.
+    // The longest real path in the catalogue is 76 characters.
+    imageSrcMax: 512,
+    // Long-form case-study prose.
+    caseStudyProseMax: 4000,
+    caseStudyBodyMax: 8000,
+    caseStudySectionsMax: 20,
+    caseStudyListItemMax: 500,
+    caseStudyListMax: 20,
+    sectionMediaMax: 12,
+    mediaMax: 20,
   },
   contact: {
     nameMax: 100,

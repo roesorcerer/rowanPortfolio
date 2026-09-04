@@ -2,9 +2,22 @@ import { z } from "zod";
 import { LIMITS } from "./limits";
 import { slugify } from "../utils/slug";
 
+// A path or a URL, never inline data. A pasted `data:` URI would be stored in
+// Mongo and re-sent to every visitor on every project list, so the cap rejects
+// it here with a message that says what to do instead.
+const imageSrc = (label: string) =>
+  z
+    .string()
+    .trim()
+    .min(1, `${label} is required`)
+    .max(
+      LIMITS.project.imageSrcMax,
+      `${label} cannot exceed ${LIMITS.project.imageSrcMax} characters — put the file in frontend/public/assets and reference it as /assets/your-file.png`
+    );
+
 const mediaItemSchema = z.object({
   type: z.enum(["image", "video"]),
-  src: z.string().min(1, "Media source is required").trim(),
+  src: imageSrc("Media source"),
   alt: z.string().trim().optional(),
   poster: z.string().trim().optional(),
   caption: z.string().trim().optional(),
@@ -51,20 +64,57 @@ const caseStudySectionSchema = z.object({
       `Section heading cannot exceed ${LIMITS.project.caseStudyHeadingMax} characters`
     )
     .trim(),
-  body: z.string().min(1, "Section body is required").trim(),
-  media: z.array(mediaItemSchema).default([]),
+  body: z
+    .string()
+    .min(1, "Section body is required")
+    .max(
+      LIMITS.project.caseStudyBodyMax,
+      `Section body cannot exceed ${LIMITS.project.caseStudyBodyMax} characters`
+    )
+    .trim(),
+  media: z.array(mediaItemSchema).max(LIMITS.project.sectionMediaMax).default([]),
 });
 
 // Every part is optional so a case study can be written incrementally — a
 // summary today, the process sections next week — without failing validation
 // in between.
 const caseStudySchema = z.object({
-  summary: z.string().trim().optional(),
-  role: z.string().trim().optional(),
-  problem: z.string().trim().optional(),
-  sections: z.array(caseStudySectionSchema).default([]),
-  outcomes: z.array(z.string().trim()).default([]),
-  lessons: z.array(z.string().trim()).default([]),
+  summary: z
+    .string()
+    .trim()
+    .max(
+      LIMITS.project.caseStudyProseMax,
+      `Summary cannot exceed ${LIMITS.project.caseStudyProseMax} characters`
+    )
+    .optional(),
+  role: z
+    .string()
+    .trim()
+    .max(
+      LIMITS.project.caseStudyProseMax,
+      `Role cannot exceed ${LIMITS.project.caseStudyProseMax} characters`
+    )
+    .optional(),
+  problem: z
+    .string()
+    .trim()
+    .max(
+      LIMITS.project.caseStudyProseMax,
+      `Problem cannot exceed ${LIMITS.project.caseStudyProseMax} characters`
+    )
+    .optional(),
+  sections: z
+    .array(caseStudySectionSchema)
+    .max(LIMITS.project.caseStudySectionsMax)
+    .default([]),
+  outcomes: z
+    .array(z.string().trim().max(LIMITS.project.caseStudyListItemMax))
+    .max(LIMITS.project.caseStudyListMax)
+    .default([]),
+  lessons: z
+    .array(z.string().trim().max(LIMITS.project.caseStudyListItemMax))
+    .max(LIMITS.project.caseStudyListMax)
+    .default([]),
 });
 
 // Free-form `kind`, same reasoning as `detail.key`. The URL is validated
@@ -139,10 +189,12 @@ export const projectFields = {
   description: z
     .string({ error: "Description is required" })
     .min(1, "Description is required")
+    .max(
+      LIMITS.project.descriptionMax,
+      `Description cannot exceed ${LIMITS.project.descriptionMax} characters`
+    )
     .trim(),
-  image: z
-    .string({ error: "Image path is required" })
-    .min(1, "Image path is required"),
+  image: imageSrc("Image path"),
   links: z
     .array(linkSchema)
     .max(
@@ -157,7 +209,7 @@ export const projectFields = {
     )
     .trim()
     .optional(),
-  media: z.array(mediaItemSchema),
+  media: z.array(mediaItemSchema).max(LIMITS.project.mediaMax),
   collaborators: z.array(collaboratorSchema),
   featured: z.boolean(),
   projectType: z.enum(["product", "research", "practice", "gameDev", "art"]),

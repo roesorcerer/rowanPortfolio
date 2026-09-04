@@ -70,7 +70,12 @@ export interface IProject extends Document, ProjectRecord {
 const mediaItemSchema = new Schema<ProjectMedia>(
   {
     type: { type: String, enum: ["image", "video"], required: true },
-    src: { type: String, required: true, trim: true },
+    src: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: [LIMITS.project.imageSrcMax, `Media source cannot exceed ${LIMITS.project.imageSrcMax} characters — reference a file by path, not inline data`],
+    },
     alt: { type: String, trim: true },
     poster: { type: String, trim: true },
     caption: { type: String, trim: true },
@@ -139,7 +144,12 @@ const caseStudySectionSchema = new Schema<ProjectCaseStudySection>(
         `Section heading cannot exceed ${LIMITS.project.caseStudyHeadingMax} characters`,
       ],
     },
-    body: { type: String, required: true, trim: true },
+    body: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: [LIMITS.project.caseStudyBodyMax, `Section body cannot exceed ${LIMITS.project.caseStudyBodyMax} characters`],
+    },
     media: { type: [mediaItemSchema], default: [] },
   },
   { _id: false }
@@ -149,9 +159,9 @@ const caseStudySectionSchema = new Schema<ProjectCaseStudySection>(
 // can carry only a summary and still render as a case study.
 const caseStudySchema = new Schema<ProjectCaseStudy>(
   {
-    summary: { type: String, trim: true },
-    role: { type: String, trim: true },
-    problem: { type: String, trim: true },
+    summary: { type: String, trim: true, maxlength: LIMITS.project.caseStudyProseMax },
+    role: { type: String, trim: true, maxlength: LIMITS.project.caseStudyProseMax },
+    problem: { type: String, trim: true, maxlength: LIMITS.project.caseStudyProseMax },
     sections: { type: [caseStudySectionSchema], default: [] },
     outcomes: { type: [String], default: [] },
     lessons: { type: [String], default: [] },
@@ -186,10 +196,13 @@ const projectSchema = new Schema<IProject>(
       type: String,
       required: [true, "Project description is required"],
       trim: true,
+      maxlength: [LIMITS.project.descriptionMax, `Description cannot exceed ${LIMITS.project.descriptionMax} characters`],
     },
     image: {
       type: String,
       required: [true, "Project image path is required"],
+      trim: true,
+      maxlength: [LIMITS.project.imageSrcMax, `Image path cannot exceed ${LIMITS.project.imageSrcMax} characters — reference a file by path, not inline data`],
     },
     media: {
       type: [mediaItemSchema],
