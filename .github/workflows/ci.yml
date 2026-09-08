@@ -49,7 +49,12 @@ jobs:
       - name: Test
         run: npm test
         env:
-          MONGODB_URI: mongodb://localhost:27017/portfolio-test
+          # src/test/setup.ts connects to MONGODB_URI_TEST and refuses to run
+          # unless it is set, names a database containing "test", and differs
+          # from MONGODB_URI (the guard against wiping a real database).
+          # src/config/index.ts still requires MONGODB_URI to exist at import.
+          MONGODB_URI: mongodb://localhost:27017/portfolio-ci
+          MONGODB_URI_TEST: mongodb://localhost:27017/portfolio-test
           JWT_SECRET: ci-test-secret
           JWT_EXPIRES_IN: 7d
 
@@ -93,8 +98,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The backend Dockerfile lives at the repo root and needs the root as
+      # its build context, because it copies shared/ alongside backend/.
+      # This mirrors what `flyctl deploy` does in deploy.yml.
       - name: Build backend image
-        run: docker build ./backend
+        run: docker build -f Dockerfile .
 
       - name: Build frontend image
         run: docker build ./frontend

@@ -7,6 +7,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://rowan-portfolio-api.fly.dev/api/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ]
 }

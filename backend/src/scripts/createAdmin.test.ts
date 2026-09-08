@@ -13,6 +13,9 @@ vi.mock("mongoose", () => ({
     connect: connectMock,
     connection: {
       close: closeMock,
+      // 0 = disconnected. createAdmin only opens (and closes) a connection
+      // when it finds none already open, so the mock has to report one.
+      readyState: 0,
     },
   },
 }));
@@ -58,7 +61,7 @@ describe("createAdmin", () => {
         name: "Test Admin",
         role: "admin",
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     expect(closeMock).toHaveBeenCalled();
   });

@@ -399,7 +399,7 @@ describe("POST /api/projects", () => {
 
   it("defaults to a draft when status is omitted", async () => {
     const token = await getAdminToken();
-    const { status, ...withoutStatus } = validProject;
+    const { status: _status, ...withoutStatus } = validProject;
 
     const res = await request(app)
       .post("/api/projects")
