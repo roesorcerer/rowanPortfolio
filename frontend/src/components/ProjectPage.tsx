@@ -6,13 +6,11 @@ import { useProject } from "../hooks/useProjects";
 import { useAnalytics } from "../analytics";
 import type { Project } from "../types";
 import CaseStudy from "./CaseStudy";
-import Navigation from "./Header";
 import ProjectMediaCarousel from "./project/ProjectMediaCarousel";
 import ProjectFacts from "./project/ProjectFacts";
 import ProjectLinks from "./project/ProjectLinks";
 import { ProjectTags, ResearchStatusLine } from "./project/ProjectHeading";
 import { hasCaseStudy } from "../lib/projectLinks";
-import { buttonVariants } from "@/components/ui/button";
 
 /**
  * The `/projects/:slug` permalink — the page a resume link lands on, and the
@@ -27,23 +25,13 @@ function ProjectPage() {
   const { data: project, isLoading, error } = useProject(slug);
 
   return (
-    <>
-      <Navigation />
-      <main className="bg-paper min-h-screen">
-        {isLoading && (
-          <div className="flex items-center justify-center w-full py-32">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-              <p className="text-muted text-base">Loading project…</p>
-            </div>
-          </div>
-        )}
+    <div className="doc">
+      {isLoading && <p className="doc-status">Loading project...</p>}
 
-        {!isLoading && (error || !project) && <NotFound slug={slug} />}
+      {!isLoading && (error || !project) && <NotFound slug={slug} />}
 
-        {!isLoading && project && <ProjectDocument project={project} />}
-      </main>
-    </>
+      {!isLoading && project && <ProjectDocument project={project} />}
+    </div>
   );
 }
 
@@ -61,9 +49,8 @@ function NotFound({ slug }: { slug?: string }) {
       <p className="text-muted text-sm mb-8">
         Every project on the site is listed on the home page.
       </p>
-      <Link to="/#projects" className={buttonVariants({ size: "sm" })}>
+      <Link to="/#work" className="cmd primary inline-flex">
         Browse all projects
-        <span className="text-xs">→</span>
       </Link>
     </div>
   );
@@ -75,9 +62,8 @@ function ProjectDocument({ project }: { project: Project }) {
 
   const caseStudy = hasCaseStudy(project.caseStudy) ? project.caseStudy : null;
 
-  // A project view fires here as well as from the modal: arriving on the
-  // permalink is the same interest signal as opening the card, and engagement
-  // that only counted modal opens would under-report resume traffic entirely.
+  // Every card leads here, and so does every resume link, so this is the one
+  // place a project view is counted.
   useEffect(() => {
     analytics.projectView(project);
   }, [analytics, project]);
@@ -85,11 +71,7 @@ function ProjectDocument({ project }: { project: Project }) {
   // The tab title is what gets bookmarked and what shows in a shared link's
   // preview, so it carries the project name rather than the site's.
   useEffect(() => {
-    const previous = document.title;
-    document.title = `${project.title} — Rowan Stratton`;
-    return () => {
-      document.title = previous;
-    };
+    document.title = `${project.title} | Rowan Stratton`;
   }, [project.title]);
 
   const copyLink = async () => {
@@ -105,8 +87,8 @@ function ProjectDocument({ project }: { project: Project }) {
   return (
     <article className="px-5 md:px-10 py-8 md:py-12 max-w-[900px] mx-auto">
       <Link
-        to="/#projects"
-        className="inline-flex items-center gap-2 text-muted text-sm hover:text-ink transition-colors mb-8 print:hidden"
+        to="/#work"
+        className="doc-back inline-flex items-center gap-2 text-muted text-sm hover:text-ink transition-colors mb-8 print:hidden"
       >
         <ArrowLeft className="size-4" />
         All projects
@@ -151,7 +133,7 @@ function ProjectDocument({ project }: { project: Project }) {
           <CaseStudy caseStudy={caseStudy} density="page" />
         </section>
       ) : (
-        <p className="border border-rule bg-white text-muted text-sm p-4 mt-10">
+        <p className="border border-rule bg-surface text-muted text-sm p-4 mt-10">
           The write-up for this project is still being drafted.
         </p>
       )}
@@ -161,7 +143,7 @@ function ProjectDocument({ project }: { project: Project }) {
           <button
             type="button"
             onClick={copyLink}
-            className={buttonVariants({ variant: "ghost", size: "sm" })}
+            className="cmd"
           >
             {copied ? "Link copied" : "Copy link"}
           </button>

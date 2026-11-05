@@ -26,6 +26,20 @@ body {
     --font-sans: var(--font-body);
   }
   :root {
+    --c-ink: 44 44 42;
+    --c-ink-deep: 26 26 26;
+    --c-paper: 250 249 247;
+    --c-surface: 255 255 255;
+    --c-body: 95 94 90;
+    --c-muted: 136 135 128;
+    --c-faint: 180 178 169;
+    --c-rule: 232 230 225;
+    --c-rule-soft: 245 244 240;
+    --c-accent: 29 158 117;
+    --c-accent-dark: 15 110 86;
+    --c-accent-darker: 8 80 65;
+    --c-accent-soft: 225 245 238;
+    --c-danger: 176 68 60;
     --font-heading: 'Trajan Sans Pro', 'Trajan Pro', 'Times New Roman', serif;
     --font-heading-regular: 'Trajan Sans Pro', 'Trajan Pro', 'Times New Roman', serif;
     --font-body: 'Perpetua', 'Palatino Linotype', Palatino, 'Book Antiqua', serif;

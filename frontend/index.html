@@ -4,16 +4,44 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/resume.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+    <title>Rowan Stratton | Software engineer and game developer</title>
+    <meta
+      name="description"
+      content="Rowan Stratton is a software engineer, game developer and HCI researcher in Coleraine, MN, building full stack applications and games."
     />
-    <title>Rowan Portfolio</title>
+    <link rel="canonical" href="https://rowan.page/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Rowan Stratton | Software engineer and game developer" />
+    <meta
+      property="og:description"
+      content="Full stack applications, games and research. Read the case studies, or play the story."
+    />
+    <meta property="og:url" content="https://rowan.page/" />
+    <script>
+      // Paint the right background before React loads. The admin and resume stay light.
+      (function () {
+        if (/^\/(admin|resume)/.test(location.pathname)) return;
+        var theme = "dark";
+        try {
+          theme =
+            localStorage.getItem("portfolio-theme") ||
+            (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        } catch (e) {}
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>Rowan Stratton</h1>
+      <p>Software engineer, game developer and HCI researcher in Coleraine, MN.</p>
+      <p>
+        <a href="https://github.com/roesorcerer">GitHub</a> |
+        <a href="https://www.linkedin.com/in/rowan-stratton-611247247">LinkedIn</a> |
+        <a href="mailto:rowanstratton1@gmail.com">Email</a>
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

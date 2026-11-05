@@ -2,13 +2,9 @@ import type { ProjectCaseStudy, ProjectMedia } from "../types";
 import { cn } from "@/lib/utils";
 
 /**
- * The process narrative, rendered identically in the project modal and on the
- * `/projects/:slug` permalink page.
- *
- * One component for both surfaces on purpose: the permalink is what a resume
- * points at, and a reader who lands there should see the same case study a
- * visitor sees after opening the modal — never a second, drifting version of
- * it. `density` only changes spacing and type scale, never what's shown.
+ * The process narrative on the `/projects/:slug` permalink, which is what a
+ * resume points at and where every card on the home page leads. `density` only
+ * changes spacing and type scale, never what's shown.
  */
 export type CaseStudyDensity = "compact" | "page";
 
@@ -50,7 +46,7 @@ function CaseStudy({ caseStudy, density = "page", className }: CaseStudyProps) {
       {context.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {context.map((entry) => (
-            <section key={entry.label} className="border border-rule bg-white p-4">
+            <section key={entry.label} className="border border-rule bg-surface p-4">
               <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-2">
                 {entry.label}
               </h3>
@@ -147,7 +143,7 @@ function StepMedia({
         return (
           <figure
             key={`${item.src}-${index}`}
-            className="border border-rule bg-white p-2"
+            className="border border-rule bg-surface p-2"
           >
             {item.type === "video" ? (
               <video
@@ -182,7 +178,7 @@ function StepMedia({
 
 function CaseStudyList({ label, items }: { label: string; items: string[] }) {
   return (
-    <section className="border border-rule bg-white p-4">
+    <section className="border border-rule bg-surface p-4">
       <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-3">
         {label}
       </h3>

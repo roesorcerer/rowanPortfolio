@@ -17,6 +17,7 @@
     "migrate:links": "ts-node src/scripts/migrate-links-and-tags.ts",
     "backup:projects": "ts-node src/scripts/backup-projects.ts",
     "restore:projects": "ts-node src/scripts/restore-projects.ts",
+    "seed:case-studies": "ts-node src/scripts/seed-case-studies.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },

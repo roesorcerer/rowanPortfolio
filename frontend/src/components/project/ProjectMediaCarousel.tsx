@@ -38,7 +38,7 @@ function ProjectMediaCarousel({
     setActiveIndex((current) => (current + 1) % mediaItems.length);
 
   return (
-    <div className={cn("bg-white", className)}>
+    <div className={cn("bg-surface", className)}>
       <div
         className={cn(
           "relative overflow-hidden flex items-center justify-center p-3 md:p-5",
