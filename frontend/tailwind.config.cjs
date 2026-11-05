@@ -3,35 +3,39 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      // The values live in index.css (the admin's palette) and site/site.css
+      // (the public site's light and dark themes).
+      //
       // The portfolio's "warm minimal" palette. Use these semantic tokens
       // (bg-paper, text-ink, border-rule, etc.) instead of bare hex values.
       // One-off colors (research blue, practice tan, resume's intentional
       // LaTeX-style link blue) are left as inline hex on purpose.
       colors: {
         // Foreground / background neutrals
-        ink: "#2C2C2A",          // primary foreground text + dark surfaces
-        "ink-deep": "#1a1a1a",   // button hover + image placeholder
-        paper: "#FAF9F7",        // page background
-        body: "#5F5E5A",         // body copy
-        muted: "#888780",        // secondary text
-        faint: "#B4B2A9",        // tertiary text + timestamps
+        surface: "rgb(var(--c-surface) / <alpha-value>)", // a card on the page
+        ink: "rgb(var(--c-ink) / <alpha-value>)",          // primary foreground text + dark surfaces
+        "ink-deep": "rgb(var(--c-ink-deep) / <alpha-value>)",   // button hover + image placeholder
+        paper: "rgb(var(--c-paper) / <alpha-value>)",        // page background
+        body: "rgb(var(--c-body) / <alpha-value>)",         // body copy
+        muted: "rgb(var(--c-muted) / <alpha-value>)",        // secondary text
+        faint: "rgb(var(--c-faint) / <alpha-value>)",        // tertiary text + timestamps
 
         // Borders & dividers
         rule: {
-          DEFAULT: "#E8E6E1",    // card / section borders
-          soft: "#F5F4F0",       // divide lines inside cards
+          DEFAULT: "rgb(var(--c-rule) / <alpha-value>)",    // card / section borders
+          soft: "rgb(var(--c-rule-soft) / <alpha-value>)",       // divide lines inside cards
         },
 
         // Brand accent (eudaimonic green)
         accent: {
-          DEFAULT: "#1D9E75",    // dots, brand colour
-          dark: "#0F6E56",       // links + hover targets
-          darker: "#085041",     // link hover
-          soft: "#E1F5EE",       // featured-tag background
+          DEFAULT: "rgb(var(--c-accent) / <alpha-value>)",    // dots, brand colour
+          dark: "rgb(var(--c-accent-dark) / <alpha-value>)",       // links + hover targets
+          darker: "rgb(var(--c-accent-darker) / <alpha-value>)",     // link hover
+          soft: "rgb(var(--c-accent-soft) / <alpha-value>)",       // featured-tag background
         },
 
         // Status
-        danger: "#B0443C",       // form error text
+        danger: "rgb(var(--c-danger) / <alpha-value>)",       // form error text
       },
     },
   },

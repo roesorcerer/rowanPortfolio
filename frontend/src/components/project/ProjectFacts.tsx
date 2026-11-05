@@ -1,5 +1,5 @@
 import type { Project, ProjectDetail } from "../../types";
-import { datesLabel, researchStatusOf } from "./projectFacts";
+import { datesLabel, researchStatusOf } from "../../lib/projectFacts";
 import { CARD_COPY } from "./cardCopy";
 import {
   DETAIL_KEYS,
@@ -82,8 +82,8 @@ function ProjectFacts({ project }: { project: Project }) {
         </Fact>
       )}
 
-      <Fact label="Worked on by">
-        {project.collaborators && project.collaborators.length > 0 ? (
+      {project.collaborators && project.collaborators.length > 0 && (
+        <Fact label="Worked on by">
           <ul className="flex flex-wrap gap-2">
             {project.collaborators.map((collaborator) => (
               <li key={`${collaborator.name}-${collaborator.socialLink}`}>
@@ -101,10 +101,8 @@ function ProjectFacts({ project }: { project: Project }) {
               </li>
             ))}
           </ul>
-        ) : (
-          <p className="text-body text-sm">Not listed</p>
-        )}
-      </Fact>
+        </Fact>
+      )}
     </div>
   );
 }
@@ -178,7 +176,7 @@ function Fact({
   children: React.ReactNode;
 }) {
   return (
-    <section className={`border border-rule bg-white p-4 ${className ?? ""}`}>
+    <section className={`border border-rule bg-surface p-4 ${className ?? ""}`}>
       <h3 className="text-ink text-xs uppercase tracking-widest font-medium mb-2">
         {label}
       </h3>

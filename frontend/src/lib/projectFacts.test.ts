@@ -1,5 +1,5 @@
 import { datesLabel, hasExternalLinks, mediaItemsOf, researchStatusOf } from "./projectFacts";
-import type { Project } from "../../types";
+import type { Project } from "../types";
 
 function makeProject(overrides: Partial<Project> = {}): Project {
   return {

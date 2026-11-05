@@ -1,5 +1,5 @@
-import type { Project, ProjectMedia, ResearchStatus } from "../../types";
-import { hasRevisionTrail } from "../../lib/projectDetails";
+import type { Project, ProjectMedia, ResearchStatus } from "../types";
+import { hasRevisionTrail } from "./projectDetails";
 
 // The derivations every project surface needs, in one place.
 //

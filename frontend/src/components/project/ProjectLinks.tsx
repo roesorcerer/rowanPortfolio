@@ -2,15 +2,12 @@ import type { Project } from "../../types";
 import { useAnalytics } from "../../analytics";
 import { CARD_COPY } from "./cardCopy";
 import { linkLabel, usableLinks } from "../../lib/projectLinks";
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**
  * The row of outbound project links, with the analytics verbs attached.
  *
- * Just the row — no heading, no border. The modal boxes it as one more card in
- * the facts grid; the page runs it along a footer. Sharing the row keeps the
- * `link_click` verbs firing identically from both.
+ * Just the row — no heading, no border. The page runs it along a footer.
  *
  * This used to be three hardcoded blocks for three columns. Now it walks
  * `project.links`, so a project can carry an itch.io build or a Figma file
@@ -47,14 +44,10 @@ function ProjectLinks({ project, className, children }: ProjectLinksProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => analytics.linkClick(project, link.kind)}
-            className={buttonVariants({
-              variant: isPrimary ? "default" : "outline",
-              size: "sm",
-            })}
+            className={isPrimary ? "cmd primary" : "cmd"}
           >
             {link.kind === "github" && <GitHubMark />}
             {linkLabel(link, demoLabel)}
-            {link.kind !== "github" && <span className="text-xs">→</span>}
           </a>
         );
       })}
