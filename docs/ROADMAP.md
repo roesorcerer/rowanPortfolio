@@ -46,7 +46,7 @@ with the redesign. These are recommendations, and nothing has been closed.
 | #1 and PR #11, drop `featured` | The Featured tab reads `featured`. PR #11 no longer merges cleanly | Close both |
 | #5, replace `category` with `topics` | The skill filter is built from `category` | Close, or redo it after phase 1 with skills in the vocabulary |
 | #4, `demoUrl` and `sourceUrl` | Replaced by `links` | Close |
-| #2, drop `developmentTime` | The field is still in the model. Check it isn't still shown | Keep, after phase 1 |
+| #2, drop `developmentTime` | The issue calls it unused, but the admin form and project facts still read it | Close, or redo it after phase 1 |
 | #3, rename `image` | The Work cards and project page read `image` | Keep, after phase 1, and include the new files |
 | #6, scoped `order` | Ordering by display group and a reorder endpoint already exist | Check, then close if covered |
 | #7, #8, #9, #10 | No conflict found, but #10 names a variable in a file phase 1 removes | Keep #7 to #9 and close #10 |
