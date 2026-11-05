@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Project } from "../../types";
-import { mediaItemsOf } from "./projectFacts";
+import { mediaItemsOf } from "../../lib/projectFacts";
 import { cn } from "@/lib/utils";
 
 /**

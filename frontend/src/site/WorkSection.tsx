@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAnalytics } from "../analytics";
 import { useProjects } from "../hooks/useProjects";
 import { hasCaseStudy, projectPath, usableLinks } from "../lib/projectLinks";
-import { researchStatusOf } from "../components/project/projectFacts";
+import { researchStatusOf } from "../lib/projectFacts";
 import type { Project, ProjectType } from "../types";
 import Sprite from "./Sprite";
 

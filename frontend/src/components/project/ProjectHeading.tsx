@@ -1,5 +1,5 @@
 import type { Project } from "../../types";
-import { researchStatusOf } from "./projectFacts";
+import { researchStatusOf } from "../../lib/projectFacts";
 
 // The two header fragments the modal and the page render identically. The
 // headings themselves stay local to each surface — one is an <h2> carrying the

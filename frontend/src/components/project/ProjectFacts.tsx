@@ -1,5 +1,5 @@
 import type { Project, ProjectDetail } from "../../types";
-import { datesLabel, researchStatusOf } from "./projectFacts";
+import { datesLabel, researchStatusOf } from "../../lib/projectFacts";
 import { CARD_COPY } from "./cardCopy";
 import {
   DETAIL_KEYS,
