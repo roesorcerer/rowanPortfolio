@@ -3,8 +3,13 @@ node_modules
 .DS_Store
 build
 dist
-.claude/
 .vscode/
 .vercel/
-CONTEXT.md
+local/
 
+# Claude Code context — solo project, kept local and untracked.
+# Bare names match at any depth, so backend/ and frontend/ copies are covered.
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+CONTEXT.md
