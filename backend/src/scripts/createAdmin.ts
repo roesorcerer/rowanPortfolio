@@ -6,10 +6,14 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 import mongoose from "mongoose";
 import { UserModel } from "../models/user.model";
 import { hashPassword } from "../utils/auth.utils";
+import { LIMITS } from "../validators/limits";
 
-// Creates (or refreshes) an admin user from env vars. Idempotent — if a
-// user with the given email already exists, the password is reset and
-// the role is promoted to "admin".
+// Creates (or refreshes) an admin user from env vars. This is the only way an
+// account comes into being: public registration was removed, because a
+// single-admin site has nobody else to register.
+//
+// Idempotent — if a user with the given email already exists, the password is
+// reset and the role is promoted to "admin".
 //
 // Required env vars (in backend/.env or shell):
 //   ADMIN_EMAIL=you@example.com
@@ -37,8 +41,10 @@ export async function createAdmin(): Promise<void> {
     );
     return;
   }
-  if (password.length < 8) {
-    console.warn("Skipping admin bootstrap: ADMIN_PASSWORD must be at least 8 characters.");
+  if (password.length < LIMITS.user.passwordMin) {
+    console.warn(
+      `Skipping admin bootstrap: ADMIN_PASSWORD must be at least ${LIMITS.user.passwordMin} characters.`
+    );
     return;
   }
 

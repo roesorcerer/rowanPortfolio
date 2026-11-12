@@ -9,6 +9,12 @@ import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
 
+// Behind Vercel and Fly, the socket address is Fly's proxy, not the visitor.
+// Trusting exactly that many hops makes req.ip the visitor's address, which
+// the rate limiters key on. See config.trustProxyHops for why the number
+// must be exact.
+app.set("trust proxy", config.trustProxyHops);
+
 // --- Security Middleware ---
 // helmet() sets ~15 security headers in one call.
 // In production, this protects against clickjacking, MIME sniffing,

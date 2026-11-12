@@ -1,6 +1,21 @@
 import request from "supertest";
 import app from "../app";
 import { connectTestDb, disconnectTestDb, clearDatabase } from "../test/setup";
+import * as usersStore from "../stores/users-store";
+import { hashPassword } from "../utils/auth.utils";
+
+// Accounts are made out of band now (createAdmin), so tests make theirs
+// through the store, hashed the same way.
+async function createUser(input: {
+  email: string;
+  password: string;
+  name: string;
+}) {
+  return usersStore.create({
+    ...input,
+    password: await hashPassword(input.password),
+  });
+}
 
 beforeAll(async () => {
   await connectTestDb();
@@ -15,56 +30,16 @@ beforeEach(async () => {
   await clearDatabase();
 });
 
+// Registration was removed: the only account is the admin, made by
+// `npm run admin`. This guards against the route quietly coming back.
 describe("POST /api/auth/register", () => {
-  const validUser = {
-    email: "test@example.com",
-    password: "password123",
-    name: "Test User",
-  };
-
-  it("registers a new user and returns a token", async () => {
-    const res = await request(app).post("/api/auth/register").send(validUser);
-
-    expect(res.status).toBe(201);
-    expect(res.body.success).toBe(true);
-    expect(res.body.data.token).toBeTypeOf("string");
-    expect(res.body.data.user.email).toBe("test@example.com");
-    expect(res.body.data.user.name).toBe("Test User");
-    expect(res.body.data.user.role).toBe("user");
-    // Password should never appear in the response
-    expect(res.body.data.user.password).toBeUndefined();
-  });
-
-  it("rejects duplicate email", async () => {
-    await request(app).post("/api/auth/register").send(validUser);
-    const res = await request(app).post("/api/auth/register").send(validUser);
-
-    expect(res.status).toBe(409);
-    expect(res.body.error).toBe("Email already registered");
-  });
-
-  it("rejects invalid email", async () => {
+  it("no longer exists", async () => {
     const res = await request(app)
       .post("/api/auth/register")
-      .send({ ...validUser, email: "bad" });
+      .send({ email: "new@example.com", password: "password123", name: "New" });
 
-    expect(res.status).toBe(400);
-  });
-
-  it("rejects short password", async () => {
-    const res = await request(app)
-      .post("/api/auth/register")
-      .send({ ...validUser, password: "short" });
-
-    expect(res.status).toBe(400);
-  });
-
-  it("rejects missing name", async () => {
-    const res = await request(app)
-      .post("/api/auth/register")
-      .send({ email: "a@b.com", password: "password123" });
-
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(404);
+    expect(await usersStore.findByEmail("new@example.com")).toBeNull();
   });
 });
 
@@ -76,7 +51,7 @@ describe("POST /api/auth/login", () => {
   };
 
   beforeEach(async () => {
-    await request(app).post("/api/auth/register").send(user);
+    await createUser(user);
   });
 
   it("logs in with valid credentials", async () => {
@@ -111,11 +86,13 @@ describe("POST /api/auth/login", () => {
 
 describe("GET /api/auth/me", () => {
   it("returns the authenticated user", async () => {
-    const registerRes = await request(app)
-      .post("/api/auth/register")
-      .send({ email: "me@example.com", password: "password123", name: "Me" });
+    const me = { email: "me@example.com", password: "password123", name: "Me" };
+    await createUser(me);
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({ email: me.email, password: me.password });
 
-    const token = registerRes.body.data.token;
+    const token = loginRes.body.data.token;
 
     const res = await request(app)
       .get("/api/auth/me")

@@ -12,6 +12,10 @@ primary_region = 'ord'
 [env]
   NODE_ENV = 'production'
   PORT = '8080'
+  # Proxies in front of Express: Vercel's /api rewrite, then Fly's edge.
+  # Rate limiting keys on the visitor IP this produces; see
+  # backend/src/config/index.ts before changing it.
+  TRUST_PROXY_HOPS = '2'
 
 [http_service]
   internal_port = 8080

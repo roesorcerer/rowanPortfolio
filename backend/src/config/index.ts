@@ -21,6 +21,18 @@ for (const varName of requiredVars) {
   }
 }
 
+// A malformed number fails at boot rather than becoming NaN, which
+// express-rate-limit would treat as "no limit" and `trust proxy` as false.
+function intFromEnv(name: string, fallback: number): number {
+  const raw = process.env[name];
+  if (raw === undefined || raw === "") return fallback;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 0) {
+    throw new Error(`${name} must be a whole number, got "${raw}"`);
+  }
+  return value;
+}
+
 const config = {
   env: process.env.NODE_ENV || "development",
   port: parseInt(process.env.PORT || "5000", 10),
@@ -41,6 +53,24 @@ const config = {
     from: process.env.SMTP_FROM || process.env.SMTP_USER || "",
   },
   contactEmail: process.env.CONTACT_EMAIL || "",
+  // How many proxies sit between the visitor and Express, for `trust proxy`.
+  // Production is 2: Vercel's /api rewrite, then Fly's edge. Each appends to
+  // X-Forwarded-For, so the visitor is the second address from the right.
+  // Too low and every visitor looks like Vercel, sharing one rate-limit
+  // bucket; too high and the visitor can choose their own IP. Locally there
+  // is no proxy in front of Express, so the default is 0 (trust nothing).
+  // Set in fly.toml, so it can be corrected without a code change.
+  trustProxyHops: intFromEnv("TRUST_PROXY_HOPS", 0),
+  // Requests allowed per window by src/middleware/rateLimit.ts, which explains
+  // the per-IP/global split and the windows. Env overrides exist so the test
+  // suite can raise them out of the way and the rate-limit tests can lower
+  // them to something reachable — production uses the defaults.
+  rateLimit: {
+    loginPerIp: intFromEnv("RATE_LIMIT_LOGIN_PER_IP", 10),
+    loginGlobal: intFromEnv("RATE_LIMIT_LOGIN_GLOBAL", 50),
+    contactPerIp: intFromEnv("RATE_LIMIT_CONTACT_PER_IP", 5),
+    contactGlobal: intFromEnv("RATE_LIMIT_CONTACT_GLOBAL", 50),
+  },
 } as const;
 
 export default config;
