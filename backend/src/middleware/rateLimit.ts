@@ -20,7 +20,14 @@ import config from "../config";
 //
 // Counters live in memory, per process. With one Fly machine that is exact;
 // if the app ever scales out, each machine counts separately and the
-// effective limit multiplies by the machine count.
+// effective limit multiplies by the machine count. A restart also clears
+// them. fly.toml keeps one machine running (min_machines_running = 1), so in
+// practice that means a deploy, which is an accepted gap — a shared store
+// (Redis) would close it at the cost of another service to run.
+//
+// Malformed JSON never reaches these: express.json() rejects it with a 400
+// first. That is fine, because such a request never reaches a password check,
+// the database or the mailer, so repeating it gains an attacker nothing.
 //
 // Responses keep the API envelope so the frontend's ApiError carries the
 // message, rather than the library's default plain-text body.
@@ -41,21 +48,29 @@ const shared = {
   legacyHeaders: false,
 } as const;
 
-// Only failed attempts count, so signing in successfully never uses up the
-// allowance — the admin can't lock themselves out by logging in often.
+// Only wrong guesses count: a 4xx. Signing in successfully never uses up the
+// allowance, so the admin can't lock themselves out by logging in often, and
+// a 5xx is our failure, not a guess, so a database outage doesn't fill the
+// global bucket and keep the admin out after it recovers.
+const countGuessesOnly = {
+  skipSuccessfulRequests: true,
+  requestWasSuccessful: (_req: unknown, res: { statusCode: number }) =>
+    res.statusCode < 400 || res.statusCode >= 500,
+} as const;
+
 export const loginLimiters = [
   rateLimit({
     ...shared,
     windowMs: FIFTEEN_MINUTES,
     limit: config.rateLimit.loginPerIp,
-    skipSuccessfulRequests: true,
+    ...countGuessesOnly,
     ...tooMany("Too many login attempts. Try again in 15 minutes."),
   }),
   rateLimit({
     ...shared,
     windowMs: FIFTEEN_MINUTES,
     limit: config.rateLimit.loginGlobal,
-    skipSuccessfulRequests: true,
+    ...countGuessesOnly,
     keyGenerator: everyone,
     ...tooMany("Login is temporarily unavailable. Try again in 15 minutes."),
   }),

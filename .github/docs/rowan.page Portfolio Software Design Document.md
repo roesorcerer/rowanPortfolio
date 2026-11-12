@@ -100,8 +100,8 @@ These findings come from reading the code, a production build, and an axe access
 | F1 | Public HTML has no content | `index.html` holds an empty `#root`, the title "Rowan Portfolio", and no description, OG or canonical tags | 3.1, 5.2 |
 | F2 | Unknown URLs render a blank page | `App.tsx` has no catch-all route; confirmed in a browser | 5.2, 6.3 |
 | F3 | Missing projects are soft 404s | The not-found message renders on a page served as 200 | 5.2 |
-| F4 | Public write endpoints have no rate limit | No limiter in `backend/src` or its dependencies, covering login, register, contact and analytics | 5.5, 8.2 |
-| F5 | Registration is open to anyone | `POST /api/auth/register` is public, though the site has one admin; new accounts get no admin rights | 5.4 |
+| F4 | Public write endpoints have no rate limit | No limiter in `backend/src` or its dependencies, covering login, register, contact and analytics. **Login and contact fixed in #24**; analytics intake still open | 5.5, 8.2 |
+| F5 | Registration is open to anyone | `POST /api/auth/register` is public, though the site has one admin; new accounts get no admin rights. **Fixed in #24**: the route is removed | 5.4 |
 | F6 | Long-lived token sits in `localStorage` | 7-day JWT, with no CSP on the site to limit script injection | 5.4, 8.2 |
 | F7 | Visitors download the admin | One 440 KB JavaScript file (138 KB gzipped), with no code splitting | 3.2 |
 | F8 | List responses carry full case studies | `GET /api/projects` maps every field, including `caseStudy` | 4.1, 5.1 |
@@ -274,7 +274,7 @@ All routes sit under `/api` and exchange JSON in one envelope: `{ success, data?
 | --- | --- | --- | --- |
 | GET `/health` | Public | Liveness | Add a database ping; wire it to a Fly health check |
 | POST `/auth/login` | Public | Start an admin session | Set a cookie; rate limit |
-| POST `/auth/register` | Public | Create a user | Remove (D5) |
+| POST `/auth/register` | Public | Create a user | Removed (D5, #24) |
 | GET `/auth/me` | Signed in | Current user | Used by the admin route guard |
 | POST `/auth/logout` | Signed in | End the session | New |
 | GET `/projects` | Public | Published list | Return `ProjectSummary` |

@@ -58,47 +58,43 @@ function login(ip: string, password: string) {
     .send({ email: admin.email, password });
 }
 
-// The counters are per process and these tests share them, so they run in
-// order and the global-limit test counts on the failures before it. The
-// running total of failed logins is noted at each step.
+// The counters are per process and every test in this file shares them, so
+// each test uses its own IPs, and only one test makes failed logins — the
+// global count it relies on is all its own, whichever tests run.
 describe("login rate limit", () => {
-  it("counts failed attempts only, and blocks the fourth from one IP", async () => {
+  it("never counts successful logins", async () => {
+    // More than the per-IP limit of 3, all allowed.
     for (let i = 0; i < 5; i++) {
       expect((await login("10.0.0.1", admin.password)).status).toBe(200);
     }
-
-    for (let i = 0; i < 3; i++) {
-      expect((await login("10.0.0.1", "wrong")).status).toBe(401);
-    }
-    // Global failures: 3.
-
-    const blocked = await login("10.0.0.1", "wrong");
-    expect(blocked.status).toBe(429);
-    expect(blocked.body).toEqual({
-      success: false,
-      error: "Too many login attempts. Try again in 15 minutes.",
-    });
-
-    // Blocked even with the right password: the limit is on the source.
-    expect((await login("10.0.0.1", admin.password)).status).toBe(429);
   });
 
-  it("keeps each IP's count separate", async () => {
+  it("blocks an IP after 3 failures, per IP, with a global backstop", async () => {
     for (let i = 0; i < 3; i++) {
       expect((await login("10.0.0.2", "wrong")).status).toBe(401);
     }
-    // Global failures: 6.
-  });
+    const perIp = await login("10.0.0.2", "wrong");
+    expect(perIp.status).toBe(429);
+    expect(perIp.body).toEqual({
+      success: false,
+      error: "Too many login attempts. Try again in 15 minutes.",
+    });
+    // Blocked even with the right password: the limit is on the source.
+    expect((await login("10.0.0.2", admin.password)).status).toBe(429);
 
-  it("caps failures across all IPs with the global backstop", async () => {
-    for (let i = 0; i < 2; i++) {
+    // Another IP has its own count, untouched by the block above.
+    for (let i = 0; i < 3; i++) {
       expect((await login("10.0.0.3", "wrong")).status).toBe(401);
     }
-    // Global failures: 8, the global limit. A fresh IP is now refused.
+    for (let i = 0; i < 2; i++) {
+      expect((await login("10.0.0.4", "wrong")).status).toBe(401);
+    }
 
-    const blocked = await login("10.0.0.4", admin.password);
-    expect(blocked.status).toBe(429);
-    expect(blocked.body.error).toBe(
+    // 3 + 3 + 2 = 8 failures reached the global limiter, its limit. A fresh
+    // IP with the right password is now refused by the backstop.
+    const global = await login("10.0.0.5", admin.password);
+    expect(global.status).toBe(429);
+    expect(global.body.error).toBe(
       "Login is temporarily unavailable. Try again in 15 minutes."
     );
   });
