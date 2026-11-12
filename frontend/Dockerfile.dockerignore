@@ -1,0 +1,16 @@
+# Ignore file for frontend/Dockerfile only. BuildKit uses this instead of the
+# root .dockerignore when building with `-f frontend/Dockerfile`, because the
+# root file excludes frontend/ entirely (it is sized for the backend image).
+#
+# Paths are relative to the build context, which is the repo root. Allowlist:
+# start from nothing and let in only what the frontend build reads.
+*
+!frontend
+!shared
+
+frontend/node_modules
+frontend/build
+frontend/.env
+frontend/.env.*
+frontend/npm-debug.log
+frontend/**/*.md
