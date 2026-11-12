@@ -171,7 +171,7 @@ export const ENCOUNTERS: Record<string, Encounter> = {
   '6f': { art: 'boss', win: true, name: 'THE MASTERS DEGREE',
     rounds: ['I finished my MS in Computer Science, with an emphasis on gamification.'],
     result: 'MS, University of Minnesota Duluth, May 2026.', links: [] },
-  '7a': { art: 'tome', name: 'WHAT THE MOUNTAIN KEEPS',
+  '7a': { art: 'tome', name: 'EGGSHELLS',
     rounds: ['It is the mid-2000s. Over one summer, a teen keeps a struggling house afloat and finds escape at Alder Hollow, a fading mountain resort about to be bought out.', 'There, the ghosts of the resort\'s past start to speak. The player chooses which ghosts to take in.', 'Those choices shape who the teen becomes.'],
     result: 'In progress.', links: [],
     notes: { game: 'Design goal: the player should feel what it is like to build a self out of whatever is around you when the adults cannot hold you, and see that the self they built was a choice.' } },
