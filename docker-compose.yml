@@ -38,7 +38,11 @@ services:
 
   # --- Frontend (React + nginx) ---
   frontend:
-    build: ./frontend
+    # Root context for the same reason as the backend: the frontend imports
+    # shared/contracts. Its ignore list is frontend/Dockerfile.dockerignore.
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     ports:
       - "80:80"
     depends_on:

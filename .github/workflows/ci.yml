@@ -104,5 +104,8 @@ jobs:
       - name: Build backend image
         run: docker build -f Dockerfile .
 
+      # Same root context for the frontend image, for the same reason: it
+      # imports shared/contracts. frontend/Dockerfile.dockerignore stands in
+      # for the root .dockerignore, which excludes frontend/.
       - name: Build frontend image
-        run: docker build ./frontend
+        run: docker build -f frontend/Dockerfile .
