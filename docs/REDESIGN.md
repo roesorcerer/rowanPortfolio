@@ -57,12 +57,15 @@ backup file.
 
 ## 3. Finish in the admin
 
-- Work comes from the database, so **What the Mountain Keeps** and
-  **Metamorphosis** appear only once they are published. They are still drafts.
+- Work comes from the database, so **Eggshells** (formerly What the Mountain
+  Keeps) and **Metamorphosis** appear only once they are published. They are
+  still drafts. When renaming Eggshells, edit its slug too: slugs are frozen on
+  rename, and it is safe to change while nothing links to it.
 - Update these two links: Itasca Trails to
-  `https://github.com/roesorcerer/ItascaCountyExplore/tree/production`, and Anime
-  Ratings to
-  `https://github.com/roesorcerer/AnimeRatingsWeb/tree/chore/modernization-phase-0-1`.
+  `https://github.com/roesorcerer/ItascaCountyExplore/tree/release2`, and Anime
+  Ratings to `https://github.com/roesorcerer/AnimeRatingsWeb/tree/version4`.
+  Both are the branches where active work lives, so revisit the links when
+  those branches merge.
 - The skill filter is built from each project's tags, so tags need to match
   exactly ("React Native", not "react-native") to be counted together. A skill
   shows up once two projects share it.
