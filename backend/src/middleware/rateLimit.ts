@@ -9,8 +9,8 @@ import config from "../config";
 //
 //   1. Per client IP. The normal case. The IP comes from `req.ip`, which is
 //      only the visitor's address because app.ts sets `trust proxy` to the
-//      number of proxies in front of us (config.trustProxyHops — Vercel's
-//      rewrite, then Fly's edge).
+//      number of forwarding hops in front of us (config.trustProxyHops —
+//      Vercel's rewrite, then Fly's proxy).
 //   2. Global, one bucket for everyone. A backstop, because the per-IP key
 //      can be dodged: anyone who calls the Fly hostname directly, skipping
 //      Vercel, can put any address they like in X-Forwarded-For. The global

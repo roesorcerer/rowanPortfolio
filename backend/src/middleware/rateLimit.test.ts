@@ -12,7 +12,7 @@ import { ContactSubmissionModel } from "../models/contact-submission.model";
 //
 // One trusted hop means req.ip is the last X-Forwarded-For entry, so each test
 // can act as a different visitor by setting that header — the same thing
-// Vercel and Fly do in production with two hops.
+// Vercel and Fly do in production with three.
 vi.hoisted(() => {
   process.env.TRUST_PROXY_HOPS = "1";
   process.env.RATE_LIMIT_LOGIN_PER_IP = "3";
