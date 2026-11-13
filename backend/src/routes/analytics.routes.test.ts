@@ -109,6 +109,32 @@ describe("POST /api/analytics/pageview", () => {
   });
 });
 
+// Vercel's check loads every preview deploy in a headless browser, which
+// posts here like a visitor. Acknowledged, never stored.
+const HEADLESS =
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.0 Safari/537.36";
+
+describe("automated agents", () => {
+  it("acknowledges a bot's page view without storing it", async () => {
+    const res = await asBrowser("/api/analytics/pageview", { path: "/" }).set(
+      "User-Agent",
+      HEADLESS
+    );
+
+    expect(res.status).toBe(204);
+    expect(await PageViewModel.countDocuments()).toBe(0);
+  });
+
+  it("acknowledges a bot's event without storing it", async () => {
+    const res = await asBrowser("/api/analytics/event", {
+      eventType: "project_view",
+    }).set("User-Agent", "Mozilla/5.0 (compatible; Googlebot/2.1)");
+
+    expect(res.status).toBe(204);
+    expect(await EventModel.countDocuments()).toBe(0);
+  });
+});
+
 describe("POST /api/analytics/event", () => {
   it("records an event sent as text/plain JSON", async () => {
     const res = await asBrowser("/api/analytics/event", {

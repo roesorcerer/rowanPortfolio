@@ -110,7 +110,7 @@ These findings come from reading the code, a production build, and an axe access
 | F11 | Motion cannot be paused | Looping hero video and a word change every 2.2 s; no reduced-motion handling | 6.4 |
 | F12 | Fonts do not match the CSS | Google Fonts loads Cormorant Garamond, while the body stack names Perpetua and Palatino, which are not served | 6.1 |
 | F13 | Images are unoptimized | 12.7 MB in `public`, nearly all PNG and JPG, and many duplicated in `src/assets`; one image exceeds 1 MB | 5.3 |
-| F14 | Analytics are spoofable and kept forever | `/pageview` has no validator, a non-string `path` raises a 500, and no retention limit or notice exists. **Validator fixed in #29**; retention and the notice remain | 4.1, 5.6 |
+| F14 | Analytics are spoofable and kept forever | `/pageview` has no validator, a non-string `path` raises a 500, and no retention limit or notice exists. **Validator fixed in #29; 13-month retention and bot filtering in #31**; the notice remains | 4.1, 5.6 |
 | F15 | Headshot is a link to admin login | `Header.tsx` wraps the public photo in a link to `/admin/login` | 6.3 |
 | F16 | Repository undersells the work | README is an unfilled template; root `package.json` is a leftover template; `.env.example` is missing though startup errors cite it; `development` last moved 2026-04-17 | 8.5 |
 | F17 | Dependencies and claims have drifted | Redux Toolkit and Inter are installed but never imported; About lists PostgreSQL, not the MongoDB this site runs on | 8.5 |
@@ -199,7 +199,7 @@ Project images and other static files live in `frontend/public/assets`, and docu
 | --- | --- | --- |
 | Add a `ProjectSummary` list shape | `GET /api/projects` omits `caseStudy`; case studies load by slug or at build time | F8 |
 | Add `metaDescription` | Optional, 160 characters at most; falls back to a trimmed `description` | F1 |
-| Set analytics retention | TTL index on `PageView` and `Event` `createdAt`, proposed at 365 days | F14 |
+| Set analytics retention | TTL index on `PageView` and `Event` `createdAt` at 396 days (13 months, so a month compares with the same month a year earlier); done in #31 | F14 |
 | Replace `userAgent` with `device` | Store `mobile` or `desktop` at write time, then stop keeping the raw string | F14 |
 | Allow message deletion | New admin delete action for contact submissions | F14 |
 | Add `GameSave` | Versioned JSON in `localStorage`, read and written in `try/catch` | D8 |
@@ -558,7 +558,7 @@ Each best practice below has a measurable target and an automated check where po
 | Sharing | OG title, description and image on every public page; `Person` JSON-LD on home | Built-HTML assertion | Missing |
 | Security | [OWASP Top 10:2025](https://top10.owasp.org/2025/) coverage (8.2) | Route tests, header scan, dependency audit | Partial |
 | Resilience | Public pages load with the API off | Playwright against the static build | Home shows an error; project lists fail |
-| Privacy | No cookies for visitors; 365-day retention | TTL index test | No limit |
+| Privacy | No cookies for visitors; 13-month retention | TTL index test | 13 months (#31) |
 
 ### 8.2 Security review
 
@@ -615,7 +615,7 @@ A04, A06 and A08 raise no project-specific action beyond the items above, this d
 - [ ] Approve Vite prerendering (D1), or choose Next.js instead
 - [ ] Approve the session cookie (D4)
 - [ ] Confirm which header carries the visitor IP through Vercel and Fly
-- [ ] Confirm 365-day analytics retention
+- [x] Confirm analytics retention: 13 months (#31)
 - [ ] Decide whether `development` stays, or pull requests go straight to `production`
 - [ ] Decide whether project backups run on a schedule; `backup:projects` is manual today
 - [ ] Rowan reviews the story text and role notes; family and health details stay out of all public text

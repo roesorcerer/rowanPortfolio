@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { LIMITS } from "../validators/limits";
+import { TTL_INDEX, reportIndexFailure } from "./analytics-retention";
 
 export interface IPageView extends Document {
   path: string;       // e.g. "/", "/admin/login"
@@ -33,8 +34,11 @@ const pageViewSchema = new Schema<IPageView>(
   { timestamps: true }
 );
 
-// Indexes for the most common analytics queries.
-pageViewSchema.index({ createdAt: -1 });
+// Indexes for the most common analytics queries. The createdAt index doubles
+// as the retention TTL — see analytics-retention.ts.
+pageViewSchema.index(TTL_INDEX.key, TTL_INDEX.options);
 pageViewSchema.index({ path: 1, createdAt: -1 });
 
 export const PageViewModel = mongoose.model<IPageView>("PageView", pageViewSchema);
+
+reportIndexFailure(PageViewModel);
