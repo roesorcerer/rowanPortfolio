@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { LIMITS } from "../validators/limits";
+import { TTL_INDEX, reportIndexFailure } from "./analytics-retention";
 
 // Named interaction events fired by the frontend (non-pageview).
 // e.g. project_view, link_click
@@ -66,6 +67,10 @@ const eventSchema = new Schema<IEvent>(
 );
 
 eventSchema.index({ eventType: 1, createdAt: -1 });
+// Retention: MongoDB deletes events past the window — see analytics-retention.ts.
+eventSchema.index(TTL_INDEX.key, TTL_INDEX.options);
 eventSchema.index({ projectId: 1, eventType: 1 });
 
 export const EventModel = mongoose.model<IEvent>("Event", eventSchema);
+
+reportIndexFailure(EventModel);

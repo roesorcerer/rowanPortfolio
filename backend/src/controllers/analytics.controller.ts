@@ -3,6 +3,7 @@ import { ApiResponse } from "../types";
 import { PageViewModel } from "../models/page-view.model";
 import { EventModel } from "../models/event.model";
 import { LIMITS } from "../validators/limits";
+import { isAutomatedAgent } from "../utils/automated-agent";
 import {
   TrackEventInput,
   TrackPageViewInput,
@@ -27,8 +28,9 @@ export async function trackPageView(
       LIMITS.tracking.userAgentMax
     );
 
-    // Ignore admin routes — we only want visitor traffic.
-    if (path.startsWith("/admin")) {
+    // Ignore admin routes and software (preview checks, crawlers) — we only
+    // want visitor traffic. Still a 204: there's nothing for either to fix.
+    if (path.startsWith("/admin") || isAutomatedAgent(userAgent)) {
       res.status(204).end();
       return;
     }
@@ -59,6 +61,11 @@ export async function trackEvent(
       0,
       LIMITS.tracking.userAgentMax
     );
+
+    if (isAutomatedAgent(userAgent)) {
+      res.status(204).end();
+      return;
+    }
 
     await EventModel.create({
       eventType,
