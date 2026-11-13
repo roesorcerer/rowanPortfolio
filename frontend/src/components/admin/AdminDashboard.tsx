@@ -1,20 +1,25 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { logout } from "../../api/auth";
 import { useContactSubmissions } from "../../hooks/useContactSubmissions";
+import { useLogout } from "../../hooks/useSession";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 function AdminDashboard() {
   const navigate = useNavigate();
+  const signOut = useLogout();
 
   // Read the cached submissions count for the tab badge. The query runs
   // lazily, so this only triggers a fetch once MessagesTab mounts; if no
   // fetch has happened yet the count just renders as 0.
   const { data: messages = [] } = useContactSubmissions();
 
+  // Navigates whether or not the request succeeds: the session cache is
+  // cleared either way (useLogout), and a failed logout leaves at worst a
+  // cookie that expires on its own.
   function handleLogout() {
-    logout();
-    navigate("/admin/login");
+    signOut.mutate(undefined, {
+      onSettled: () => navigate("/admin/login"),
+    });
   }
 
   return (

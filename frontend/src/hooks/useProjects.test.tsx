@@ -7,7 +7,9 @@ import {
   useUpdateProject,
   useDeleteProject,
   useReorderProjects,
+  useProject,
 } from "./useProjects";
+import { ApiError } from "../api/client";
 import * as projectsApi from "../api/projects";
 import type { Project, ProjectPayload } from "../types";
 
@@ -167,5 +169,46 @@ describe("useReorderProjects", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(qc.getQueryData<Project[]>(["projects", "admin"])).toEqual([a, b, c]);
+  });
+});
+
+// The session is an HttpOnly cookie the page can't inspect, so a 404 always
+// tries the admin endpoint and lets the server say whether that's allowed.
+describe("useProject draft fallback", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("shows a signed-in admin the draft behind a public 404", async () => {
+    const draft = { ...project, status: "draft" as const };
+    vi.spyOn(projectsApi, "getProjectByIdOrSlug").mockRejectedValue(
+      new ApiError(404, "Project not found")
+    );
+    vi.spyOn(projectsApi, "getProjectForAdmin").mockResolvedValue(draft);
+    const { Wrap } = wrapper();
+
+    const { result } = renderHook(() => useProject("hello"), {
+      wrapper: Wrap,
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(draft);
+  });
+
+  it("keeps the 404 when the admin endpoint says signed out", async () => {
+    vi.spyOn(projectsApi, "getProjectByIdOrSlug").mockRejectedValue(
+      new ApiError(404, "Project not found")
+    );
+    vi.spyOn(projectsApi, "getProjectForAdmin").mockRejectedValue(
+      new ApiError(401, "Authentication required")
+    );
+    const { Wrap } = wrapper();
+
+    const { result } = renderHook(() => useProject("nope"), {
+      wrapper: Wrap,
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error).toMatchObject({ status: 404 });
   });
 });

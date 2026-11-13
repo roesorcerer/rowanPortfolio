@@ -109,31 +109,19 @@ export function apiUrl(path: string): string {
   return `${import.meta.env.VITE_API_URL || ""}${path}`;
 }
 
+// withCredentials sends the admin session cookie to the API host. There is
+// no token to attach any more: the cookie is HttpOnly, so this module can't
+// read it and doesn't need to (src/api/auth.ts). A 401 is handled where the
+// session state lives, in main.tsx, rather than by an interceptor here.
+//
+// In production the API is api.rowan.page, a subdomain of the site, which
+// is what lets the browser treat the cookie as first-party; on a different
+// site (the old *.fly.dev host) Safari would refuse it.
 const http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "",
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
-
-// Attach the JWT to every request.
-http.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-// Clear an expired/invalid token on 401 so the next render sees the
-// unauthenticated state. The ApiError still propagates so callers can react.
-http.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-    }
-    return Promise.reject(error);
-  }
-);
 
 const api: ApiClient = createApiClient(http);
 export default api;
