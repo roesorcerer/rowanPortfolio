@@ -177,6 +177,22 @@ export interface Project {
   updatedAt: string;
 }
 
+/**
+ * A project as the public list (`GET /api/projects`) returns it: everything
+ * the card needs, without the case study.
+ *
+ * The case study is the long-form record only the permalink renders, and it
+ * was about half the list's bytes — fetched for every project on every visit
+ * to the home page and read by nothing there except a yes/no "is there one?".
+ * `hasCaseStudy` is that answer, computed by the backend with the same
+ * "nothing written counts as absent" rule the store applies on save. The
+ * permalink (`GET /api/projects/:idOrSlug`) and the admin list still return
+ * the full `Project`.
+ */
+export interface ProjectSummary extends Omit<Project, "caseStudy"> {
+  hasCaseStudy: boolean;
+}
+
 export interface ProjectPayload {
   /**
    * Omit it and the backend derives one from the title, de-duplicating with

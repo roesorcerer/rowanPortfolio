@@ -54,12 +54,14 @@ function wrapper() {
 
 describe("useProjects + mutations", () => {
   it("useProjects fetches and exposes the list", async () => {
-    vi.spyOn(projectsApi, "getProjects").mockResolvedValue([project]);
+    const { caseStudy: _omitted, ...card } = project;
+    const summary = { ...card, hasCaseStudy: false };
+    vi.spyOn(projectsApi, "getProjects").mockResolvedValue([summary]);
     const { Wrap } = wrapper();
     const { result } = renderHook(() => useProjects(), { wrapper: Wrap });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual([project]);
+    expect(result.current.data).toEqual([summary]);
   });
 
   it("useCreateProject invalidates the projects query on success", async () => {

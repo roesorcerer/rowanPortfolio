@@ -15,6 +15,7 @@ export type {
   ProjectPayload,
   ProjectReorderPayload,
   ProjectStatus,
+  ProjectSummary,
   ProjectType,
   ResearchStatus,
 } from "../../../shared/contracts";

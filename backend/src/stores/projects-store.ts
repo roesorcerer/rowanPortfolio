@@ -20,6 +20,14 @@ export type Project = ProjectRecord & {
 };
 
 /**
+ * What the public list returns: a project without its case study, plus
+ * whether it has one. See `ProjectSummary` in shared/contracts.d.ts for why.
+ */
+export type ProjectSummary = Omit<Project, "caseStudy"> & {
+  hasCaseStudy: boolean;
+};
+
+/**
  * The fields the Mongoose schema gives a `default:`.
  *
  * A raw document can genuinely lack these even though every write through the
@@ -86,6 +94,11 @@ function toProject(doc: ProjectDoc): Project {
   };
 }
 
+function toSummary(project: Project): ProjectSummary {
+  const { caseStudy, ...rest } = project;
+  return { ...rest, hasCaseStudy: !isEmptyCaseStudy(caseStudy) };
+}
+
 function isCastError(error: unknown): boolean {
   return (error as { name?: string })?.name === "CastError";
 }
@@ -109,12 +122,21 @@ const LIST_SORT = { featured: -1, order: 1 } as const;
  */
 const PUBLISHED_ONLY = { status: "published" } as const;
 
-/** Public read — drafts never leave the building. */
-export async function list(): Promise<Project[]> {
+/**
+ * Public read — drafts never leave the building, and neither do case studies:
+ * the list is what the home page fetches, and only a permalink renders one.
+ *
+ * The case study is still read from Mongo, because `hasCaseStudy` has to be
+ * computed with the same emptiness rule the save path uses, and an old record
+ * can hold an empty one written before that rule existed. With a dozen
+ * projects the extra bytes between Mongo and Fly cost nothing; it's the bytes
+ * to every visitor's browser that this saves.
+ */
+export async function list(): Promise<ProjectSummary[]> {
   const docs = await ProjectModel.find(PUBLISHED_ONLY)
     .sort(LIST_SORT)
     .lean();
-  return docs.map((d) => toProject(d as ProjectDoc));
+  return docs.map((d) => toSummary(toProject(d as ProjectDoc)));
 }
 
 /** Admin read — drafts included. */

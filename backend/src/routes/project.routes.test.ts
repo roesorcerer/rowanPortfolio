@@ -4,6 +4,7 @@ import { connectTestDb, disconnectTestDb, clearDatabase } from "../test/setup";
 import jwt from "jsonwebtoken";
 import config from "../config";
 import { AdminModel } from "../models/admin.model";
+import { ProjectModel } from "../models/project.model";
 import { hashPassword } from "../utils/auth.utils";
 import { signToken } from "../utils/auth.utils";
 
@@ -246,8 +247,12 @@ describe("GET /api/projects/:idOrSlug", () => {
       status: "draft",
     });
 
-    expect((await request(app).get("/api/projects/unfinished")).status).toBe(404);
-    expect((await request(app).get(`/api/projects/${draft._id}`)).status).toBe(404);
+    expect((await request(app).get("/api/projects/unfinished")).status).toBe(
+      404
+    );
+    expect((await request(app).get(`/api/projects/${draft._id}`)).status).toBe(
+      404
+    );
   });
 
   it("serves a draft to an admin at the same permalink", async () => {
@@ -345,8 +350,12 @@ describe("project case studies", () => {
     expect(res.status).toBe(200);
     expect(res.body.data.caseStudy.summary).toBe("How it came together.");
     expect(res.body.data.caseStudy.sections).toHaveLength(2);
-    expect(res.body.data.caseStudy.sections[0].heading).toBe("Shadowing a shift");
-    expect(res.body.data.caseStudy.outcomes).toEqual(["Delivered to the client"]);
+    expect(res.body.data.caseStudy.sections[0].heading).toBe(
+      "Shadowing a shift"
+    );
+    expect(res.body.data.caseStudy.outcomes).toEqual([
+      "Delivered to the client",
+    ]);
   });
 
   it("stores no case study when every field is blank", async () => {
@@ -362,7 +371,10 @@ describe("project case studies", () => {
   // An emptied form has to erase the stored text, not read as "unchanged".
   it("clears a stored case study when an empty one is sent", async () => {
     const token = await getAdminToken();
-    const project = await createProject(token, { title: "Food Forward", caseStudy });
+    const project = await createProject(token, {
+      title: "Food Forward",
+      caseStudy,
+    });
 
     const res = await request(app)
       .put(`/api/projects/${project._id}`)
@@ -417,7 +429,10 @@ describe("POST /api/projects", () => {
   it("appends to the end of its own display group", async () => {
     const token = await getAdminToken();
 
-    await createProject(token, { title: "Practice 1", projectType: "practice" });
+    await createProject(token, {
+      title: "Practice 1",
+      projectType: "practice",
+    });
     const secondPractice = await createProject(token, {
       title: "Practice 2",
       projectType: "practice",
@@ -568,5 +583,74 @@ describe("DELETE /api/projects/:id", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(401);
+  });
+});
+
+// The public list is what every home-page visit fetches, so it leaves the
+// long-form case study to the permalink and says only whether one exists.
+describe("GET /api/projects (summary shape)", () => {
+  const caseStudy = {
+    summary: "The whole story in a breath.",
+    sections: [{ heading: "Build", body: "How it was made.", media: [] }],
+    outcomes: ["It shipped."],
+    lessons: [],
+  };
+
+  it("omits the case study and reports whether there is one", async () => {
+    const token = await getAdminToken();
+    await createProject(token, { title: "With Study", caseStudy });
+    await createProject(token, { title: "Without Study" });
+
+    const res = await request(app).get("/api/projects");
+
+    const byTitle = Object.fromEntries(
+      res.body.data.map((p: { title: string }) => [p.title, p])
+    );
+    expect(byTitle["With Study"]).not.toHaveProperty("caseStudy");
+    expect(byTitle["With Study"].hasCaseStudy).toBe(true);
+    expect(byTitle["Without Study"].hasCaseStudy).toBe(false);
+    // Everything the card renders is still there.
+    expect(byTitle["With Study"]).toMatchObject({
+      title: "With Study",
+      description: validProject.description,
+      links: validProject.links,
+    });
+  });
+
+  it("still returns the full case study on the permalink", async () => {
+    const token = await getAdminToken();
+    const created = await createProject(token, {
+      title: "Permalink Study",
+      caseStudy,
+    });
+
+    const res = await request(app).get(`/api/projects/${created.slug}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.caseStudy.summary).toBe(caseStudy.summary);
+    expect(res.body.data).not.toHaveProperty("hasCaseStudy");
+  });
+
+  // Records written before the store unset emptied case studies can still
+  // hold one with nothing in it. That isn't a case study to link to.
+  it("counts a stored case study with nothing written in it as none", async () => {
+    await ProjectModel.collection.insertOne({
+      title: "Empty Study",
+      slug: "empty-study",
+      category: [],
+      description: "d",
+      image: "/x.png",
+      projectType: "product",
+      status: "published",
+      order: 0,
+      caseStudy: { summary: "  ", sections: [], outcomes: [], lessons: [] },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const res = await request(app).get("/api/projects");
+
+    expect(res.body.data[0].title).toBe("Empty Study");
+    expect(res.body.data[0].hasCaseStudy).toBe(false);
   });
 });

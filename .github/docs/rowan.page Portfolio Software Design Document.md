@@ -104,7 +104,7 @@ These findings come from reading the code, a production build, and an axe access
 | F5 | Registration is open to anyone | `POST /api/auth/register` is public, though the site has one admin; new accounts get no admin rights. **Fixed in #24**: the route is removed | 5.4 |
 | F6 | Long-lived token sits in `localStorage` | 7-day JWT, with no CSP on the site to limit script injection | 5.4, 8.2 |
 | F7 | Visitors download the admin | One 440 KB JavaScript file (138 KB gzipped), with no code splitting | 3.2 |
-| F8 | List responses carry full case studies | `GET /api/projects` maps every field, including `caseStudy` | 4.1, 5.1 |
+| F8 | List responses carry full case studies | `GET /api/projects` maps every field, including `caseStudy`. **Fixed in #30**: the list returns `ProjectSummary` | 4.1, 5.1 |
 | F9 | Home page has 25 axe failures | 18 contrast, 3 nested interactive, 3 label mismatch, 1 target size | 6.4 |
 | F10 | Text colors miss AA | `muted` is 3.43:1 and `faint` 2.02:1 on `paper`; body text needs 4.5:1 | 6.4 |
 | F11 | Motion cannot be paused | Looping hero video and a word change every 2.2 s; no reduced-motion handling | 6.4 |
@@ -277,7 +277,7 @@ All routes sit under `/api` and exchange JSON in one envelope: `{ success, data?
 | POST `/auth/register` | Public | Create an account | Removed (D5, #24) |
 | GET `/auth/me` | Signed in | Current user | Used by the admin route guard |
 | POST `/auth/logout` | Signed in | End the session | New |
-| GET `/projects` | Public | Published list | Return `ProjectSummary` |
+| GET `/projects` | Public | Published list | Returns `ProjectSummary` (#30) |
 | GET `/projects/:idOrSlug` | Public | One published project | Cache-Control headers |
 | GET `/projects/all` | Admin | List including drafts | None |
 | GET `/projects/all/:idOrSlug` | Admin | Draft preview | None |

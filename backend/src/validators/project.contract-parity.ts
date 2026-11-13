@@ -2,8 +2,12 @@ import type { z } from "zod";
 import type {
   Project as WireProject,
   ProjectPayload as WirePayload,
+  ProjectSummary as WireSummary,
 } from "../../../shared/contracts";
-import type { Project as StoredProject } from "../stores/projects-store";
+import type {
+  Project as StoredProject,
+  ProjectSummary as StoredSummary,
+} from "../stores/projects-store";
 import type { createProjectSchema } from "./project.validators";
 
 /**
@@ -40,6 +44,11 @@ type Wire<T> = { [K in keyof T]: T[K] extends Date ? string : T[K] };
 // it fails the second.
 export type _StoredFitsWire = Expect<Assignable<Wire<StoredProject>, WireProject>>;
 export type _WireFitsStored = Expect<Assignable<WireProject, Wire<StoredProject>>>;
+
+// The public list's shape, checked the same two ways, so the summary can't
+// drift from the store's mapper any more than the full project can.
+export type _StoredSummaryFitsWire = Expect<Assignable<Wire<StoredSummary>, WireSummary>>;
+export type _WireSummaryFitsStored = Expect<Assignable<WireSummary, Wire<StoredSummary>>>;
 
 // --- The request shape the frontend sends ---
 // One-way on purpose: `createProjectSchema` accepts more than the contract

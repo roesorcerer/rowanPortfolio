@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useProjects } from "../hooks/useProjects";
-import { hasCaseStudy, projectPath } from "../lib/projectLinks";
+import { projectPath } from "../lib/projectLinks";
 import Sprite from "../site/Sprite";
 import { ThemeToggle } from "../site/theme";
 import { ENCOUNTERS, FLOORS, GAME_NAME, ROLES, type Encounter } from "./data";
@@ -196,7 +196,7 @@ function Game() {
   const studyPath = useCallback(
     (encounter: Encounter) => {
       const project = projects?.find(
-        (item) => encounter.study?.test(item.title) && hasCaseStudy(item.caseStudy)
+        (item) => encounter.study?.test(item.title) && item.hasCaseStudy
       );
       return project ? projectPath(project) : undefined;
     },
