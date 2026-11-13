@@ -53,13 +53,16 @@ const config = {
     from: process.env.SMTP_FROM || process.env.SMTP_USER || "",
   },
   contactEmail: process.env.CONTACT_EMAIL || "",
-  // How many proxies sit between the visitor and Express, for `trust proxy`.
-  // Production is 2: Vercel's /api rewrite, then Fly's edge. Each appends to
-  // X-Forwarded-For, so the visitor is the second address from the right.
-  // Too low and every visitor looks like Vercel, sharing one rate-limit
-  // bucket; too high and the visitor can choose their own IP. Locally there
-  // is no proxy in front of Express, so the default is 0 (trust nothing).
-  // Set in fly.toml, so it can be corrected without a code change.
+  // How many X-Forwarded-For entries to skip from the right, for `trust
+  // proxy`. Production is 3, measured against live logs rather than counted
+  // from the architecture: Fly's proxy contributes two entries (a request
+  // sent straight to fly.dev resolves to the caller at 2), and Vercel's /api
+  // rewrite one more. At 2, every visitor through rowan.page showed up as a
+  // Vercel egress address (18.118.x, 13.184.x), sharing a handful of
+  // rate-limit buckets. Too high and the visitor can choose their own IP.
+  // Locally there is no proxy in front of Express, so the default is 0
+  // (trust nothing). Set in fly.toml, so it can be corrected without a code
+  // change; after changing it, check `fly logs` shows your own IP.
   trustProxyHops: intFromEnv("TRUST_PROXY_HOPS", 0),
   // Requests allowed per window by src/middleware/rateLimit.ts, which explains
   // the per-IP/global split and the windows. Env overrides exist so the test
