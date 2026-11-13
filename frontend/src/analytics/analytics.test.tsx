@@ -27,13 +27,21 @@ const project: Project = {
   updatedAt: "",
 };
 
-function Probe({ onMount }: { onMount: (a: ReturnType<typeof useAnalytics>) => void }) {
+function Probe({
+  onMount,
+}: {
+  onMount: (a: ReturnType<typeof useAnalytics>) => void;
+}) {
   const analytics = useAnalytics();
   onMount(analytics);
   return null;
 }
 
-function mount(adapter: TestAnalyticsAdapter, path: string, capture: (a: ReturnType<typeof useAnalytics>) => void) {
+function mount(
+  adapter: TestAnalyticsAdapter,
+  path: string,
+  capture: (a: ReturnType<typeof useAnalytics>) => void
+) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <AnalyticsProvider adapter={adapter}>
@@ -157,6 +165,68 @@ describe("analytics", () => {
         });
       } finally {
         fetchSpy.mockRestore();
+      }
+    });
+
+    // Production sets VITE_API_URL to the Fly hostname. Going through
+    // rowan.page's /api rewrite instead would make every visitor look like
+    // a Vercel server to the backend.
+    it("posts to the API origin as text/plain, so no preflight is needed", () => {
+      vi.stubEnv("VITE_API_URL", "https://api.example.test");
+      const fetchSpy = vi
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(new Response(null, { status: 204 }));
+      try {
+        fetchAnalyticsAdapter.send({
+          type: "pageview",
+          path: "/",
+          referrer: "",
+        });
+        const [url, init] = fetchSpy.mock.calls[0];
+        expect(url).toBe("https://api.example.test/api/analytics/pageview");
+        expect((init as RequestInit).headers).toEqual({
+          "Content-Type": "text/plain;charset=UTF-8",
+        });
+        expect(JSON.parse((init as RequestInit).body as string)).toEqual({
+          path: "/",
+          referrer: "",
+        });
+      } finally {
+        fetchSpy.mockRestore();
+        vi.unstubAllEnvs();
+      }
+    });
+
+    it("sends link clicks by beacon to the API origin", () => {
+      vi.stubEnv("VITE_API_URL", "https://api.example.test");
+      const beacon = vi.fn().mockReturnValue(true);
+      Object.defineProperty(navigator, "sendBeacon", {
+        value: beacon,
+        configurable: true,
+      });
+      const fetchSpy = vi.spyOn(globalThis, "fetch");
+      try {
+        fetchAnalyticsAdapter.send({
+          type: "link_click",
+          path: "/",
+          referrer: "",
+          projectId: "p1",
+          projectTitle: "Hello",
+          linkType: "demo",
+        });
+        expect(beacon).toHaveBeenCalledWith(
+          "https://api.example.test/api/analytics/event",
+          expect.any(Blob)
+        );
+        expect((beacon.mock.calls[0][1] as Blob).type).toBe(
+          "text/plain;charset=utf-8"
+        );
+        expect(fetchSpy).not.toHaveBeenCalled();
+      } finally {
+        fetchSpy.mockRestore();
+        vi.unstubAllEnvs();
+        // jsdom has no sendBeacon of its own; remove the stub.
+        delete (navigator as { sendBeacon?: unknown }).sendBeacon;
       }
     });
 
