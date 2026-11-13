@@ -9,7 +9,7 @@ const router = Router();
 
 // All routes are prefixed with /api in app.ts
 router.use("/health", healthRoutes);       // GET /api/health
-router.use("/auth", authRoutes);           // POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
+router.use("/auth", authRoutes);           // POST /api/auth/login, GET /api/auth/me
 router.use("/projects", projectRoutes);    // GET /api/projects, GET /api/projects/:id, POST/PUT/DELETE (auth required)
 router.use("/contact", contactRoutes);     // POST /api/contact, GET /api/contact/submissions (admin)
 router.use("/analytics", analyticsRoutes); // POST /api/analytics/pageview, GET /api/analytics/summary (admin)

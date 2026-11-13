@@ -1,29 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { ApiResponse } from "../types";
-import { RegisterInput, LoginInput } from "../validators/auth.validators";
+import { LoginInput } from "../validators/auth.validators";
 import * as usersStore from "../stores/users-store";
-import { registerUser, authenticate } from "../operations/auth-operations";
-
-// POST /api/auth/register
-export async function register(
-  req: Request<unknown, unknown, RegisterInput>,
-  res: Response<ApiResponse>,
-  next: NextFunction
-): Promise<void> {
-  try {
-    const result = await registerUser(req.body);
-    if (result.kind === "duplicate-email") {
-      res.status(409).json({ success: false, error: "Email already registered" });
-      return;
-    }
-    res.status(201).json({
-      success: true,
-      data: { token: result.token, user: result.user },
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+import { authenticate } from "../operations/auth-operations";
 
 // POST /api/auth/login
 export async function login(

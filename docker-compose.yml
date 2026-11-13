@@ -31,6 +31,8 @@ services:
       - JWT_SECRET=${JWT_SECRET:-docker-dev-secret-change-in-production}
       - JWT_EXPIRES_IN=7d
       - CORS_ORIGIN=http://localhost
+      # One proxy in front: the frontend container's nginx forwards /api here.
+      - TRUST_PROXY_HOPS=1
     depends_on:
       mongo:
         condition: service_healthy
