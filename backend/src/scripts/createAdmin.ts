@@ -24,36 +24,28 @@ import { LIMITS } from "../validators/limits";
 // Run from the backend/ directory:
 //   npm run admin
 
+// A command now, not a startup step, so a missing or short value is an error
+// that stops the run with a non-zero exit. When this also ran on every boot,
+// the same checks had to warn and carry on, so the server could start
+// without them; that is why they used to say "Skipping".
 export async function createAdmin(): Promise<void> {
   const mongoUri = process.env.MONGODB_URI;
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
   const name = process.env.ADMIN_NAME ?? "Admin";
-  const shouldManageConnection = mongoose.connection.readyState === 0;
 
-  if (shouldManageConnection && !mongoUri) {
-    console.warn("Skipping admin bootstrap: MONGODB_URI is not set.");
-    return;
-  }
+  if (!mongoUri) throw new Error("MONGODB_URI is not set.");
   if (!email || !password) {
-    console.warn(
-      "Skipping admin bootstrap: ADMIN_EMAIL and ADMIN_PASSWORD must both be set."
-    );
-    return;
+    throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must both be set.");
   }
   if (password.length < LIMITS.admin.passwordMin) {
-    console.warn(
-      `Skipping admin bootstrap: ADMIN_PASSWORD must be at least ${LIMITS.admin.passwordMin} characters.`
+    throw new Error(
+      `ADMIN_PASSWORD must be at least ${LIMITS.admin.passwordMin} characters.`
     );
-    return;
   }
 
+  await mongoose.connect(mongoUri);
   try {
-    if (shouldManageConnection) {
-      await mongoose.connect(mongoUri as string);
-      console.log("Connected to MongoDB.");
-    }
-
     const hashed = await hashPassword(password);
     const lowerEmail = email.trim().toLowerCase();
 
@@ -64,16 +56,17 @@ export async function createAdmin(): Promise<void> {
     );
 
     console.log(`Admin ready: ${result.email} (${result._id})`);
-  } catch (error) {
-    console.error("createAdmin failed:", error);
   } finally {
-    if (shouldManageConnection) {
-      await mongoose.connection.close();
-      console.log("Done.");
-    }
+    await mongoose.connection.close();
   }
 }
 
 if (require.main === module) {
-  void createAdmin();
+  createAdmin().catch((error: unknown) => {
+    console.error(
+      "npm run admin failed:",
+      error instanceof Error ? error.message : error
+    );
+    process.exit(1);
+  });
 }

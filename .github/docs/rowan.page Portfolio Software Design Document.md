@@ -348,7 +348,7 @@ POST /auth/login:
 requireAuth: read the cookie instead of the Authorization header
 ```
 
-`SameSite=Strict` and JSON-only writes cover CSRF for this same-origin setup. Rate limiting needs `trust proxy` set correctly, and the header carrying the visitor's real IP must be confirmed through both the Vercel rewrite and Fly's proxy (see 8.6). `server.ts` also resets the admin password on every boot when `ADMIN_PASSWORD` is set; this should run only through `npm run admin`.
+`SameSite=Strict` and JSON-only writes cover CSRF for this same-origin setup. Rate limiting needs `trust proxy` set correctly, and the header carrying the visitor's real IP must be confirmed through both the Vercel rewrite and Fly's proxy (see 8.6). `server.ts` used to reset the admin password on every boot when `ADMIN_PASSWORD` was set. **Fixed in #28**: the account changes only through `npm run admin`.
 
 ### 5.5 Contact
 
