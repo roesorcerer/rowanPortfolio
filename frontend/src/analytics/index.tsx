@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useLocation } from "react-router-dom";
 import type { Project } from "../types";
+import { apiUrl } from "../api/client";
 
 // ---- Wire shape ----------------------------------------------------------
 
@@ -40,15 +41,23 @@ export interface AnalyticsAdapter {
   send(event: AnalyticsEvent): void;
 }
 
-// Production adapter: posts to /api/analytics/*. Never throws.
+// Production adapter: posts to the API's /api/analytics/*. Never throws.
 // Uses sendBeacon for link_click so the request survives the page unload
 // when the user follows the link.
+//
+// The body is JSON, but labelled text/plain. The API is on another origin
+// (see apiUrl), and text/plain keeps the POST a CORS "simple" request: no
+// OPTIONS preflight before every page view, and sendBeacon works
+// cross-origin. The backend's intakeBody middleware parses it back.
+const INTAKE_TYPE = "text/plain;charset=UTF-8";
+
 export const fetchAnalyticsAdapter: AnalyticsAdapter = {
   send(event) {
-    const [url, body] = serialize(event);
+    const [path, body] = serialize(event);
+    const url = apiUrl(path);
     if (event.type === "link_click" && supportsBeacon()) {
       try {
-        const blob = new Blob([body], { type: "application/json" });
+        const blob = new Blob([body], { type: INTAKE_TYPE });
         if (navigator.sendBeacon(url, blob)) return;
       } catch {
         // fall through to fetch
@@ -56,7 +65,7 @@ export const fetchAnalyticsAdapter: AnalyticsAdapter = {
     }
     void fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": INTAKE_TYPE },
       body,
       keepalive: true,
     }).catch(() => undefined);
@@ -79,10 +88,7 @@ function serialize(event: AnalyticsEvent): [string, string] {
     ];
   }
   const { type, ...rest } = event;
-  return [
-    "/api/analytics/event",
-    JSON.stringify({ eventType: type, ...rest }),
-  ];
+  return ["/api/analytics/event", JSON.stringify({ eventType: type, ...rest })];
 }
 
 function supportsBeacon(): boolean {

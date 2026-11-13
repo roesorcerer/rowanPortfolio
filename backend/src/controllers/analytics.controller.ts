@@ -3,21 +3,26 @@ import { ApiResponse } from "../types";
 import { PageViewModel } from "../models/page-view.model";
 import { EventModel } from "../models/event.model";
 import { LIMITS } from "../validators/limits";
-import { TrackEventInput } from "../validators/analytics.validators";
+import {
+  TrackEventInput,
+  TrackPageViewInput,
+} from "../validators/analytics.validators";
 
 // POST /api/analytics/pageview  (public — called by the frontend on each route change)
+// Body validated (and clipped) by trackPageViewSchema; the headers are
+// clipped here because they never go through Zod.
 export async function trackPageView(
-  req: Request,
+  req: Request<unknown, unknown, TrackPageViewInput>,
   res: Response<ApiResponse>,
   next: NextFunction
 ): Promise<void> {
   try {
-    const path: string = (req.body?.path ?? "/").slice(0, LIMITS.tracking.pathMax);
-    const referrer: string = (req.body?.referrer ?? req.headers.referer ?? "").slice(
+    const { path } = req.body;
+    const referrer = (req.body.referrer ?? req.headers.referer ?? "").slice(
       0,
       LIMITS.tracking.referrerMax
     );
-    const userAgent: string = (req.headers["user-agent"] ?? "").slice(
+    const userAgent = (req.headers["user-agent"] ?? "").slice(
       0,
       LIMITS.tracking.userAgentMax
     );
@@ -44,12 +49,16 @@ export async function trackEvent(
   next: NextFunction
 ): Promise<void> {
   try {
-    const { eventType, projectId, projectTitle, projectType, linkType } = req.body;
+    const { eventType, projectId, projectTitle, projectType, linkType } =
+      req.body;
     const referrer = (req.body.referrer ?? req.headers.referer ?? "").slice(
       0,
       LIMITS.tracking.referrerMax
     );
-    const userAgent = (req.headers["user-agent"] ?? "").slice(0, LIMITS.tracking.userAgentMax);
+    const userAgent = (req.headers["user-agent"] ?? "").slice(
+      0,
+      LIMITS.tracking.userAgentMax
+    );
 
     await EventModel.create({
       eventType,

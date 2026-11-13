@@ -97,6 +97,18 @@ function isAxiosError(err: unknown): err is AxiosError {
 // --- Production wiring ---
 // In development, Vite's proxy handles /api requests (no baseURL needed).
 // In production on Vercel, VITE_API_URL points to the Fly.io backend.
+//
+// apiUrl() is the same base for the one caller that can't use Axios: the
+// analytics adapter, which needs sendBeacon and keepalive fetch. Calling
+// Fly directly matters for more than speed — the backend reads the
+// visitor's IP from X-Forwarded-For assuming only Fly's proxy is in front
+// (TRUST_PROXY_HOPS=2). A request through Vercel's /api rewrite arrives
+// with an extra hop and shows up as a Vercel server. Read at call time, not
+// import time, so a test can stub the variable.
+export function apiUrl(path: string): string {
+  return `${import.meta.env.VITE_API_URL || ""}${path}`;
+}
+
 const http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "",
   headers: { "Content-Type": "application/json" },

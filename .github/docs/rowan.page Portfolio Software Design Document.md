@@ -110,7 +110,7 @@ These findings come from reading the code, a production build, and an axe access
 | F11 | Motion cannot be paused | Looping hero video and a word change every 2.2 s; no reduced-motion handling | 6.4 |
 | F12 | Fonts do not match the CSS | Google Fonts loads Cormorant Garamond, while the body stack names Perpetua and Palatino, which are not served | 6.1 |
 | F13 | Images are unoptimized | 12.7 MB in `public`, nearly all PNG and JPG, and many duplicated in `src/assets`; one image exceeds 1 MB | 5.3 |
-| F14 | Analytics are spoofable and kept forever | `/pageview` has no validator, a non-string `path` raises a 500, and no retention limit or notice exists | 4.1, 5.6 |
+| F14 | Analytics are spoofable and kept forever | `/pageview` has no validator, a non-string `path` raises a 500, and no retention limit or notice exists. **Validator fixed in #29**; retention and the notice remain | 4.1, 5.6 |
 | F15 | Headshot is a link to admin login | `Header.tsx` wraps the public photo in a link to `/admin/login` | 6.3 |
 | F16 | Repository undersells the work | README is an unfilled template; root `package.json` is a leftover template; `.env.example` is missing though startup errors cite it; `development` last moved 2026-04-17 | 8.5 |
 | F17 | Dependencies and claims have drifted | Redux Toolkit and Inter are installed but never imported; About lists PostgreSQL, not the MongoDB this site runs on | 8.5 |
@@ -288,7 +288,7 @@ All routes sit under `/api` and exchange JSON in one envelope: `{ success, data?
 | POST `/contact` | Public | Send a message | Rate limit |
 | GET `/contact/submissions` | Admin | Latest 200 messages | None |
 | DELETE `/contact/submissions/:id` | Admin | Delete a message | New |
-| POST `/analytics/pageview` | Public | Record a page view | Add a validator; rate limit |
+| POST `/analytics/pageview` | Public | Record a page view | Validator added (#29); rate limit |
 | POST `/analytics/event` | Public | Record an interaction | Rate limit |
 | GET `/analytics/summary` | Admin | Traffic report | None |
 | GET `/analytics/engagement` | Admin | Project engagement report | None |
@@ -570,7 +570,7 @@ Each best practice below has a measurable target and an automated check where po
 | A05 Injection | Zod on inputs, React escaping, escaped email HTML | Validate `/pageview` |
 | A07 Authentication Failures | Argon2id, generic login errors, but no limiter and a 7-day token | 5.4 |
 | A09 Security Logging and Alerting Failures | Morgan logs only; no alerts | Alert on repeated 5xx and failed deploys |
-| A10 Mishandling of Exceptional Conditions | Central error handler; bad `/pageview` input raises a 500 | Return 400; add a Fly health check |
+| A10 Mishandling of Exceptional Conditions | Central error handler; bad `/pageview` input returns 400 (#29) | Add a Fly health check |
 
 A04, A06 and A08 raise no project-specific action beyond the items above, this design and the existing CI gates.
 
