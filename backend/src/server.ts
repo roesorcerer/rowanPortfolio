@@ -1,14 +1,18 @@
 import app from "./app";
 import config from "./config";
 import { connectDatabase, disconnectDatabase } from "./config/database";
-import { createAdmin } from "./scripts/createAdmin";
 
 // Connect to MongoDB FIRST, then start accepting HTTP requests.
 // This ensures no request hits a controller before the database
 // is ready. If the DB connection fails, the server never starts.
+//
+// Startup deliberately does not create or touch the admin account. It used
+// to run createAdmin() here, which reset the admin's password to
+// ADMIN_PASSWORD on every boot whenever that variable was set: a stale value
+// left in the host's environment would silently undo a password change on
+// the next deploy or restart. The account is managed only by `npm run admin`.
 async function start() {
   await connectDatabase();
-  await createAdmin();
 
   const server = app.listen(config.port, () => {
     console.log(

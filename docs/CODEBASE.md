@@ -43,7 +43,9 @@ the repo root adds the root package as a dependency by mistake.
 server stops on boot with a message naming the missing variable
 (`backend/src/config/index.ts`). Also set `PORT=5001`: the backend defaults to
 5000, but Vite forwards `/api` to 5001, so without it the frontend can't reach
-the API. Add `ADMIN_EMAIL` and `ADMIN_PASSWORD` to get an admin login. For a safe local database, run Mongo in Docker, then point
+the API. To get an admin login, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` and run
+`npm run admin`; the server never creates the account itself, and running the
+command again resets the password. For a safe local database, run Mongo in Docker, then point
 `MONGODB_URI` at it and run `npm run seed`:
 
 ```bash

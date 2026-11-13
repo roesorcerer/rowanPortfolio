@@ -13,9 +13,6 @@ vi.mock("mongoose", () => ({
     connect: connectMock,
     connection: {
       close: closeMock,
-      // 0 = disconnected. createAdmin only opens (and closes) a connection
-      // when it finds none already open, so the mock has to report one.
-      readyState: 0,
     },
   },
 }));
@@ -61,6 +58,30 @@ describe("createAdmin", () => {
       },
       { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
+    expect(closeMock).toHaveBeenCalled();
+  });
+
+  it("refuses to run without a password, before touching the database", async () => {
+    delete process.env.ADMIN_PASSWORD;
+
+    await expect(createAdmin()).rejects.toThrow(
+      "ADMIN_EMAIL and ADMIN_PASSWORD must both be set."
+    );
+    expect(connectMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses a password shorter than the minimum", async () => {
+    process.env.ADMIN_PASSWORD = "short";
+
+    await expect(createAdmin()).rejects.toThrow(/at least 8 characters/);
+    expect(connectMock).not.toHaveBeenCalled();
+  });
+
+  it("closes the connection even when the write fails", async () => {
+    hashPasswordMock.mockResolvedValue("hashed-password");
+    findOneAndUpdateMock.mockRejectedValue(new Error("write failed"));
+
+    await expect(createAdmin()).rejects.toThrow("write failed");
     expect(closeMock).toHaveBeenCalled();
   });
 });
