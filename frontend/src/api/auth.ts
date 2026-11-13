@@ -6,7 +6,7 @@ const TOKEN_KEY = "token";
 
 interface LoginResponse {
   token: string;
-  user: { _id: string; email: string; role: string };
+  admin: { _id: string; email: string; name: string };
 }
 
 export async function login(email: string, password: string): Promise<void> {

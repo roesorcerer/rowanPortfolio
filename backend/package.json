@@ -15,6 +15,7 @@
     "backfill:slugs": "ts-node src/scripts/backfill-slugs.ts",
     "migrate:details": "ts-node src/scripts/migrate-project-details.ts",
     "migrate:links": "ts-node src/scripts/migrate-links-and-tags.ts",
+    "migrate:admins": "ts-node src/scripts/migrate-admins.ts",
     "backup:projects": "ts-node src/scripts/backup-projects.ts",
     "restore:projects": "ts-node src/scripts/restore-projects.ts",
     "seed:case-studies": "ts-node src/scripts/seed-case-studies.ts",

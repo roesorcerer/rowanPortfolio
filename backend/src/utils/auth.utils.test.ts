@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+import config from "../config";
 import {
   hashPassword,
   verifyPassword,
@@ -34,19 +36,18 @@ describe("Password hashing", () => {
 
 describe("JWT sign and verify", () => {
   it("signs a token and verifies the payload", () => {
-    const payload = { userId: "abc123", role: "admin" };
+    const payload = { adminId: "abc123" };
     const token = signToken(payload);
 
     // Token should be a JWT (three dot-separated base64 segments)
     expect(token.split(".")).toHaveLength(3);
 
     const decoded = verifyToken(token);
-    expect(decoded.userId).toBe("abc123");
-    expect(decoded.role).toBe("admin");
+    expect(decoded).toEqual({ adminId: "abc123" });
   });
 
   it("rejects a tampered token", () => {
-    const token = signToken({ userId: "abc123", role: "user" });
+    const token = signToken({ adminId: "abc123" });
     // Tamper with the payload section
     const tampered = token.slice(0, -5) + "XXXXX";
 
@@ -55,5 +56,13 @@ describe("JWT sign and verify", () => {
 
   it("rejects a completely invalid string", () => {
     expect(() => verifyToken("not.a.jwt")).toThrow();
+  });
+
+  // Signed with our secret, so jwt.verify alone would accept it. This is the
+  // shape every token had before the Admin model, and the admin's browser
+  // still holds one on the day this ships.
+  it("rejects a validly signed token from before the Admin model", () => {
+    const old = jwt.sign({ userId: "abc123", role: "admin" }, config.jwtSecret);
+    expect(() => verifyToken(old)).toThrow();
   });
 });

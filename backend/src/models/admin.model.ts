@@ -1,16 +1,22 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { LIMITS } from "../validators/limits";
 
-export interface IUser extends Document {
+// The one kind of account that can sign in. There used to be a User with a
+// role of "admin" or "user", but a single-admin site has nobody else to be,
+// and the "user" role could do nothing once registration was gone. Accounts
+// come only from `npm run admin` (src/scripts/createAdmin.ts).
+//
+// The collection is `admins`. Existing data moved there from `users` with
+// `npm run migrate:admins`, which also dropped the old role field.
+export interface IAdmin extends Document {
   email: string;
   password: string; // Argon2 hash — never store plaintext
   name: string;
-  role: "admin" | "user";
   createdAt: Date;
   updatedAt: Date;
 }
 
-const userSchema = new Schema<IUser>(
+const adminSchema = new Schema<IAdmin>(
   {
     email: {
       type: String,
@@ -31,12 +37,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: [true, "Name is required"],
       trim: true,
-      maxlength: [LIMITS.user.nameMax, `Name cannot exceed ${LIMITS.user.nameMax} characters`],
-    },
-    role: {
-      type: String,
-      enum: ["admin", "user"],
-      default: "user",
+      maxlength: [LIMITS.admin.nameMax, `Name cannot exceed ${LIMITS.admin.nameMax} characters`],
     },
   },
   {
@@ -57,4 +58,4 @@ const userSchema = new Schema<IUser>(
 // unique: true on the email field already creates an index,
 // so no separate schema.index() call is needed.
 
-export const UserModel = mongoose.model<IUser>("User", userSchema);
+export const AdminModel = mongoose.model<IAdmin>("Admin", adminSchema);

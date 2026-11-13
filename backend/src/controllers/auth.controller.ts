@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ApiResponse } from "../types";
 import { LoginInput } from "../validators/auth.validators";
-import * as usersStore from "../stores/users-store";
+import * as adminsStore from "../stores/admins-store";
 import { authenticate } from "../operations/auth-operations";
 
 // POST /api/auth/login
@@ -18,7 +18,7 @@ export async function login(
     }
     res.json({
       success: true,
-      data: { token: result.token, user: result.user },
+      data: { token: result.token, admin: result.admin },
     });
   } catch (error) {
     next(error);
@@ -32,12 +32,12 @@ export async function getMe(
   next: NextFunction
 ): Promise<void> {
   try {
-    const user = await usersStore.findById(req.user!.userId);
-    if (!user) {
-      res.status(404).json({ success: false, error: "User not found" });
+    const admin = await adminsStore.findById(req.admin!.adminId);
+    if (!admin) {
+      res.status(404).json({ success: false, error: "Admin not found" });
       return;
     }
-    res.json({ success: true, data: { user } });
+    res.json({ success: true, data: { admin } });
   } catch (error) {
     next(error);
   }

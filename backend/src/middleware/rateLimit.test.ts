@@ -2,7 +2,7 @@ import { vi } from "vitest";
 import request from "supertest";
 import app from "../app";
 import { connectTestDb, disconnectTestDb, clearDatabase } from "../test/setup";
-import * as usersStore from "../stores/users-store";
+import * as adminsStore from "../stores/admins-store";
 import { hashPassword } from "../utils/auth.utils";
 import { ContactSubmissionModel } from "../models/contact-submission.model";
 
@@ -35,7 +35,7 @@ const admin = {
 beforeAll(async () => {
   await connectTestDb();
   await clearDatabase();
-  await usersStore.create({
+  await adminsStore.create({
     ...admin,
     password: await hashPassword(admin.password),
   });

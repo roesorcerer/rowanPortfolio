@@ -8,17 +8,18 @@
 
 export type { ApiResponse } from "../../../shared/contracts";
 
-export interface AuthUser {
-  userId: string;
-  role: string;
+// Who requireAuth let through. Always the admin — there is no other kind of
+// account — so there is nothing to carry but the id.
+export interface AuthAdmin {
+  adminId: string;
 }
 
-// Augment Express's Request type so TypeScript knows about req.user.
+// Augment Express's Request type so TypeScript knows about req.admin.
 // This is the standard pattern for extending third-party types.
 declare global {
   namespace Express {
     interface Request {
-      user?: AuthUser;
+      admin?: AuthAdmin;
     }
   }
 }

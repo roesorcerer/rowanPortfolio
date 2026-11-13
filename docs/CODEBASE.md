@@ -155,8 +155,9 @@ standard `{ success, data }` reply, as `GET /api/contact/submissions` does.
 6. The controller replies with 202 and wording that depends on whether the email
    went out. Any thrown error goes to `middleware/errorHandler.ts`.
 
-Admin routes look the same with `requireAuth, requireAdmin` added before the
-handler (see the second route in `contact.routes.ts`).
+Admin routes look the same with `requireAuth` added before the handler (see the
+second route in `contact.routes.ts`). Signed in means admin: there is no other
+kind of account, so there is no separate role check.
 
 ## Recipe: adding a field to projects
 

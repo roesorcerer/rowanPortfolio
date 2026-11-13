@@ -1,32 +1,31 @@
-import * as usersStore from "../stores/users-store";
-import type { User } from "../stores/users-store";
+import * as adminsStore from "../stores/admins-store";
+import type { Admin } from "../stores/admins-store";
 import { verifyPassword, signToken } from "../utils/auth.utils";
 
-type Issued = { user: User; token: string };
+type Issued = { admin: Admin; token: string };
 
 export type AuthenticateResult =
   | ({ kind: "ok" } & Issued)
   | { kind: "invalid-credentials" };
 
-function issue(user: User): Issued {
-  return {
-    user,
-    token: signToken({ userId: user._id, role: user.role }),
-  };
+function issue(admin: Admin): Issued {
+  return { admin, token: signToken({ adminId: admin._id }) };
 }
 
 export async function authenticate(input: {
   email: string;
   password: string;
 }): Promise<AuthenticateResult> {
-  const found = await usersStore.findByEmail(input.email, { withPassword: true });
+  const found = await adminsStore.findByEmail(input.email, {
+    withPassword: true,
+  });
 
-  // Same outcome for "no such user" and "wrong password" to prevent
+  // Same outcome for "no such admin" and "wrong password" to prevent
   // email enumeration.
   if (!found || !(await verifyPassword(found.password, input.password))) {
     return { kind: "invalid-credentials" };
   }
 
-  const { password: _hash, ...user } = found;
-  return { kind: "ok", ...issue(user) };
+  const { password: _hash, ...admin } = found;
+  return { kind: "ok", ...issue(admin) };
 }

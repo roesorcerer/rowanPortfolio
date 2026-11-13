@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { trackPageView, trackEvent } from "../controllers/analytics.controller";
-import { requireAuth, requireAdmin } from "../middleware/requireAuth";
+import { requireAuth } from "../middleware/requireAuth";
 import { validate } from "../middleware/validate";
 import { trackEventSchema } from "../validators/analytics.validators";
 import { respond } from "./respond";
@@ -16,13 +16,11 @@ router.post("/event", validate(trackEventSchema), trackEvent);
 router.get(
   "/summary",
   requireAuth,
-  requireAdmin,
   respond(() => analyticsReport.summary())
 );
 router.get(
   "/engagement",
   requireAuth,
-  requireAdmin,
   respond(() => analyticsReport.engagement())
 );
 

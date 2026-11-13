@@ -3,10 +3,9 @@
 // other file should re-declare it — Zod and Mongoose both import from here.
 
 export const LIMITS = {
-  user: {
+  admin: {
     nameMax: 100,
     passwordMin: 8,
-    passwordMax: 128,
   },
   project: {
     titleMax: 200,

@@ -21,13 +21,13 @@ export async function verifyPassword(
 }
 
 // --- JWT ---
-// We store minimal data in the token: just the user ID and role.
+// We store minimal data in the token: just the admin's ID. There is no role
+// to carry, because the only account that can exist is the admin.
 // Never put sensitive data (email, password hash) in JWTs —
 // they're base64-encoded, not encrypted. Anyone can decode them.
 
 export interface JwtPayload {
-  userId: string;
-  role: string;
+  adminId: string;
 }
 
 export function signToken(payload: JwtPayload): string {
@@ -36,6 +36,19 @@ export function signToken(payload: JwtPayload): string {
   });
 }
 
+// The signature proves we issued the token, not that it has today's shape.
+// Tokens issued before the Admin model carried { userId, role } and are
+// still validly signed until they expire, so the shape is checked here and
+// an old token fails like any other bad one: a 401, and the admin signs in
+// again. Without the check it would pass with adminId undefined.
 export function verifyToken(token: string): JwtPayload {
-  return jwt.verify(token, config.jwtSecret) as JwtPayload;
+  const decoded = jwt.verify(token, config.jwtSecret);
+  if (
+    typeof decoded !== "object" ||
+    typeof decoded.adminId !== "string" ||
+    decoded.adminId === ""
+  ) {
+    throw new Error("Token payload is not an admin session");
+  }
+  return { adminId: decoded.adminId };
 }
