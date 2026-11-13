@@ -20,8 +20,8 @@ vi.mock("mongoose", () => ({
   },
 }));
 
-vi.mock("../models/user.model", () => ({
-  UserModel: {
+vi.mock("../models/admin.model", () => ({
+  AdminModel: {
     findOneAndUpdate: findOneAndUpdateMock,
   },
 }));
@@ -41,12 +41,11 @@ describe("createAdmin", () => {
     process.env.ADMIN_NAME = "Test Admin";
   });
 
-  it("creates or updates the admin user from environment variables", async () => {
+  it("creates or updates the admin from environment variables", async () => {
     hashPasswordMock.mockResolvedValue("hashed-password");
     findOneAndUpdateMock.mockResolvedValue({
       email: "admin@example.com",
       _id: "abc123",
-      role: "admin",
     });
 
     await createAdmin();
@@ -59,7 +58,6 @@ describe("createAdmin", () => {
         email: "admin@example.com",
         password: "hashed-password",
         name: "Test Admin",
-        role: "admin",
       },
       { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );

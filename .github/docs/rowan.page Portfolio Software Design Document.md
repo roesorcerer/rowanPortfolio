@@ -258,9 +258,9 @@ Floor layouts live in code. Each published project gains an optional `journey` f
 | Project | slug | string | Unique, 120 at most, frozen on rename; `all` and `reorder` are reserved |
 | Project | status | enum | `draft` or `published`; default `draft` |
 | Project | title | string | Required; 200 at most |
-| User | email | string | Required, unique, lowercased |
-| User | password | string | Argon2id hash; excluded from queries by default |
-| User | role | enum | `admin` or `user`; only `admin` is needed after D5 |
+| Admin | email | string | Required, unique, lowercased |
+| Admin | password | string | Argon2id hash; excluded from queries by default |
+| Admin | name | string | Required; 100 at most |
 
 ## 5. Component design
 
@@ -274,7 +274,7 @@ All routes sit under `/api` and exchange JSON in one envelope: `{ success, data?
 | --- | --- | --- | --- |
 | GET `/health` | Public | Liveness | Add a database ping; wire it to a Fly health check |
 | POST `/auth/login` | Public | Start an admin session | Set a cookie; rate limit |
-| POST `/auth/register` | Public | Create a user | Removed (D5, #24) |
+| POST `/auth/register` | Public | Create an account | Removed (D5, #24) |
 | GET `/auth/me` | Signed in | Current user | Used by the admin route guard |
 | POST `/auth/logout` | Signed in | End the session | New |
 | GET `/projects` | Public | Published list | Return `ProjectSummary` |
@@ -339,11 +339,11 @@ Only one person ever signs in, so the design favors a small attack surface over 
 ```text
 POST /auth/login:
     reject with 429 if this client exceeded the login limit
-    find user by email, including password hash
-    if no user, or Argon2 verify fails, or role is not admin:
+    find admin by email, including password hash
+    if no admin, or Argon2 verify fails:
         return 401 "Invalid email or password"
     set cookie session=<JWT>, HttpOnly, Secure, SameSite=Strict, 12 h expiry
-    return the user, without the hash
+    return the admin, without the hash
 
 requireAuth: read the cookie instead of the Authorization header
 ```

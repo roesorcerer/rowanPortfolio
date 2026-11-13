@@ -1,30 +1,35 @@
 import request from "supertest";
 import app from "../app";
 import { connectTestDb, disconnectTestDb, clearDatabase } from "../test/setup";
-import { UserModel } from "../models/user.model";
+import jwt from "jsonwebtoken";
+import config from "../config";
+import { AdminModel } from "../models/admin.model";
 import { hashPassword } from "../utils/auth.utils";
 import { signToken } from "../utils/auth.utils";
 
-// Helper: create an admin user and return a JWT
+// Helper: create the admin and return a JWT
 async function getAdminToken(): Promise<string> {
-  const user = await UserModel.create({
+  const admin = await AdminModel.create({
     email: "admin@test.com",
     password: await hashPassword("password123"),
     name: "Admin",
-    role: "admin",
   });
-  return signToken({ userId: String(user._id), role: "admin" });
+  return signToken({ adminId: String(admin._id) });
 }
 
-// Helper: create a regular user and return a JWT
-async function getUserToken(): Promise<string> {
-  const user = await UserModel.create({
-    email: "user@test.com",
+// Helper: a token in the shape issued before the Admin model ({ userId,
+// role }), validly signed. The admin's browser holds one on the day the
+// change ships; it has to be refused, not half-accepted.
+async function getPreAdminModelToken(): Promise<string> {
+  const admin = await AdminModel.create({
+    email: "old@test.com",
     password: await hashPassword("password123"),
-    name: "User",
-    role: "user",
+    name: "Old",
   });
-  return signToken({ userId: String(user._id), role: "user" });
+  return jwt.sign(
+    { userId: String(admin._id), role: "admin" },
+    config.jwtSecret
+  );
 }
 
 beforeAll(async () => {
@@ -141,12 +146,12 @@ describe("GET /api/projects/all", () => {
     expect(res.status).toBe(401);
   });
 
-  it("rejects a non-admin user", async () => {
-    const token = await getUserToken();
+  it("rejects a token issued before the Admin model", async () => {
+    const token = await getPreAdminModelToken();
     const res = await request(app)
       .get("/api/projects/all")
       .set("Authorization", `Bearer ${token}`);
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 });
 
@@ -432,16 +437,16 @@ describe("POST /api/projects", () => {
     expect(res.status).toBe(401);
   });
 
-  it("rejects non-admin user", async () => {
-    const token = await getUserToken();
+  it("rejects a token issued before the Admin model", async () => {
+    const token = await getPreAdminModelToken();
 
     const res = await request(app)
       .post("/api/projects")
       .set("Authorization", `Bearer ${token}`)
       .send(validProject);
 
-    expect(res.status).toBe(403);
-    expect(res.body.error).toBe("Admin access required");
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe("Invalid or expired token");
   });
 
   it("rejects invalid data", async () => {
@@ -549,8 +554,8 @@ describe("DELETE /api/projects/:id", () => {
     expect(getRes.status).toBe(404);
   });
 
-  it("rejects non-admin user", async () => {
-    const token = await getUserToken();
+  it("rejects a token issued before the Admin model", async () => {
+    const token = await getPreAdminModelToken();
     const adminToken = await getAdminToken();
 
     const createRes = await request(app)
@@ -562,6 +567,6 @@ describe("DELETE /api/projects/:id", () => {
       .delete(`/api/projects/${createRes.body.data._id}`)
       .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 });

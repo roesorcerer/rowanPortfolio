@@ -5,7 +5,7 @@ import {
   updateProject,
   deleteProject,
 } from "../controllers/project.controller";
-import { requireAuth, requireAdmin } from "../middleware/requireAuth";
+import { requireAuth } from "../middleware/requireAuth";
 import { validate } from "../middleware/validate";
 import {
   createProjectSchema,
@@ -24,11 +24,11 @@ router.get("/", respond(() => projectsStore.list()));
 
 // Admin read — the same list plus drafts. Declared before "/:idOrSlug" so
 // "all" isn't swallowed as an id.
-router.get("/all", requireAuth, requireAdmin, respond(() => projectsStore.listAll()));
+router.get("/all", requireAuth, respond(() => projectsStore.listAll()));
 
 // Admin single-project read — drafts included, for previewing an unpublished
 // case study at its permalink.
-router.get("/all/:idOrSlug", requireAuth, requireAdmin, getProjectForAdmin);
+router.get("/all/:idOrSlug", requireAuth, getProjectForAdmin);
 
 // Public permalink. Accepts either the slug a resume prints or a raw id.
 router.get("/:idOrSlug", getProjectByIdOrSlug);
@@ -37,7 +37,6 @@ router.get("/:idOrSlug", getProjectByIdOrSlug);
 router.post(
   "/",
   requireAuth,
-  requireAdmin,
   validate(createProjectSchema),
   respond((req) => projectsStore.create(req.body as CreateProjectInput), 201)
 );
@@ -47,14 +46,13 @@ router.post(
 router.put(
   "/reorder",
   requireAuth,
-  requireAdmin,
   validate(reorderProjectsSchema),
   respond(async (req) => ({
     reordered: await projectsStore.reorder((req.body as ReorderProjectsInput).ids),
   }))
 );
 
-router.put("/:id", requireAuth, requireAdmin, validate(updateProjectSchema), updateProject);
-router.delete("/:id", requireAuth, requireAdmin, deleteProject);
+router.put("/:id", requireAuth, validate(updateProjectSchema), updateProject);
+router.delete("/:id", requireAuth, deleteProject);
 
 export default router;

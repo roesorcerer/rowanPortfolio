@@ -2,7 +2,7 @@ import { Router } from "express";
 import { submitContact } from "../controllers/contact.controller";
 import { validate } from "../middleware/validate";
 import { contactSchema } from "../validators/contact.validators";
-import { requireAuth, requireAdmin } from "../middleware/requireAuth";
+import { requireAuth } from "../middleware/requireAuth";
 import { respond } from "./respond";
 import { contactLimiters } from "../middleware/rateLimit";
 import * as contactSubmissionsStore from "../stores/contact-submissions-store";
@@ -18,7 +18,6 @@ router.post("/", ...contactLimiters, validate(contactSchema), submitContact);
 router.get(
   "/submissions",
   requireAuth,
-  requireAdmin,
   respond(() => contactSubmissionsStore.list({ limit: 200 }))
 );
 

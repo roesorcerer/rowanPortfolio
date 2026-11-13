@@ -1,17 +1,17 @@
 import request from "supertest";
 import app from "../app";
 import { connectTestDb, disconnectTestDb, clearDatabase } from "../test/setup";
-import * as usersStore from "../stores/users-store";
+import * as adminsStore from "../stores/admins-store";
 import { hashPassword } from "../utils/auth.utils";
 
 // Accounts are made out of band now (createAdmin), so tests make theirs
 // through the store, hashed the same way.
-async function createUser(input: {
+async function createAdmin(input: {
   email: string;
   password: string;
   name: string;
 }) {
-  return usersStore.create({
+  return adminsStore.create({
     ...input,
     password: await hashPassword(input.password),
   });
@@ -39,36 +39,38 @@ describe("POST /api/auth/register", () => {
       .send({ email: "new@example.com", password: "password123", name: "New" });
 
     expect(res.status).toBe(404);
-    expect(await usersStore.findByEmail("new@example.com")).toBeNull();
+    expect(await adminsStore.findByEmail("new@example.com")).toBeNull();
   });
 });
 
 describe("POST /api/auth/login", () => {
-  const user = {
+  const admin = {
     email: "login@example.com",
     password: "password123",
-    name: "Login User",
+    name: "Login Admin",
   };
 
   beforeEach(async () => {
-    await createUser(user);
+    await createAdmin(admin);
   });
 
   it("logs in with valid credentials", async () => {
     const res = await request(app)
       .post("/api/auth/login")
-      .send({ email: user.email, password: user.password });
+      .send({ email: admin.email, password: admin.password });
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data.token).toBeTypeOf("string");
-    expect(res.body.data.user.email).toBe(user.email);
+    expect(res.body.data.admin.email).toBe(admin.email);
+    expect(res.body.data.admin).not.toHaveProperty("role");
+    expect(res.body.data.admin).not.toHaveProperty("password");
   });
 
   it("rejects wrong password", async () => {
     const res = await request(app)
       .post("/api/auth/login")
-      .send({ email: user.email, password: "wrongpassword" });
+      .send({ email: admin.email, password: "wrongpassword" });
 
     expect(res.status).toBe(401);
     expect(res.body.error).toBe("Invalid email or password");
@@ -85,9 +87,9 @@ describe("POST /api/auth/login", () => {
 });
 
 describe("GET /api/auth/me", () => {
-  it("returns the authenticated user", async () => {
+  it("returns the signed-in admin", async () => {
     const me = { email: "me@example.com", password: "password123", name: "Me" };
-    await createUser(me);
+    await createAdmin(me);
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({ email: me.email, password: me.password });
@@ -99,7 +101,7 @@ describe("GET /api/auth/me", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
-    expect(res.body.data.user.email).toBe("me@example.com");
+    expect(res.body.data.admin.email).toBe("me@example.com");
   });
 
   it("rejects request without token", async () => {
