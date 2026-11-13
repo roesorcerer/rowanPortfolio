@@ -1,5 +1,9 @@
 import api from "./client";
-import type { Project, ProjectPayload } from "../../../shared/contracts";
+import type {
+  Project,
+  ProjectPayload,
+  ProjectSummary,
+} from "../../../shared/contracts";
 
 export type { ProjectPayload };
 
@@ -7,9 +11,12 @@ export type { ProjectPayload };
 // The deepened client unwraps the {success, data} envelope and throws
 // ApiError on failure, so these are one-liners.
 
-/** Public list — published projects only. */
-export function getProjects(): Promise<Project[]> {
-  return api.get<Project[]>("/api/projects");
+/**
+ * Public list — published projects only, without their case studies (see
+ * `ProjectSummary`). The permalink fetches the full project.
+ */
+export function getProjects(): Promise<ProjectSummary[]> {
+  return api.get<ProjectSummary[]>("/api/projects");
 }
 
 /** Admin list — the same projects plus drafts. Requires an admin session. */

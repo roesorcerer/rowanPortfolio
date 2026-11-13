@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAnalytics } from "../analytics";
 import { useProjects } from "../hooks/useProjects";
-import { hasCaseStudy, projectPath, usableLinks } from "../lib/projectLinks";
+import { projectPath, usableLinks } from "../lib/projectLinks";
 import { researchStatusOf } from "../lib/projectFacts";
-import type { Project, ProjectType } from "../types";
+import type { ProjectSummary, ProjectType } from "../types";
 import Sprite from "./Sprite";
 
 type TabKey = "featured" | ProjectType;
@@ -26,11 +26,11 @@ const SPRITE_FOR: Record<ProjectType, string> = {
   art: "void",
 };
 
-const inTab = (project: Project, tab: TabKey) =>
+const inTab = (project: ProjectSummary, tab: TabKey) =>
   tab === "featured" ? project.featured : project.projectType === tab;
 
 /** A skill is only useful as a filter if more than one project shares it. */
-function sharedSkills(projects: Project[]) {
+function sharedSkills(projects: ProjectSummary[]) {
   const counts = new Map<string, number>();
   projects.forEach((project) =>
     (project.category ?? []).forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1))
@@ -40,7 +40,10 @@ function sharedSkills(projects: Project[]) {
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 }
 
-function WorkCard({ project }: { project: Project }) {
+// Typed as the summary, not the full Project, on purpose: a summary is
+// assignable to Project (caseStudy is optional there), so with the wider type
+// a card would compile while reading a caseStudy the list never sends.
+function WorkCard({ project }: { project: ProjectSummary }) {
   const analytics = useAnalytics();
   const source = usableLinks(project).find((link) => link.kind === "github");
   const research = researchStatusOf(project);
@@ -65,7 +68,7 @@ function WorkCard({ project }: { project: Project }) {
         )}
         <p className="work-links">
           <Link className="link" to={projectPath(project)}>
-            {hasCaseStudy(project.caseStudy) ? "Read the case study" : "View project"}
+            {project.hasCaseStudy ? "Read the case study" : "View project"}
           </Link>
           {source && (
             <a

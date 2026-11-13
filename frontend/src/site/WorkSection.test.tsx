@@ -3,13 +3,13 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useProjects } from "../hooks/useProjects";
-import type { Project } from "../types";
+import type { ProjectSummary } from "../types";
 import WorkSection from "./WorkSection";
 
 vi.mock("../hooks/useProjects", () => ({ useProjects: vi.fn() }));
 vi.mock("../analytics", () => ({ useAnalytics: () => ({ linkClick: vi.fn() }) }));
 
-const project = (title: string, extra: Partial<Project>) =>
+const project = (title: string, extra: Partial<ProjectSummary>) =>
   ({
     _id: title,
     slug: title.toLowerCase(),
@@ -19,14 +19,15 @@ const project = (title: string, extra: Partial<Project>) =>
     links: [],
     featured: false,
     projectType: "product",
+    hasCaseStudy: false,
     ...extra,
-  }) as Project;
+  }) as ProjectSummary;
 
 const PROJECTS = [
   project("Archive", {
     featured: true,
     category: ["TypeScript"],
-    caseStudy: { summary: "Written", sections: [], outcomes: [], lessons: [] },
+    hasCaseStudy: true,
     links: [{ kind: "github", url: "https://github.com/roesorcerer/thearchive" }],
   }),
   project("Forward", { category: ["TypeScript"] }),
