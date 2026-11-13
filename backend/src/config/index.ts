@@ -54,15 +54,21 @@ const config = {
   },
   contactEmail: process.env.CONTACT_EMAIL || "",
   // How many X-Forwarded-For entries to skip from the right, for `trust
-  // proxy`. Production is 3, measured against live logs rather than counted
-  // from the architecture: Fly's proxy contributes two entries (a request
-  // sent straight to fly.dev resolves to the caller at 2), and Vercel's /api
-  // rewrite one more. At 2, every visitor through rowan.page showed up as a
-  // Vercel egress address (18.118.x, 13.184.x), sharing a handful of
-  // rate-limit buckets. Too high and the visitor can choose their own IP.
+  // proxy`. Production is 2, and both belong to Fly's proxy: the browser
+  // calls the Fly hostname directly (VITE_API_URL), not through Vercel.
+  // Checked against live logs, where 2 resolves a browser to its real
+  // address even when the request carries a forged X-Forwarded-For.
+  //
+  // Requests to rowan.page/api/* do pass through Vercel's rewrite, which
+  // adds a third entry, so those show up as Vercel addresses. Only crawlers
+  // and curl take that path. Raising this to 3 to suit them was tried and
+  // reverted: it lets every browser request choose its own rate-limit key.
+  //
+  // Too low and visitors share a bucket; too high and they pick their key.
   // Locally there is no proxy in front of Express, so the default is 0
   // (trust nothing). Set in fly.toml, so it can be corrected without a code
-  // change; after changing it, check `fly logs` shows your own IP.
+  // change; afterwards, check `fly logs` shows your own IP for a request the
+  // browser made, not one from curl.
   trustProxyHops: intFromEnv("TRUST_PROXY_HOPS", 0),
   // Requests allowed per window by src/middleware/rateLimit.ts, which explains
   // the per-IP/global split and the windows. Env overrides exist so the test

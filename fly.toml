@@ -12,10 +12,9 @@ primary_region = 'ord'
 [env]
   NODE_ENV = 'production'
   PORT = '8080'
-  # X-Forwarded-For entries to skip from the right to reach the visitor:
-  # Vercel's /api rewrite adds one, Fly's proxy adds two. Measured, not
-  # guessed; see backend/src/config/index.ts before changing it.
-  TRUST_PROXY_HOPS = '3'
+  # X-Forwarded-For entries Fly's proxy adds in front of Express. Measured
+  # against live logs; see backend/src/config/index.ts before changing it.
+  TRUST_PROXY_HOPS = '2'
 
 [http_service]
   internal_port = 8080
