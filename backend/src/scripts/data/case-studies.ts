@@ -187,8 +187,8 @@ export const CASE_STUDIES: CaseStudyEntry[] = [
     },
   },
   {
-    name: "Bug Cup Fill",
-    match: /bug\s*cup|cup[\s-]*fill/i,
+    name: "Fill the Cup",
+    match: /fill\s*the\s*cup|bug\s*cup|cup[\s-]*fill/i,
     caseStudy: {
       summary:
         "It is a fast game where the player feels the rush of saving and collecting bugs before the time runs out.",
