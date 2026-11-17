@@ -97,9 +97,9 @@ These findings come from reading the code, a production build, and an axe access
 
 | # | Finding | Evidence | Addressed in |
 | --- | --- | --- | --- |
-| F1 | Public HTML has no content | `index.html` holds an empty `#root`, the title "Rowan Portfolio", and no description, OG or canonical tags | 3.1, 5.2 |
-| F2 | Unknown URLs render a blank page | `App.tsx` has no catch-all route; confirmed in a browser | 5.2, 6.3 |
-| F3 | Missing projects are soft 404s | The not-found message renders on a page served as 200 | 5.2 |
+| F1 | Public HTML has no content | `index.html` holds an empty `#root`, the title "Rowan Portfolio", and no description, OG or canonical tags. **Fixed in #33**: public pages are prerendered with their own metadata | 3.1, 5.2 |
+| F2 | Unknown URLs render a blank page | `App.tsx` has no catch-all route; confirmed in a browser. **Fixed**: a not-found page, served as `404.html` with a 404 status since #33 | 5.2, 6.3 |
+| F3 | Missing projects are soft 404s | The not-found message renders on a page served as 200. **Mostly fixed in #33**: unknown addresses get a real 404; `/projects/<unknown>` still falls back to the shell with a 200, so a project published since the last build stays reachable until the deploy trigger (5.7) exists | 5.2 |
 | F4 | Public write endpoints have no rate limit | No limiter in `backend/src` or its dependencies, covering login, register, contact and analytics. **Login and contact fixed in #24**; analytics intake still open | 5.5, 8.2 |
 | F5 | Registration is open to anyone | `POST /api/auth/register` is public, though the site has one admin; new accounts get no admin rights. **Fixed in #24**: the route is removed | 5.4 |
 | F6 | Long-lived token sits in `localStorage` | 7-day JWT, with no CSP on the site to limit script injection. **Fixed in #32**: the session is an `HttpOnly` cookie; the API moves to `api.rowan.page` so the cookie is first-party | 5.4, 8.2 |
@@ -323,6 +323,8 @@ write 404.html
 ```
 
 Three related changes make this work. `main.tsx` moves to `hydrateRoot`. Components read `localStorage` only after mounting, so server and client markup match. The catch-all rewrite in `vercel.json` narrows to `/admin/*`, so a missing URL returns a real 404 status instead of the app shell, which resolves F2 and F3.
+
+**Built in #33**, with three differences from the sketch above. The theme, not `localStorage` in general, was the only render-time browser read; it now starts at the server's value while hydrating and switches in a transition, because a plain update made React discard the server HTML (error #421). `/play` and `/projects/:slug` are also rewritten to the shell, the latter so a project published since the last build still loads until the deploy trigger in 5.7 exists. `/privacy` and JSON-LD are not built yet.
 
 `vercel.json` also gains site-wide headers: Content-Security-Policy, Strict-Transport-Security, X-Content-Type-Options and Referrer-Policy. The CSP should start in report-only mode, since JSON-LD and hydration data need a nonce-free approach such as hashes.
 
@@ -612,7 +614,7 @@ A04, A06 and A08 raise no project-specific action beyond the items above, this d
 
 ### 8.6 Open decisions
 
-- [ ] Approve Vite prerendering (D1), or choose Next.js instead
+- [x] Approve Vite prerendering (D1), or choose Next.js instead. Built in #33
 - [ ] Approve the session cookie (D4)
 - [ ] Confirm which header carries the visitor IP through Vercel and Fly
 - [x] Confirm analytics retention: 13 months (#31)

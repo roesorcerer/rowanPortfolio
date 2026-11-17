@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { NOT_FOUND_META } from "../seo";
 
 function NotFoundPage() {
   useEffect(() => {
-    document.title = "Page not found | Rowan Stratton";
+    document.title = NOT_FOUND_META.title;
   }, []);
 
   return (

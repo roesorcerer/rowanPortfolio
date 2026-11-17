@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  startTransition,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import { endHydration, isHydrating } from "../lib/hydration";
 
 // Light and dark for the public pages. The admin and the resume stay as they
 // are: the theme only exists while a page inside SiteShell is mounted, because
@@ -8,7 +17,7 @@ export type Theme = "light" | "dark";
 
 const STORAGE_KEY = "portfolio-theme";
 
-function initialTheme(): Theme {
+function storedTheme(): Theme {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark") return stored;
@@ -23,8 +32,36 @@ const ThemeContext = createContext<{ theme: Theme; toggleTheme: () => void }>({
   toggleTheme: () => {},
 });
 
+// The visitor's choice lives in localStorage, which the prerender step can't
+// read, so a prerendered page is always built dark. Reading storage in the
+// first render would make the browser's markup disagree with the HTML it is
+// hydrating, so while hydrating the theme starts as the server's (dark) and
+// switches after mount.
+//
+// That switch has to be a transition. As a plain update it lands on the
+// Suspense boundary around the page content while it is still hydrating,
+// and React discards the server HTML inside it (error #421, seen in Chrome:
+// headless Chrome prefers light). A transition waits for hydration to
+// finish. A page rendered only in the browser, such as the game, reads the
+// stored theme in its first render and never switches.
+//
+// The inline script in index.html has already set <html data-theme>, which
+// is what the colours hang off, so the palette is right from the first
+// paint either way; only the corridor art and the toggle's label catch up.
+const SERVER_THEME: Theme = "dark";
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(initialTheme);
+  const [hydrated] = useState(isHydrating);
+  const [theme, setTheme] = useState<Theme>(() =>
+    hydrated ? SERVER_THEME : storedTheme()
+  );
+
+  useEffect(() => {
+    if (!hydrated) return;
+    endHydration();
+    const stored = storedTheme();
+    if (stored !== SERVER_THEME) startTransition(() => setTheme(stored));
+  }, [hydrated]);
 
   useEffect(() => {
     const root = document.documentElement;

@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { RESUME_META } from "../seo";
 import { useProjects } from "../hooks/useProjects";
 import { projectPath, projectUrl } from "../lib/projectLinks";
 import { buttonVariants } from "@/components/ui/button";
@@ -72,6 +74,10 @@ function ProjectLink({ title }: { title: string }) {
 }
 
 function Resume() {
+  useEffect(() => {
+    document.title = RESUME_META.title;
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#E8E6E1] py-8 px-4 print:bg-white print:py-0 print:px-0">
       {/* Toolbar (hidden on print) */}

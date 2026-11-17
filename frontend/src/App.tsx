@@ -2,20 +2,27 @@ import { Suspense, lazy } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import LoadingPulse from "./components/LoadingPulse";
 import ProjectPage from "./components/ProjectPage";
+import Resume from "./components/Resume";
 import { AnalyticsProvider, fetchAnalyticsAdapter } from "./analytics";
 import Landing from "./site/Landing";
 import NotFoundPage from "./site/NotFoundPage";
 import SiteShell from "./site/SiteShell";
 
-// Split off so a visitor reading the landing page doesn't download the admin,
-// the resume or the game until they go there.
+// Split off so a visitor reading the landing page doesn't download the admin
+// or the game until they go there.
+//
+// The resume used to be split off too. Now that it is prerendered (see
+// src/entry-server.tsx), a lazy resume costs more than it saves: its 2.5 kB
+// gzipped chunk has to arrive before the prerendered page can hydrate, and
+// the server render has to suspend for it. Every prerendered page (the
+// landing page, the resume, permalinks, the 404) is eager for that reason;
+// only routes served as the empty shell (app.html) are lazy.
 const AdminLogin = lazy(() => import("./components/AdminLogin"));
 const AdminDashboard = lazy(() => import("./components/admin/AdminDashboard"));
 const ProjectsTab = lazy(() => import("./components/admin/ProjectsTab"));
 const AnalyticsTab = lazy(() => import("./components/admin/AnalyticsTab"));
 const MessagesTab = lazy(() => import("./components/admin/MessagesTab"));
 const RequireAdmin = lazy(() => import("./components/admin/RequireAdmin"));
-const Resume = lazy(() => import("./components/Resume"));
 const Game = lazy(() => import("./game/Game"));
 
 function AppRoutes() {
@@ -45,12 +52,24 @@ function AppRoutes() {
   );
 }
 
+/**
+ * The whole site without a router, so each environment supplies its own:
+ * the browser a BrowserRouter (App, below), the prerender step a
+ * StaticRouter at a fixed URL (src/entry-server.tsx). Both must render the
+ * same tree for hydration to adopt the prerendered HTML.
+ */
+export function Site() {
+  return (
+    <AnalyticsProvider adapter={fetchAnalyticsAdapter}>
+      <AppRoutes />
+    </AnalyticsProvider>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
-      <AnalyticsProvider adapter={fetchAnalyticsAdapter}>
-        <AppRoutes />
-      </AnalyticsProvider>
+      <Site />
     </BrowserRouter>
   );
 }

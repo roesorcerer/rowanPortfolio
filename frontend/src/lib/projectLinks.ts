@@ -1,4 +1,5 @@
 import type { Project, ProjectCaseStudy, ProjectLink } from "../types";
+import { SITE_ORIGIN } from "./site";
 
 // Link vocabulary for projects, inbound and outbound: the permalink a resume
 // points at, and the labels the outbound `links[]` render with. Not to be
@@ -23,10 +24,12 @@ export function projectPath(project: Linkable): string {
   return `/projects/${project.slug || project._id}`;
 }
 
-/** The same link, absolute — what a copy-to-clipboard button hands over. */
+/**
+ * The same link, absolute — what a copy-to-clipboard button hands over and
+ * what the resume prints. Always the canonical origin (src/lib/site.ts).
+ */
 export function projectUrl(project: Linkable): string {
-  const origin = typeof window === "undefined" ? "" : window.location.origin;
-  return `${origin}${projectPath(project)}`;
+  return `${SITE_ORIGIN}${projectPath(project)}`;
 }
 
 /**

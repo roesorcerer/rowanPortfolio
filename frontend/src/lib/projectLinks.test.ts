@@ -18,9 +18,11 @@ describe("projectPath", () => {
 });
 
 describe("projectUrl", () => {
-  it("is the permalink against the current origin", () => {
+  it("is the permalink against the canonical origin", () => {
+    // The canonical origin, not wherever the page happens to be open: this is
+    // the link a resume prints, and the prerender step has no window.
     expect(projectUrl(project)).toBe(
-      `${window.location.origin}/projects/food-forward`
+      "https://rowan.page/projects/food-forward"
     );
   });
 });

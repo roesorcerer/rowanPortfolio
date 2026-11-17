@@ -4,6 +4,7 @@ import ContactPanel from "./ContactPanel";
 import HeroCorridor from "./HeroCorridor";
 import StairsSection from "./StairsSection";
 import WorkSection from "./WorkSection";
+import { HOME_META } from "../seo";
 
 const FACTS = [
   { label: "Location", value: "Coleraine, MN" },
@@ -19,7 +20,7 @@ function Landing() {
   const { hash } = useLocation();
 
   useEffect(() => {
-    document.title = "Rowan Stratton | Software engineer and game developer";
+    document.title = HOME_META.title;
   }, []);
 
   // The router doesn't scroll to a hash, and links here come from other pages.
