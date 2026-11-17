@@ -21,8 +21,15 @@ app.set("trust proxy", config.trustProxyHops);
 // XSS, and other common attacks.
 app.use(helmet());
 
-// CORS: Allow requests from the React dev server.
-// In production, replace this with your actual domain.
+// CORS: the one origin allowed to call the API with credentials, which is
+// how the admin session cookie rides along. CORS_ORIGIN is https://rowan.page
+// in production (the apex: www redirects to it). In development the Vite
+// proxy makes requests same-origin, so this only matters if something calls
+// the API directly.
+//
+// This is half the CSRF story; the other half is the cookie's
+// SameSite=Strict (utils/session-cookie.ts). Admin writes are JSON, which
+// forces a preflight, and the preflight is refused for any other origin.
 app.use(
   cors({
     origin: config.isDevelopment ? "http://localhost:3000" : config.corsOrigin,

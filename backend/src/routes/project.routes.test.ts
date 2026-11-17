@@ -7,6 +7,12 @@ import { AdminModel } from "../models/admin.model";
 import { ProjectModel } from "../models/project.model";
 import { hashPassword } from "../utils/auth.utils";
 import { signToken } from "../utils/auth.utils";
+import { SESSION_COOKIE } from "../utils/session-cookie";
+
+// How the browser presents a session: the token in the admin session cookie.
+function sessionCookie(token: string): string {
+  return `${SESSION_COOKIE}=${token}`;
+}
 
 // Helper: create the admin and return a JWT
 async function getAdminToken(): Promise<string> {
@@ -63,7 +69,7 @@ async function createProject(
 ) {
   const res = await request(app)
     .post("/api/projects")
-    .set("Authorization", `Bearer ${token}`)
+    .set("Cookie", sessionCookie(token))
     .send({ ...validProject, ...overrides });
   return res.body.data;
 }
@@ -136,7 +142,7 @@ describe("GET /api/projects/all", () => {
 
     const res = await request(app)
       .get("/api/projects/all")
-      .set("Authorization", `Bearer ${token}`);
+      .set("Cookie", sessionCookie(token));
 
     expect(res.status).toBe(200);
     expect(res.body.data).toHaveLength(2);
@@ -151,7 +157,7 @@ describe("GET /api/projects/all", () => {
     const token = await getPreAdminModelToken();
     const res = await request(app)
       .get("/api/projects/all")
-      .set("Authorization", `Bearer ${token}`);
+      .set("Cookie", sessionCookie(token));
     expect(res.status).toBe(401);
   });
 });
@@ -169,7 +175,7 @@ describe("PUT /api/projects/reorder", () => {
 
     const res = await request(app)
       .put("/api/projects/reorder")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ ids: [c._id, a._id, b._id] });
 
     expect(res.status).toBe(200);
@@ -194,7 +200,7 @@ describe("PUT /api/projects/reorder", () => {
     const token = await getAdminToken();
     const res = await request(app)
       .put("/api/projects/reorder")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ ids: [] });
     expect(res.status).toBe(400);
   });
@@ -206,7 +212,7 @@ describe("GET /api/projects/:idOrSlug", () => {
 
     const createRes = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send(validProject);
 
     const id = createRes.body.data._id;
@@ -261,7 +267,7 @@ describe("GET /api/projects/:idOrSlug", () => {
 
     const res = await request(app)
       .get("/api/projects/all/unfinished")
-      .set("Authorization", `Bearer ${token}`);
+      .set("Cookie", sessionCookie(token));
 
     expect(res.status).toBe(200);
     expect(res.body.data.title).toBe("Unfinished");
@@ -300,7 +306,7 @@ describe("project slugs", () => {
 
     const res = await request(app)
       .put(`/api/projects/${project._id}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ title: "Food Forward v2" });
 
     expect(res.status).toBe(200);
@@ -313,7 +319,7 @@ describe("project slugs", () => {
 
     const res = await request(app)
       .put(`/api/projects/${project._id}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ slug: "Food Forward Mobile" });
 
     expect(res.status).toBe(200);
@@ -378,7 +384,7 @@ describe("project case studies", () => {
 
     const res = await request(app)
       .put(`/api/projects/${project._id}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ caseStudy: { sections: [], outcomes: [], lessons: [] } });
 
     expect(res.status).toBe(200);
@@ -390,7 +396,7 @@ describe("project case studies", () => {
 
     const res = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({
         ...validProject,
         caseStudy: { sections: [{ heading: "Only a heading" }] },
@@ -406,7 +412,7 @@ describe("POST /api/projects", () => {
 
     const res = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send(validProject);
 
     expect(res.status).toBe(201);
@@ -420,7 +426,7 @@ describe("POST /api/projects", () => {
 
     const res = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send(withoutStatus);
 
     expect(res.body.data.status).toBe("draft");
@@ -457,7 +463,7 @@ describe("POST /api/projects", () => {
 
     const res = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send(validProject);
 
     expect(res.status).toBe(401);
@@ -469,7 +475,7 @@ describe("POST /api/projects", () => {
 
     const res = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ title: "" });
 
     expect(res.status).toBe(400);
@@ -482,14 +488,14 @@ describe("PUT /api/projects/:id", () => {
 
     const createRes = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send(validProject);
 
     const id = createRes.body.data._id;
 
     const res = await request(app)
       .put(`/api/projects/${id}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ title: "Updated Title" });
 
     expect(res.status).toBe(200);
@@ -512,7 +518,7 @@ describe("PUT /api/projects/:id", () => {
 
     const res = await request(app)
       .put(`/api/projects/${plain._id}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ featured: true });
 
     // Keeping order 0 would have collided with "Featured 1".
@@ -528,7 +534,7 @@ describe("PUT /api/projects/:id", () => {
 
     const res = await request(app)
       .put(`/api/projects/${second._id}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ title: "Renamed" });
 
     expect(res.body.data.order).toBe(1);
@@ -539,7 +545,7 @@ describe("PUT /api/projects/:id", () => {
 
     const res = await request(app)
       .put("/api/projects/000000000000000000000000")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send({ title: "Updated" });
 
     expect(res.status).toBe(404);
@@ -552,14 +558,14 @@ describe("DELETE /api/projects/:id", () => {
 
     const createRes = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Cookie", sessionCookie(token))
       .send(validProject);
 
     const id = createRes.body.data._id;
 
     const res = await request(app)
       .delete(`/api/projects/${id}`)
-      .set("Authorization", `Bearer ${token}`);
+      .set("Cookie", sessionCookie(token));
 
     expect(res.status).toBe(200);
     expect(res.body.data.message).toBe("Project deleted");
@@ -575,12 +581,12 @@ describe("DELETE /api/projects/:id", () => {
 
     const createRes = await request(app)
       .post("/api/projects")
-      .set("Authorization", `Bearer ${adminToken}`)
+      .set("Cookie", sessionCookie(adminToken))
       .send(validProject);
 
     const res = await request(app)
       .delete(`/api/projects/${createRes.body.data._id}`)
-      .set("Authorization", `Bearer ${token}`);
+      .set("Cookie", sessionCookie(token));
 
     expect(res.status).toBe(401);
   });

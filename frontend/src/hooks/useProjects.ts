@@ -11,7 +11,6 @@ import {
   type ProjectPayload,
 } from "../api/projects";
 import { ApiError } from "../api/client";
-import { isAuthenticated } from "../api/auth";
 import type { Project } from "../types";
 
 const PROJECTS_KEY = ["projects"] as const;
@@ -42,9 +41,11 @@ export function useAllProjects() {
 /**
  * A single project by permalink — the slug a resume links to, or a raw id.
  *
- * Signed in as an admin, a 404 is retried against the draft-visible endpoint,
- * so an unpublished case study can be proofread at its real URL. Signed out,
- * a draft stays a 404.
+ * A 404 is retried against the draft-visible admin endpoint, so a signed-in
+ * admin can proofread an unpublished case study at its real URL. Signed out,
+ * that retry is a 401 and the original 404 stands. It asks rather than
+ * checking first because the session is an HttpOnly cookie the page can't
+ * see; the cost is one extra request on a bad slug, which is rare.
  */
 export function useProject(idOrSlug: string | undefined) {
   return useQuery({
@@ -56,8 +57,14 @@ export function useProject(idOrSlug: string | undefined) {
         return await getProjectByIdOrSlug(key);
       } catch (error) {
         const missing = error instanceof ApiError && error.status === 404;
-        if (missing && isAuthenticated()) return getProjectForAdmin(key);
-        throw error;
+        if (!missing) throw error;
+        try {
+          return await getProjectForAdmin(key);
+        } catch (adminError) {
+          const signedOut =
+            adminError instanceof ApiError && adminError.status === 401;
+          throw signedOut ? error : adminError;
+        }
       }
     },
     // A missing slug is a typo in a printed link, not a blip — retrying it

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { isAuthenticated, login } from "../api/auth";
 import { ApiError } from "../api/client";
+import { useLogin, useSession } from "../hooks/useSession";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,8 @@ function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { data: admin } = useSession();
+  const signIn = useLogin();
 
   // Where to send the user after a successful login. If RequireAdmin
   // bounced them here, location.state.from holds the original target;
@@ -19,28 +20,25 @@ function AdminLogin() {
   const from = (location.state as { from?: string } | null)?.from ?? "/admin";
 
   // If you're already signed in, don't show the login form — bounce.
+  // A successful sign-in lands here too: useLogin refetches the session.
   useEffect(() => {
-    if (isAuthenticated()) {
+    if (admin) {
       navigate(from, { replace: true });
     }
-  }, [from, navigate]);
+  }, [admin, from, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
     try {
-      await login(email, password);
-      navigate(from, { replace: true });
+      await signIn.mutateAsync({ email, password });
     } catch (err) {
       setError(
         err instanceof ApiError && err.status !== 0
           ? err.message
           : "Unable to connect. Please try again."
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -110,10 +108,10 @@ function AdminLogin() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={signIn.isPending}
             className={cn(buttonVariants({ size: "lg" }), "w-full")}
           >
-            {loading ? "Signing in…" : "Sign in"}
+            {signIn.isPending ? "Signing in…" : "Sign in"}
           </button>
         </form>
       </div>

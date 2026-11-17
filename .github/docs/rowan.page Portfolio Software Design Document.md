@@ -102,7 +102,7 @@ These findings come from reading the code, a production build, and an axe access
 | F3 | Missing projects are soft 404s | The not-found message renders on a page served as 200 | 5.2 |
 | F4 | Public write endpoints have no rate limit | No limiter in `backend/src` or its dependencies, covering login, register, contact and analytics. **Login and contact fixed in #24**; analytics intake still open | 5.5, 8.2 |
 | F5 | Registration is open to anyone | `POST /api/auth/register` is public, though the site has one admin; new accounts get no admin rights. **Fixed in #24**: the route is removed | 5.4 |
-| F6 | Long-lived token sits in `localStorage` | 7-day JWT, with no CSP on the site to limit script injection | 5.4, 8.2 |
+| F6 | Long-lived token sits in `localStorage` | 7-day JWT, with no CSP on the site to limit script injection. **Fixed in #32**: the session is an `HttpOnly` cookie; the API moves to `api.rowan.page` so the cookie is first-party | 5.4, 8.2 |
 | F7 | Visitors download the admin | One 440 KB JavaScript file (138 KB gzipped), with no code splitting | 3.2 |
 | F8 | List responses carry full case studies | `GET /api/projects` maps every field, including `caseStudy`. **Fixed in #30**: the list returns `ProjectSummary` | 4.1, 5.1 |
 | F9 | Home page has 25 axe failures | 18 contrast, 3 nested interactive, 3 label mismatch, 1 target size | 6.4 |
@@ -276,7 +276,7 @@ All routes sit under `/api` and exchange JSON in one envelope: `{ success, data?
 | POST `/auth/login` | Public | Start an admin session | Set a cookie; rate limit |
 | POST `/auth/register` | Public | Create an account | Removed (D5, #24) |
 | GET `/auth/me` | Signed in | Current user | Used by the admin route guard |
-| POST `/auth/logout` | Signed in | End the session | New |
+| POST `/auth/logout` | Public | End the session | Clears the cookie (#32); public so an expired session can still sign out |
 | GET `/projects` | Public | Published list | Returns `ProjectSummary` (#30) |
 | GET `/projects/:idOrSlug` | Public | One published project | Cache-Control headers |
 | GET `/projects/all` | Admin | List including drafts | None |
@@ -348,7 +348,7 @@ POST /auth/login:
 requireAuth: read the cookie instead of the Authorization header
 ```
 
-`SameSite=Strict` and JSON-only writes cover CSRF for this same-origin setup. Rate limiting needs `trust proxy` set correctly, and the header carrying the visitor's real IP must be confirmed through both the Vercel rewrite and Fly's proxy (see 8.6). `server.ts` used to reset the admin password on every boot when `ADMIN_PASSWORD` was set. **Fixed in #28**: the account changes only through `npm run admin`.
+`SameSite=Strict` and JSON-only writes cover CSRF. They depend on the API being same-site with the frontend: the site is `rowan.page` and the API is `api.rowan.page`, a Fly certificate on a subdomain. On `rowan-portfolio-api.fly.dev` the cookie would be third-party, because `fly.dev` is a public suffix, and Safari would refuse it. Routing admin calls through Vercel's `/api` rewrite would also make the cookie first-party, but every admin request would then arrive from a Vercel IP and share one login rate limit bucket. **Done in #32.** Session length is `JWT_EXPIRES_IN`, and the cookie expires with the token. Rate limiting needs `trust proxy` set correctly, and the header carrying the visitor's real IP must be confirmed through both the Vercel rewrite and Fly's proxy (see 8.6). `server.ts` used to reset the admin password on every boot when `ADMIN_PASSWORD` was set. **Fixed in #28**: the account changes only through `npm run admin`.
 
 ### 5.5 Contact
 
