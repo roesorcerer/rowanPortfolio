@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:site",
   "outputDirectory": "build",
   "framework": "vite",
   "rewrites": [
@@ -8,8 +8,20 @@
       "destination": "https://rowan-portfolio-api.fly.dev/api/:path*"
     },
     {
-      "source": "/:path*",
-      "destination": "/index.html"
+      "source": "/admin",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/play",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/projects/:slug",
+      "destination": "/app.html"
     }
   ]
 }

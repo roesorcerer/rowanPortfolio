@@ -13,7 +13,9 @@ import {
 import { ApiError } from "../api/client";
 import type { Project } from "../types";
 
-const PROJECTS_KEY = ["projects"] as const;
+// Exported for the prerender step (src/entry-server.tsx), which fills these
+// keys before rendering so a page's data is in its HTML.
+export const PROJECTS_KEY = ["projects"] as const;
 const ADMIN_PROJECTS_KEY = ["projects", "admin"] as const;
 
 // Read hooks. Components call useProjects() and get { data, isLoading, ... }.
@@ -38,6 +40,11 @@ export function useAllProjects() {
   });
 }
 
+/** The cache key for one permalink: the URL segment, slug or id. */
+export function projectDetailKey(idOrSlug: string | undefined) {
+  return ["projects", "detail", idOrSlug] as const;
+}
+
 /**
  * A single project by permalink — the slug a resume links to, or a raw id.
  *
@@ -49,7 +56,7 @@ export function useAllProjects() {
  */
 export function useProject(idOrSlug: string | undefined) {
   return useQuery({
-    queryKey: ["projects", "detail", idOrSlug] as const,
+    queryKey: projectDetailKey(idOrSlug),
     enabled: Boolean(idOrSlug),
     queryFn: async () => {
       const key = idOrSlug as string;

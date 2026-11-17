@@ -69,14 +69,16 @@ Tests sit next to the file they test, as `name.test.ts(x)`.
 | Folder | What's in it | Start here |
 | --- | --- | --- |
 | `App.tsx` | Every route, and which ones load lazily | Adding a page |
-| `main.tsx` | Mounts React and sets up the React Query cache | Rarely changed |
+| `main.tsx` | Hydrates a prerendered page with the query cache it was built from, or renders the admin and game shell from scratch | Rarely changed |
+| `entry-server.tsx` | Renders one URL to HTML at build time, for `scripts/prerender.mjs` | Adding a prerendered page |
+| `seo.ts` | Each public page's title, description, canonical and link-preview tags | Changing what a page says in search results |
 | `site/` | The public landing page: hero, Work tabs, stairs, contact, 404, theme | `Landing.tsx` |
 | `site/site.css` | Colors, type and layout for the public site, as CSS variables | Changing the look |
 | `game/` | The game at `/play` (see below) | `data.ts` for story text |
 | `components/` | Pages shared with the old site: case study, project page, resume, admin login | `ProjectPage.tsx` |
 | `components/project/` | Pieces of a project page: heading, facts, links, media carousel | |
 | `components/admin/` | The admin CMS: projects, messages, analytics tabs | `AdminDashboard.tsx` |
-| `api/` | One function per API call. `client.ts` adds the auth token and turns errors into `ApiError` | `projects.ts` |
+| `api/` | One function per API call. `client.ts` sends the session cookie and turns errors into `ApiError` | `projects.ts` |
 | `hooks/` | React Query hooks wrapping the `api/` functions. Components call these, not `api/` | `useProjects.ts` |
 | `lib/` | Pure helper functions with no React in them. Easy to unit test | `projectLinks.ts` |
 | `analytics/` | Page view and event tracking. Skips `/admin` paths | `index.tsx` |
@@ -200,6 +202,22 @@ These are tracked in #13. Expect them to change.
 - Images exist twice, in `src/assets/` and `public/assets/`. `public/assets/` is
   the real one.
 - There are two `vercel.json` files, one at the root and one in `frontend/`.
+  Keep their `buildCommand` and `rewrites` in step: both run `build:site`.
+
+### Prerendering
+
+`npm run build:site` (what Vercel runs) builds the app, builds a server bundle
+from `src/entry-server.tsx`, then runs `scripts/prerender.mjs`. The script
+reads the published projects from the live API and writes real HTML for `/`,
+`/resume`, each `/projects/<slug>` and `404.html`, plus `sitemap.xml` and
+`robots.txt`. The admin and `/play` are served `app.html`, the empty shell.
+
+- A page that's prerendered must render the same in the browser's first pass
+  as on the server: no `window`, `localStorage` or `Date.now()` in render.
+  `src/entry-server.test.tsx` fails if hydration discards a page's HTML.
+- Prerendered routes are loaded eagerly in `App.tsx`; only shell routes are lazy.
+- A project published after the last build still loads (Vercel rewrites
+  `/projects/*` to the shell) but has no HTML of its own until the next deploy.
 - The public site lives in `site/` and `game/`, while the design document says
   `pages/` and `features/game/`. One of them will be changed to match the other.
 - The `docker` CI job fails on every PR because the frontend image can't see

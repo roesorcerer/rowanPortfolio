@@ -11,6 +11,7 @@ import ProjectFacts from "./project/ProjectFacts";
 import ProjectLinks from "./project/ProjectLinks";
 import { ProjectTags, ResearchStatusLine } from "./project/ProjectHeading";
 import { hasCaseStudy } from "../lib/projectLinks";
+import { projectMeta } from "../seo";
 
 /**
  * The `/projects/:slug` permalink — the page a resume link lands on, and the
@@ -71,8 +72,8 @@ function ProjectDocument({ project }: { project: Project }) {
   // The tab title is what gets bookmarked and what shows in a shared link's
   // preview, so it carries the project name rather than the site's.
   useEffect(() => {
-    document.title = `${project.title} | Rowan Stratton`;
-  }, [project.title]);
+    document.title = projectMeta(project).title;
+  }, [project]);
 
   const copyLink = async () => {
     try {

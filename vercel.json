@@ -1,7 +1,7 @@
 {
   "framework": "vite",
   "installCommand": "npm install --prefix frontend",
-  "buildCommand": "npm run build:frontend",
+  "buildCommand": "npm run build:site --prefix frontend",
   "outputDirectory": "frontend/build",
   "rewrites": [
     {
@@ -9,8 +9,20 @@
       "destination": "https://rowan-portfolio-api.fly.dev/api/:path*"
     },
     {
-      "source": "/:path*",
-      "destination": "/index.html"
+      "source": "/admin",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/play",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/projects/:slug",
+      "destination": "/app.html"
     }
   ]
 }

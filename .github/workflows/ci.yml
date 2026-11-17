@@ -90,6 +90,13 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The server bundle the prerender step renders with. Compiling it here
+      # catches an import that only breaks outside the browser; rendering is
+      # covered by src/entry-server.test.tsx, so CI doesn't depend on the
+      # live API.
+      - name: Build server bundle
+        run: npm run build:ssr
+
   # ---- Docker build verification ----
   docker:
     runs-on: ubuntu-latest
