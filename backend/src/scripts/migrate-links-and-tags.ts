@@ -28,7 +28,10 @@ import { ProjectModel } from "../models/project.model";
 // because it is the one a visitor most often wants.
 const LINK_COLUMNS = [
   { field: "link", kind: "demo" },
-  { field: "githubLink", kind: "github" },
+  // "source", not "github": the kind was renamed after this script first
+  // ran (migrate-link-kinds.ts), and re-running it mustn't bring the old
+  // name back.
+  { field: "githubLink", kind: "source" },
   { field: "relatedResearchLink", kind: "research" },
 ] as const;
 

@@ -5,13 +5,13 @@ import { TTL_INDEX, reportIndexFailure } from "./analytics-retention";
 // Named interaction events fired by the frontend (non-pageview).
 // e.g. project_view, link_click
 export interface IEvent extends Document {
-  eventType: string;       // "project_view" | "link_click"
+  eventType: string;       // AnalyticsEventType: "project_view" | "link_click"
   projectId?: string;      // MongoDB ObjectId string, if applicable
   projectTitle?: string;
   // Free string on purpose: historical rows keep whatever the taxonomy was
   // when the event fired (including the retired "featured" type).
   projectType?: string;    // "product" | "research" | "practice" | "gameDev" | "art"
-  linkType?: string;       // "demo" | "github"
+  linkType?: string;       // a link kind: "demo", "source", "research", or any other
   referrer: string;
   userAgent: string;
   createdAt: Date;

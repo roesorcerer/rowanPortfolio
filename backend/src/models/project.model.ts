@@ -112,8 +112,9 @@ const detailSchema = new Schema<ProjectDetail>(
 );
 
 // An outbound link. `kind` is free-form for the same reason `detail.key` is:
-// the UI knows "demo", "github" and "research" by name, and anything else
-// still renders and still tracks.
+// the UI knows "demo", "source" and "research" by name, and anything else
+// still renders and still tracks. "source" was "github" until
+// `npm run migrate:link-kinds`; it names a role, not a host.
 const linkSchema = new Schema<ProjectLink>(
   {
     kind: {

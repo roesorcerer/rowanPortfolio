@@ -28,7 +28,7 @@ const project: Project = {
   ],
   links: [
     { kind: "demo", url: "https://demo.example.com" },
-    { kind: "github", url: "https://github.com/x/y" },
+    { kind: "source", url: "https://github.com/x/y" },
     { kind: "research", url: "https://doi.org/example", label: "The paper" },
   ],
   developmentTime: "3 weeks",
@@ -58,11 +58,19 @@ describe("fromProject / toPayload", () => {
     expect(payload.metaDescription).toBe("");
   });
 
+  it("fromProject shows an unmigrated github link as source", () => {
+    const form = fromProject({
+      ...project,
+      links: [{ kind: "github", url: "https://github.com/x/y" }],
+    });
+    expect(form.links[0]?.kind).toBe("source");
+  });
+
   it("fromProject carries links across, blanking the absent label", () => {
     const form = fromProject(project);
     expect(form.links).toEqual([
       { kind: "demo", url: "https://demo.example.com", label: "" },
-      { kind: "github", url: "https://github.com/x/y", label: "" },
+      { kind: "source", url: "https://github.com/x/y", label: "" },
       { kind: "research", url: "https://doi.org/example", label: "The paper" },
     ]);
   });
@@ -86,14 +94,14 @@ describe("fromProject / toPayload", () => {
     const payload = toPayload({
       ...EMPTY_FORM,
       links: [
-        { kind: "GitHub", url: " https://github.com/x/y ", label: "" },
+        { kind: "Source", url: " https://github.com/x/y ", label: "" },
         // Added then abandoned — not a link.
         { kind: "demo", url: "   ", label: "" },
         { kind: "itch", url: "https://x.itch.io/y", label: " Play on itch.io " },
       ],
     });
     expect(payload.links).toEqual([
-      { kind: "github", url: "https://github.com/x/y", label: undefined },
+      { kind: "source", url: "https://github.com/x/y", label: undefined },
       { kind: "itch", url: "https://x.itch.io/y", label: "Play on itch.io" },
     ]);
   });

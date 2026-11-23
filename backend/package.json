@@ -21,7 +21,8 @@
     "restore:projects": "ts-node src/scripts/restore-projects.ts",
     "seed:case-studies": "ts-node src/scripts/seed-case-studies.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "migrate:link-kinds": "ts-node src/scripts/migrate-link-kinds.ts"
   },
   "dependencies": {
     "argon2": "^0.44.0",

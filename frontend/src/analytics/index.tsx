@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { useLocation } from "react-router-dom";
-import type { Project } from "../types";
+import type { AnalyticsEventType, Project } from "../types";
 import { apiUrl } from "../api/client";
 
 // ---- Wire shape ----------------------------------------------------------
@@ -19,7 +19,7 @@ export type AnalyticsEvent =
       referrer: string;
     }
   | {
-      type: "project_view";
+      type: Extract<AnalyticsEventType, "project_view">;
       path: string;
       referrer: string;
       projectId: string;
@@ -27,13 +27,24 @@ export type AnalyticsEvent =
       projectType: string;
     }
   | {
-      type: "link_click";
+      type: Extract<AnalyticsEventType, "link_click">;
       path: string;
       referrer: string;
       projectId: string;
       projectTitle: string;
       linkType?: string;
     };
+
+// The event types above are exactly the ones the API accepts
+// (AnalyticsEventType in shared/contracts.d.ts; anything else is a 400).
+// Extract<> fails if one is removed from the contract; this fails if the
+// contract gains one that has no shape here. A page view is its own
+// endpoint, not an event type.
+type NamedEvent = Exclude<AnalyticsEvent["type"], "pageview">;
+type Expect<T extends true> = T;
+export type _EventTypesMatchContract = Expect<
+  [AnalyticsEventType] extends [NamedEvent] ? true : false
+>;
 
 // ---- Adapter seam --------------------------------------------------------
 

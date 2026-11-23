@@ -107,9 +107,13 @@ export interface ProjectCaseStudy {
 
 /**
  * One outbound link. `kind` is free-form, like `ProjectDetail.key`: the three
- * the UI knows by name are "demo", "github" and "research", which carry default
+ * the UI knows by name are "demo", "source" and "research", which carry default
  * labels and analytics verbs. Anything else ("itch", "steam", "figma") renders
  * with its own `label` and tracks under its own kind — no code change.
+ *
+ * "source" names a role, not a host: a GitLab, Codeberg or itch.io source
+ * link is a "source" link too. The GitHub mark follows the URL's host, not
+ * the kind. It was "github" until `npm run migrate:link-kinds`.
  */
 export interface ProjectLink {
   kind: string;
@@ -257,6 +261,15 @@ export interface ContactSubmission {
 
 // ---- Analytics ----
 
+/**
+ * The event types `POST /api/analytics/event` accepts, and the whole
+ * vocabulary: anything else is a 400. Declared once, here. The frontend's
+ * analytics events are typed from it, and the backend's validator lists the
+ * same values for Zod, with `analytics.contract-parity.ts` failing `tsc` if
+ * the two ever differ.
+ */
+export type AnalyticsEventType = "project_view" | "link_click";
+
 export interface AnalyticsSummary {
   totalViews: number;
   todayViews: number;
@@ -280,7 +293,8 @@ export interface ProjectEngagement {
   projectType: string;
   views: number;
   demoClicks: number;
-  githubClicks: number;
+  /** Clicks on "source" links, wherever the code is hosted. */
+  sourceClicks: number;
 }
 
 export interface EngagementSummary {

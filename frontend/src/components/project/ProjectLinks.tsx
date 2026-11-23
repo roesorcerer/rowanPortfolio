@@ -46,7 +46,7 @@ function ProjectLinks({ project, className, children }: ProjectLinksProps) {
             onClick={() => analytics.linkClick(project, link.kind)}
             className={isPrimary ? "cmd primary" : "cmd"}
           >
-            {link.kind === "github" && <GitHubMark />}
+            {isGitHub(link.url) && <GitHubMark />}
             {linkLabel(link, demoLabel)}
           </a>
         );
@@ -55,6 +55,18 @@ function ProjectLinks({ project, className, children }: ProjectLinksProps) {
       {children}
     </div>
   );
+}
+
+// The mark follows where the link goes, not its kind: a "source" link to
+// GitLab gets no GitHub logo, and any link to github.com gets one, whatever
+// kind it's filed under.
+function isGitHub(url: string): boolean {
+  try {
+    const host = new URL(url).hostname;
+    return host === "github.com" || host.endsWith(".github.com");
+  } catch {
+    return false;
+  }
 }
 
 function GitHubMark() {

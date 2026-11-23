@@ -156,7 +156,10 @@ export function fromProject(project: Project): FormState {
     metaDescription: project.metaDescription ?? "",
     image: project.image,
     links: (project.links ?? []).map((link) => ({
-      kind: link.kind,
+      // A project the link-kind migration hasn't reached yet still says
+      // "github"; shown as Source, and saving writes the new name
+      // (frontend/src/lib/projectLinks.ts, usableLinks).
+      kind: link.kind === "github" ? "source" : link.kind,
       url: link.url,
       label: link.label ?? "",
     })),

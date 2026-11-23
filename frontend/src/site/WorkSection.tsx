@@ -46,7 +46,7 @@ function sharedSkills(projects: ProjectSummary[]) {
 // a card would compile while reading a caseStudy the list never sends.
 function WorkCard({ project }: { project: ProjectSummary }) {
   const analytics = useAnalytics();
-  const source = usableLinks(project).find((link) => link.kind === "github");
+  const source = usableLinks(project).find((link) => link.kind === "source");
   const research = researchStatusOf(project);
 
   return (

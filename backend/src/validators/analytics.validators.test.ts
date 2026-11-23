@@ -27,16 +27,23 @@ describe("trackEventSchema", () => {
     expect(() => trackEventSchema.parse({ eventType: "" })).toThrow();
   });
 
-  it("rejects eventType longer than the limit instead of silently truncating", () => {
-    const tooLong = "x".repeat(LIMITS.event.typeMax + 1);
-    expect(() => trackEventSchema.parse({ eventType: tooLong })).toThrow();
+  it("rejects an eventType outside the declared set", () => {
+    expect(() => trackEventSchema.parse({ eventType: "project_veiw" })).toThrow();
+    expect(() =>
+      trackEventSchema.parse({ eventType: "x".repeat(LIMITS.event.typeMax + 1) })
+    ).toThrow();
   });
 
-  it("rejects projectTitle longer than the limit", () => {
-    const tooLong = "x".repeat(LIMITS.event.projectTitleMax + 1);
-    expect(() =>
-      trackEventSchema.parse({ eventType: "project_view", projectTitle: tooLong })
-    ).toThrow();
+  // Intake clips, never rejects, on length (docs/adr/0001): an event with a
+  // long project title is still a real click.
+  it("clips an over-long projectTitle and referrer instead of rejecting them", () => {
+    const result = trackEventSchema.parse({
+      eventType: "project_view",
+      projectTitle: "x".repeat(LIMITS.event.projectTitleMax + 50),
+      referrer: "https://r.example/" + "y".repeat(LIMITS.tracking.referrerMax),
+    });
+    expect(result.projectTitle).toHaveLength(LIMITS.event.projectTitleMax);
+    expect(result.referrer).toHaveLength(LIMITS.tracking.referrerMax);
   });
 
   it("trims whitespace from string fields", () => {

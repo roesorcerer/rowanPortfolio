@@ -19,54 +19,36 @@ export const trackPageViewSchema = z.object({
 
 export type TrackPageViewInput = z.infer<typeof trackPageViewSchema>;
 
+// The event types intake accepts, and the only ones. Listed here because Zod needs
+// values at runtime and shared/contracts.d.ts (AnalyticsEventType) is
+// types only; analytics.contract-parity.ts fails tsc if the two disagree.
+// An unknown type used to be stored and then silently ignored by the
+// engagement report, so a typo or a scripted post looked like data.
+export const EVENT_TYPES = ["project_view", "link_click"] as const;
+
+// Trimmed, then clipped: the same intake rule as page views (above).
+const trimmedClippedTo = (max: number) =>
+  z
+    .string()
+    .trim()
+    .transform((value) => value.slice(0, max));
+
 export const trackEventSchema = z.object({
+  // Trimmed before the check, as it always was, so "  link_click " still
+  // counts; only the set of names is new.
   eventType: z
     .string({ error: "eventType is required" })
-    .min(1, "eventType is required")
-    .max(
-      LIMITS.event.typeMax,
-      `eventType cannot exceed ${LIMITS.event.typeMax} characters`
-    )
-    .trim(),
-  projectId: z
-    .string()
-    .max(
-      LIMITS.event.projectIdMax,
-      `projectId cannot exceed ${LIMITS.event.projectIdMax} characters`
-    )
     .trim()
-    .optional(),
-  projectTitle: z
-    .string()
-    .max(
-      LIMITS.event.projectTitleMax,
-      `projectTitle cannot exceed ${LIMITS.event.projectTitleMax} characters`
-    )
-    .trim()
-    .optional(),
-  projectType: z
-    .string()
-    .max(
-      LIMITS.event.projectTypeMax,
-      `projectType cannot exceed ${LIMITS.event.projectTypeMax} characters`
-    )
-    .trim()
-    .optional(),
-  linkType: z
-    .string()
-    .max(
-      LIMITS.event.linkTypeMax,
-      `linkType cannot exceed ${LIMITS.event.linkTypeMax} characters`
-    )
-    .trim()
-    .optional(),
-  referrer: z
-    .string()
-    .max(
-      LIMITS.tracking.referrerMax,
-      `referrer cannot exceed ${LIMITS.tracking.referrerMax} characters`
-    )
-    .optional(),
+    .pipe(
+      z.enum(EVENT_TYPES, {
+        error: `eventType must be one of: ${EVENT_TYPES.join(", ")}`,
+      })
+    ),
+  projectId: trimmedClippedTo(LIMITS.event.projectIdMax).optional(),
+  projectTitle: trimmedClippedTo(LIMITS.event.projectTitleMax).optional(),
+  projectType: trimmedClippedTo(LIMITS.event.projectTypeMax).optional(),
+  linkType: trimmedClippedTo(LIMITS.event.linkTypeMax).optional(),
+  referrer: clippedTo(LIMITS.tracking.referrerMax).optional(),
 });
 
 export type TrackEventInput = z.infer<typeof trackEventSchema>;

@@ -31,7 +31,7 @@ function ProjectEngagement({ engagement }: Props) {
         </span>
       </div>
       <p className="text-faint text-xs mb-4">
-        Modal opens · demo & GitHub clicks
+        Modal opens · demo & source clicks
       </p>
 
       {projectEngagement.length === 0 ? (
@@ -70,8 +70,8 @@ function ProjectEngagement({ engagement }: Props) {
                       ↗ {p.demoClicks}
                     </span>
                   )}
-                  {p.githubClicks > 0 && (
-                    <span title="GitHub link clicks">⌥ {p.githubClicks}</span>
+                  {p.sourceClicks > 0 && (
+                    <span title="Source clicks">⌥ {p.sourceClicks}</span>
                   )}
                 </div>
               </div>
