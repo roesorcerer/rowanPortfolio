@@ -1,7 +1,7 @@
 name: Deploy Production
 
 # Only runs when code is pushed to the production branch
-# (typically via merging a PR from development)
+# (by merging a pull request from a feature branch)
 on:
   push:
     branches: [production]
