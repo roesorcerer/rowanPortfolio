@@ -101,6 +101,22 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Design doc 8.1: public JavaScript at or under 100 KB gzipped per
+      # page. Reads the build above; the admin and game chunks are lazy and
+      # don't count.
+      - name: Bundle budget
+        run: npm run check:bundle
+
+      # axe against WCAG 2.2 AA on every public page in both themes, in a
+      # real browser over `vite preview` with the API stubbed
+      # (e2e/a11y.spec.ts), so neither the backend nor the live API is
+      # needed.
+      - name: Install Playwright's Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Accessibility
+        run: npm run test:a11y
+
       # The server bundle the prerender step renders with. Compiling it here
       # catches an import that only breaks outside the browser; rendering is
       # covered by src/entry-server.test.tsx, so CI doesn't depend on the

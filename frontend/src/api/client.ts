@@ -1,4 +1,3 @@
-import axios, { type AxiosInstance, type AxiosError } from "axios";
 import type { ApiResponse } from "../types";
 
 // ApiError is the only error type callers should need to know about.
@@ -23,83 +22,104 @@ export interface ApiClient {
   delete<T = void>(path: string): Promise<T>;
 }
 
-// Factory so tests can construct a client backed by a stub AxiosInstance.
-// Production wires the real axios instance below and exports the result as
-// the default. The factory itself knows nothing about baseURL, headers, or
-// interceptors — those live on the AxiosInstance passed in.
-export function createApiClient(http: AxiosInstance): ApiClient {
+type Method = "GET" | "POST" | "PUT" | "DELETE";
+
+/** The part of fetch the client uses, so a test can hand it a stub. */
+export type Fetch = (url: string, init: RequestInit) => Promise<Response>;
+
+// Factory so tests can construct a client backed by a stub fetch. Production
+// passes the real one and the API's base URL below, and exports the result
+// as the default.
+//
+// This was axios until the public bundle needed to fit its budget
+// (scripts/check-bundle.mjs): axios was the largest library in it after
+// React, for one request method and an error shape, both written out here
+// instead.
+export function createApiClient(options: {
+  baseUrl: string;
+  fetch: Fetch;
+}): ApiClient {
   async function request<T>(
-    method: "get" | "post" | "put" | "delete",
+    method: Method,
     path: string,
     body?: unknown
   ): Promise<T> {
+    let response: Response;
     try {
-      const response = await http.request<ApiResponse<T>>({
-        url: path,
+      response = await options.fetch(`${options.baseUrl}${path}`, {
         method,
-        data: body,
+        // Sends the admin session cookie to the API host (see below).
+        credentials: "include",
+        // On every write, body or not, as axios did. The header makes the
+        // cross-origin request preflighted, and the API's CORS refuses the
+        // preflight from any origin but the site, which is half of its
+        // CSRF defence (backend/src/app.ts). A GET stays a simple request.
+        headers:
+          method === "GET" ? undefined : { "Content-Type": "application/json" },
+        body: body === undefined ? undefined : JSON.stringify(body),
       });
-      const envelope = response.data as ApiResponse<T> | "" | null | undefined;
-      // Empty 204 / 205 responses come back as "" or undefined — treat as void.
-      if (envelope === undefined || envelope === "" || envelope === null) {
-        return undefined as T;
-      }
-      if (envelope.success === false) {
-        throw new ApiError(
-          response.status,
-          envelope.error ?? "Request failed",
-          envelope
-        );
-      }
-      return envelope.data as T;
     } catch (err) {
-      if (err instanceof ApiError) throw err;
-      throw toApiError(err);
+      // fetch rejects only when no response arrived: offline, DNS, CORS.
+      throw new ApiError(
+        0,
+        (err instanceof Error && err.message) || "Request failed",
+        undefined,
+        { cause: err }
+      );
     }
+
+    const envelope = await readBody(response);
+    if (!response.ok) {
+      const serverMessage =
+        envelope && typeof envelope === "object" && "error" in envelope
+          ? String((envelope as { error?: unknown }).error ?? "")
+          : "";
+      throw new ApiError(
+        response.status,
+        serverMessage || `Request failed with status code ${response.status}`,
+        envelope
+      );
+    }
+    // Empty 204 / 205 responses have no envelope: treat as void.
+    if (envelope === undefined) return undefined as T;
+    const typed = envelope as ApiResponse<T>;
+    if (typed.success === false) {
+      throw new ApiError(
+        response.status,
+        typed.error ?? "Request failed",
+        envelope
+      );
+    }
+    return typed.data as T;
   }
 
   return {
-    get: (path) => request("get", path),
-    post: (path, body) => request("post", path, body),
-    put: (path, body) => request("put", path, body),
-    delete: (path) => request("delete", path),
+    get: (path) => request("GET", path),
+    post: (path, body) => request("POST", path, body),
+    put: (path, body) => request("PUT", path, body),
+    delete: (path) => request("DELETE", path),
   };
 }
 
-function toApiError(err: unknown): ApiError {
-  if (isAxiosError(err)) {
-    const status = err.response?.status ?? 0;
-    const body = err.response?.data;
-    const message =
-      (body && typeof body === "object" && "error" in body
-        ? String((body as { error?: unknown }).error ?? "")
-        : "") ||
-      err.message ||
-      "Request failed";
-    return new ApiError(status, message, body, { cause: err });
+// The parsed JSON, the raw text when it isn't JSON (a proxy's HTML error
+// page, say: kept for debugging, as `ApiError.body`), or undefined when
+// there's nothing.
+async function readBody(response: Response): Promise<unknown> {
+  const text = await response.text().catch(() => "");
+  if (!text) return undefined;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
   }
-  if (err instanceof Error) {
-    return new ApiError(0, err.message || "Request failed", undefined, {
-      cause: err,
-    });
-  }
-  return new ApiError(0, "Request failed", undefined, { cause: err });
-}
-
-function isAxiosError(err: unknown): err is AxiosError {
-  return (
-    typeof err === "object" &&
-    err !== null &&
-    (err as { isAxiosError?: boolean }).isAxiosError === true
-  );
 }
 
 // --- Production wiring ---
 // In development, Vite's proxy handles /api requests (no baseURL needed).
 // In production on Vercel, VITE_API_URL points to the Fly.io backend.
 //
-// apiUrl() is the same base for the one caller that can't use Axios: the
-// analytics adapter, which needs sendBeacon and keepalive fetch. Calling
+// apiUrl() is the same base for the one caller that can't use this client:
+// the analytics adapter, which needs sendBeacon and keepalive fetch. Calling
 // Fly directly matters for more than speed — the backend reads the
 // visitor's IP from X-Forwarded-For assuming only Fly's proxy is in front
 // (TRUST_PROXY_HOPS=2). A request through Vercel's /api rewrite arrives
@@ -109,19 +129,20 @@ export function apiUrl(path: string): string {
   return `${import.meta.env.VITE_API_URL || ""}${path}`;
 }
 
-// withCredentials sends the admin session cookie to the API host. There is
-// no token to attach any more: the cookie is HttpOnly, so this module can't
-// read it and doesn't need to (src/api/auth.ts). A 401 is handled where the
-// session state lives, in main.tsx, rather than by an interceptor here.
+// credentials: "include" sends the admin session cookie to the API host.
+// There is no token to attach any more: the cookie is HttpOnly, so this
+// module can't read it and doesn't need to (src/api/auth.ts). A 401 is
+// handled where the session state lives, in main.tsx.
 //
 // In production the API is api.rowan.page, a subdomain of the site, which
 // is what lets the browser treat the cookie as first-party; on a different
 // site (the old *.fly.dev host) Safari would refuse it.
-const http: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "",
-  headers: { "Content-Type": "application/json" },
-  withCredentials: true,
+//
+// fetch is wrapped rather than passed bare: called detached from window, as
+// `options.fetch(...)` would call it, some browsers throw "Illegal
+// invocation".
+const api: ApiClient = createApiClient({
+  baseUrl: import.meta.env.VITE_API_URL || "",
+  fetch: (url, init) => fetch(url, init),
 });
-
-const api: ApiClient = createApiClient(http);
 export default api;

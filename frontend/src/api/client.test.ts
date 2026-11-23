@@ -1,65 +1,76 @@
-import type { AxiosInstance } from "axios";
-import { ApiError, createApiClient } from "./client";
+import { ApiError, createApiClient, type Fetch } from "./client";
 
-// A stub AxiosInstance is just an object with a `request` method that
-// returns whatever the test wants. We don't need real interceptors here —
-// those are wired around the http instance in production, not inside the
-// client's verb logic.
-function stubHttp(
-  impl: (req: { url?: string; method?: string; data?: unknown }) => unknown
-): AxiosInstance {
-  return { request: impl } as unknown as AxiosInstance;
+// The client is built on a stub fetch that returns real Response objects,
+// so these exercise the same status, header and body handling the browser
+// would, without a network.
+
+interface Captured {
+  url: string;
+  init: RequestInit;
 }
 
-function axiosRejection(opts: {
-  status?: number;
-  body?: unknown;
-  message?: string;
-}) {
-  const err = new Error(opts.message ?? "Request failed") as Error & {
-    isAxiosError: boolean;
-    response?: { status: number; data: unknown };
+function clientReturning(response: () => Response, calls: Captured[] = []) {
+  const fetch: Fetch = (url, init) => {
+    calls.push({ url, init });
+    return Promise.resolve(response());
   };
-  err.isAxiosError = true;
-  if (opts.status !== undefined) {
-    err.response = { status: opts.status, data: opts.body };
-  }
-  return err;
+  return createApiClient({ baseUrl: "https://api.example", fetch });
 }
+
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
 
 describe("createApiClient", () => {
   describe("success path", () => {
-    it("unwraps .data.data on GET", async () => {
-      const api = createApiClient(
-        stubHttp(() => ({
-          status: 200,
-          data: { success: true, data: [{ id: 1 }, { id: 2 }] },
-        }))
+    it("unwraps the envelope's data on GET", async () => {
+      const api = clientReturning(() =>
+        json(200, { success: true, data: [{ id: 1 }, { id: 2 }] })
       );
       const result = await api.get<{ id: number }[]>("/api/things");
       expect(result).toEqual([{ id: 1 }, { id: 2 }]);
     });
 
-    it("forwards method and body to the http instance", async () => {
-      let captured: { url?: string; method?: string; data?: unknown } = {};
-      const api = createApiClient(
-        stubHttp((req) => {
-          captured = req;
-          return { status: 200, data: { success: true, data: null } };
-        })
+    it("sends method, JSON body and the session cookie to the base URL", async () => {
+      const calls: Captured[] = [];
+      const api = clientReturning(
+        () => json(201, { success: true, data: null }),
+        calls
       );
       await api.post("/api/things", { name: "hi" });
-      expect(captured).toEqual({
-        url: "/api/things",
-        method: "post",
-        data: { name: "hi" },
+      expect(calls).toHaveLength(1);
+      expect(calls[0]?.url).toBe("https://api.example/api/things");
+      expect(calls[0]?.init).toMatchObject({
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "hi" }),
       });
     });
 
-    it("returns undefined for 204 (no body)", async () => {
-      const api = createApiClient(
-        stubHttp(() => ({ status: 204, data: "" }))
+    // The header is what makes a cross-origin write preflighted, which the
+    // API's CORS then refuses for any other site; a body-less logout needs
+    // it as much as a save does.
+    it("marks every write as JSON, with or without a body", async () => {
+      const calls: Captured[] = [];
+      const api = clientReturning(
+        () => new Response(null, { status: 204 }),
+        calls
       );
+      await api.post("/api/auth/logout");
+      await api.delete("/api/things/1");
+      await api.get("/api/things");
+      expect(calls.map((c) => c.init.headers)).toEqual([
+        { "Content-Type": "application/json" },
+        { "Content-Type": "application/json" },
+        undefined,
+      ]);
+    });
+
+    it("returns undefined for 204 (no body)", async () => {
+      const api = clientReturning(() => new Response(null, { status: 204 }));
       const result = await api.delete("/api/things/1");
       expect(result).toBeUndefined();
     });
@@ -67,11 +78,8 @@ describe("createApiClient", () => {
 
   describe("envelope failure (success: false)", () => {
     it("throws ApiError with the server's error message", async () => {
-      const api = createApiClient(
-        stubHttp(() => ({
-          status: 200,
-          data: { success: false, error: "Validation failed" },
-        }))
+      const api = clientReturning(() =>
+        json(200, { success: false, error: "Validation failed" })
       );
       await expect(api.post("/api/things", {})).rejects.toThrow(ApiError);
       await expect(api.post("/api/things", {})).rejects.toMatchObject({
@@ -83,13 +91,8 @@ describe("createApiClient", () => {
 
   describe("HTTP error responses", () => {
     it("throws ApiError(status, server-message) on 4xx", async () => {
-      const api = createApiClient(
-        stubHttp(() => {
-          throw axiosRejection({
-            status: 401,
-            body: { success: false, error: "Invalid email or password" },
-          });
-        })
+      const api = clientReturning(() =>
+        json(401, { success: false, error: "Invalid email or password" })
       );
       await expect(api.post("/api/auth/login", {})).rejects.toMatchObject({
         name: "ApiError",
@@ -98,16 +101,8 @@ describe("createApiClient", () => {
       });
     });
 
-    it("falls back to axios message when the body has no error field", async () => {
-      const api = createApiClient(
-        stubHttp(() => {
-          throw axiosRejection({
-            status: 500,
-            body: { weird: "shape" },
-            message: "Request failed with status code 500",
-          });
-        })
-      );
+    it("names the status when the body has no error field", async () => {
+      const api = clientReturning(() => json(500, { weird: "shape" }));
       await expect(api.get("/x")).rejects.toMatchObject({
         status: 500,
         message: "Request failed with status code 500",
@@ -115,52 +110,59 @@ describe("createApiClient", () => {
     });
 
     it("preserves the response body for debugging", async () => {
-      const api = createApiClient(
-        stubHttp(() => {
-          throw axiosRejection({
-            status: 422,
-            body: { success: false, error: "Bad", fieldErrors: { name: "required" } },
-          });
-        })
-      );
-      try {
-        await api.post("/x", {});
-        throw new Error("should have thrown");
-      } catch (err) {
-        expect(err).toBeInstanceOf(ApiError);
-        expect((err as ApiError).body).toEqual({
+      const api = clientReturning(() =>
+        json(422, {
           success: false,
           error: "Bad",
           fieldErrors: { name: "required" },
-        });
-      }
+        })
+      );
+      const err = await api.post("/x", {}).catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(ApiError);
+      expect(err).toMatchObject({
+        body: {
+          success: false,
+          error: "Bad",
+          fieldErrors: { name: "required" },
+        },
+      });
+    });
+
+    // A proxy in front of the API can answer with an HTML page.
+    it("keeps a body that isn't JSON as text", async () => {
+      const api = clientReturning(
+        () => new Response("<h1>Bad gateway</h1>", { status: 502 })
+      );
+      await expect(api.get("/x")).rejects.toMatchObject({
+        status: 502,
+        message: "Request failed with status code 502",
+        body: "<h1>Bad gateway</h1>",
+      });
     });
   });
 
   describe("network errors", () => {
-    it("throws ApiError(0, message) when axios rejects without a response", async () => {
-      const api = createApiClient(
-        stubHttp(() => {
-          throw axiosRejection({ message: "Network Error" });
-        })
-      );
+    it("throws ApiError(0, message) when no response arrives", async () => {
+      const api = createApiClient({
+        baseUrl: "",
+        fetch: () => Promise.reject(new TypeError("Failed to fetch")),
+      });
       await expect(api.get("/x")).rejects.toMatchObject({
         name: "ApiError",
         status: 0,
-        message: "Network Error",
+        message: "Failed to fetch",
       });
     });
 
-    it("wraps non-axios errors too", async () => {
-      const api = createApiClient(
-        stubHttp(() => {
-          throw new Error("boom");
-        })
-      );
+    it("wraps a rejection that isn't an Error too", async () => {
+      const api = createApiClient({
+        baseUrl: "",
+        fetch: () => Promise.reject("boom"),
+      });
       await expect(api.get("/x")).rejects.toMatchObject({
         name: "ApiError",
         status: 0,
-        message: "boom",
+        message: "Request failed",
       });
     });
   });

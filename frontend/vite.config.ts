@@ -4,6 +4,7 @@
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig } from "vite";
+import { configDefaults } from "vitest/config";
 import svgrPlugin from "vite-plugin-svgr";
 
 // https://vitejs.dev/config/
@@ -38,5 +39,8 @@ export default defineConfig({
     environment: "jsdom",
     css: true,
     setupFiles: "./src/test/setup.ts",
+    // e2e/ is Playwright's (playwright.config.ts): its *.spec.ts files
+    // match Vitest's default pattern too, and fail in jsdom.
+    exclude: [...configDefaults.exclude, "e2e/**"],
   },
 });

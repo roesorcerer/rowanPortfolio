@@ -29,7 +29,10 @@ function StairsSection() {
               className={i === stair ? "stair on" : "stair"}
               type="button"
               aria-pressed={i === stair}
-              aria-label={`Floor ${i + 1}: ${item.name.slice(5)}`}
+              // Starts with the visible "B1" so a voice-control user can say
+              // what they see (WCAG 2.5.3); title case so a screen reader
+              // doesn't spell the all-caps floor name letter by letter.
+              aria-label={`B${i + 1}: ${titleCase(item.name.slice(5))}`}
               style={{ height: `${stepHeight(i)}%` }}
               onMouseEnter={() => setStair(i)}
               onFocus={() => setStair(i)}

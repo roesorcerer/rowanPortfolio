@@ -34,3 +34,7 @@ skills-lock.json
 # Written by scripts/optimize-images.mjs at build time; see that file.
 public/img/
 src/generated/
+
+# Playwright output (npm run test:a11y)
+test-results/
+playwright-report/
