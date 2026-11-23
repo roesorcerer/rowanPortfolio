@@ -60,9 +60,17 @@ docker run -d --rm --name portfolio-mongo -p 27017:27017 mongo:7
 | Tests | `npx vitest run` | `npx vitest run` (route tests need `MONGODB_URI`) |
 | Lint | none yet (#13) | `npm run lint` |
 | Build | `npm run build` | `npm run build` |
+| Bundle budget | `npm run check:bundle` (after a build) | |
+| Accessibility | `npm run test:a11y` (after a build) | |
 
 CI runs the same checks on every pull request (`.github/workflows/ci.yml`).
 Tests sit next to the file they test, as `name.test.ts(x)`.
+
+The two frontend-only rows read the build. The bundle budget holds the
+JavaScript every public page loads to 100 kB gzipped; the admin and game are
+lazy and don't count. The accessibility check runs axe against WCAG 2.2 AA on
+every public page in both themes, in Chromium, over `vite preview` with the
+API stubbed (`e2e/`). Run `npx playwright install chromium` once first.
 
 ## Frontend: `frontend/src/`
 
@@ -199,10 +207,9 @@ These are tracked in #13. Expect them to change.
   `@/components/ui/button` lives outside `src`. Elsewhere imports are relative.
 - `src/components/ui/Badge.tsx` and `components/ui/badge.tsx` are two different
   files whose names differ only in case.
-- Images exist twice, in `src/assets/` and `public/assets/`. `public/assets/` is
-  the real one.
 - There are two `vercel.json` files, one at the root and one in `frontend/`.
-  Keep their `buildCommand` and `rewrites` in step: both run `build:site`.
+  Keep their `buildCommand`, `rewrites` and `headers` in step: both run
+  `build:site`, and `src/securityHeaders.test.ts` fails if the headers differ.
 
 ### Prerendering
 
@@ -216,8 +223,38 @@ reads the published projects from the live API and writes real HTML for `/`,
   as on the server: no `window`, `localStorage` or `Date.now()` in render.
   `src/entry-server.test.tsx` fails if hydration discards a page's HTML.
 - Prerendered routes are loaded eagerly in `App.tsx`; only shell routes are lazy.
+- Each page's `<head>` comes from `src/seo.ts`: title, description, canonical,
+  Open Graph, and JSON-LD (a `Person` on home, a `CreativeWork` or
+  `ScholarlyArticle` per project). A project's description is its
+  `metaDescription` if one is written, else its case study summary, else its
+  card blurb. Pages without an image share `public/og.png`, rendered from
+  `scripts/og-image.html` by `npm run og-image` and committed.
 - A project published after the last build still loads (Vercel rewrites
   `/projects/*` to the shell) but has no HTML of its own until the next deploy.
+### Images
+
+Images live in `frontend/public/assets/`, and projects store their paths
+(`/assets/...`). `npm run build` first runs `scripts/optimize-images.mjs`,
+which writes AVIF and WebP copies at 480, 960 and 1600 px to `public/img/`
+and a manifest to `src/generated/images.json`. Both are gitignored build
+output. `src/components/Picture.tsx` renders an image from the manifest as a
+`<picture>` with `srcset`, `width` and `height`; any other path (an external
+URL, an image added since the last build) stays a plain `<img>`. Use
+`<Picture>` for public images; pass `priority` for the page's largest one.
+
+### Security headers
+
+`vercel.json` sends a content security policy, report-only for now, plus
+HSTS, `nosniff`, `Referrer-Policy`, `X-Frame-Options` and
+`Permissions-Policy`. Browsers report what the policy would block to
+`POST /api/csp-report`, which logs it on Fly. Check those logs, and once
+they're quiet, rename the header to `Content-Security-Policy` to enforce it.
+The one inline script, the theme script in `index.html`, is allowed by its
+hash. If you edit it, `src/securityHeaders.test.ts` fails until you update
+the hash in both `vercel.json` files.
+
+## More known oddities
+
 - The public site lives in `site/` and `game/`, while the design document says
   `pages/` and `features/game/`. One of them will be changed to match the other.
 - The `docker` CI job fails on every PR because the frontend image can't see

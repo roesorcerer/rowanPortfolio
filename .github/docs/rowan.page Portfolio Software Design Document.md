@@ -105,11 +105,11 @@ These findings come from reading the code, a production build, and an axe access
 | F6 | Long-lived token sits in `localStorage` | 7-day JWT, with no CSP on the site to limit script injection. **Fixed in #32**: the session is an `HttpOnly` cookie; the API moves to `api.rowan.page` so the cookie is first-party | 5.4, 8.2 |
 | F7 | Visitors download the admin | One 440 KB JavaScript file (138 KB gzipped), with no code splitting | 3.2 |
 | F8 | List responses carry full case studies | `GET /api/projects` maps every field, including `caseStudy`. **Fixed in #30**: the list returns `ProjectSummary` | 4.1, 5.1 |
-| F9 | Home page has 25 axe failures | 18 contrast, 3 nested interactive, 3 label mismatch, 1 target size | 6.4 |
+| F9 | Home page has 25 axe failures | 18 contrast, 3 nested interactive, 3 label mismatch, 1 target size. **Fixed, with a CI gate**: the redesign cleared most; the last (the floor buttons' label mismatch) was fixed when axe joined CI in phase 4 (#15), and every public page now scans clean in both themes | 6.4 |
 | F10 | Text colors miss AA | `muted` is 3.43:1 and `faint` 2.02:1 on `paper`; body text needs 4.5:1 | 6.4 |
 | F11 | Motion cannot be paused | Looping hero video and a word change every 2.2 s; no reduced-motion handling | 6.4 |
 | F12 | Fonts do not match the CSS | Google Fonts loads Cormorant Garamond, while the body stack names Perpetua and Palatino, which are not served | 6.1 |
-| F13 | Images are unoptimized | 12.7 MB in `public`, nearly all PNG and JPG, and many duplicated in `src/assets`; one image exceeds 1 MB | 5.3 |
+| F13 | Images are unoptimized | 12.7 MB in `public`, nearly all PNG and JPG, and many duplicated in `src/assets`; one image exceeds 1 MB. **Fixed in phase 4 (#15)**: the build writes AVIF and WebP copies, and `src/assets` is gone | 5.3 |
 | F14 | Analytics are spoofable and kept forever | `/pageview` has no validator, a non-string `path` raises a 500, and no retention limit or notice exists. **Validator fixed in #29; 13-month retention and bot filtering in #31**; the notice remains | 4.1, 5.6 |
 | F15 | Headshot is a link to admin login | `Header.tsx` wraps the public photo in a link to `/admin/login` | 6.3 |
 | F16 | Repository undersells the work | README is an unfilled template; root `package.json` is a leftover template; `.env.example` is missing though startup errors cite it; `development` last moved 2026-04-17 | 8.5 |
@@ -198,7 +198,7 @@ Project images and other static files live in `frontend/public/assets`, and docu
 | Target change | Detail | Fixes |
 | --- | --- | --- |
 | Add a `ProjectSummary` list shape | `GET /api/projects` omits `caseStudy`; case studies load by slug or at build time | F8 |
-| Add `metaDescription` | Optional, 160 characters at most; falls back to a trimmed `description` | F1 |
+| Add `metaDescription` | Optional, 160 characters at most; falls back to the case study summary, then a trimmed `description`. Done in phase 4 (#15) | F1 |
 | Set analytics retention | TTL index on `PageView` and `Event` `createdAt` at 396 days (13 months, so a month compares with the same month a year earlier); done in #31 | F14 |
 | Replace `userAgent` with `device` | Store `mobile` or `desktop` at write time, then stop keeping the raw string | F14 |
 | Allow message deletion | New admin delete action for contact submissions | F14 |
@@ -324,15 +324,19 @@ write 404.html
 
 Three related changes make this work. `main.tsx` moves to `hydrateRoot`. Components read `localStorage` only after mounting, so server and client markup match. The catch-all rewrite in `vercel.json` narrows to `/admin/*`, so a missing URL returns a real 404 status instead of the app shell, which resolves F2 and F3.
 
-**Built in #33**, with three differences from the sketch above. The theme, not `localStorage` in general, was the only render-time browser read; it now starts at the server's value while hydrating and switches in a transition, because a plain update made React discard the server HTML (error #421). `/play` and `/projects/:slug` are also rewritten to the shell, the latter so a project published since the last build still loads until the deploy trigger in 5.7 exists. `/privacy` and JSON-LD are not built yet.
+**Built in #33**, with three differences from the sketch above. The theme, not `localStorage` in general, was the only render-time browser read; it now starts at the server's value while hydrating and switches in a transition, because a plain update made React discard the server HTML (error #421). `/play` and `/projects/:slug` are also rewritten to the shell, the latter so a project published since the last build still loads until the deploy trigger in 5.7 exists. `/privacy` is not built yet. JSON-LD followed in phase 4 (#15): a `Person` on home, and a `CreativeWork` or `ScholarlyArticle` per project that names that person as author. Pages without an image of their own share a default Open Graph image, `public/og.png`.
 
 `vercel.json` also gains site-wide headers: Content-Security-Policy, Strict-Transport-Security, X-Content-Type-Options and Referrer-Policy. The CSP should start in report-only mode, since JSON-LD and hydration data need a nonce-free approach such as hashes.
+
+**Built in phase 4 (#15)**, report-only, plus `X-Frame-Options` and `Permissions-Policy`. The hydration state and JSON-LD turned out to need no hashes: they are data blocks (`application/json`, `application/ld+json`), which `script-src` doesn't govern, so the theme script in `index.html` is the one hash. `style-src` allows inline styles, because React writes `style` attributes into the prerendered HTML. Browsers report violations to `POST /api/csp-report`, which logs them on Fly rather than storing them. Enforcing the policy means renaming the header once those logs stay quiet.
 
 ### 5.3 Image and media pipeline
 
 At build time, a `sharp` script reads `public/assets`. It writes AVIF and WebP versions at 480, 960 and 1600 px wide, plus a manifest keyed by original path, so stored project paths stay valid. An `<Image>` component reads the manifest and renders `srcset`, `width` and `height`, which prevents layout shift.
 
 The largest image on each page loads eagerly with `fetchpriority="high"`, and all others load lazily. The hero video moves to the site's own origin with a poster image, and the duplicate files in `src/assets` go away.
+
+**Built in phase 4 (#15)**, with three differences. The component is `<Picture>`, since it renders a `<picture>` element and `Image` would shadow the browser's global. The copies and the manifest are build output (`public/img/`, `src/generated/`), regenerated by `npm run build` and gitignored, so the manifest is read with `import.meta.glob` and a fresh checkout still type-checks. There is no hero video to move any more: the redesign's hero is a canvas. Images hosted elsewhere (some projects use an external file host) aren't optimized and render as a plain `<img>`.
 
 ### 5.4 Authentication
 
@@ -518,7 +522,7 @@ The target is WCAG 2.2 AA, applied to the public site and admin alike.
 
 ## 7. Requirements matrix
 
-Of 22 requirements, 5 are done, 6 are partial and 11 are planned; the Status column is editable, so this table can double as the progress tracker. No SRS exists, so requirements are defined here, drawn from the goals in 1.2 and the findings in 2.3.
+Of 22 requirements, 8 are done, 6 are partial and 8 are planned; the Status column is editable, so this table can double as the progress tracker. No SRS exists, so requirements are defined here, drawn from the goals in 1.2 and the findings in 2.3.
 
 | ID | Requirement | Components | Data | Status |
 | --- | --- | --- | --- | --- |
@@ -530,14 +534,14 @@ Of 22 requirements, 5 are done, 6 are partial and 11 are planned; the Status col
 | FR6 | Admin creates, drafts, publishes, reorders and deletes projects | `ProjectsTab`, `ProjectForm`, projects store | Project | Done |
 | FR7 | Admin reads messages and analytics | `MessagesTab`, `AnalyticsTab`, analytics report | ContactSubmission, PageView, Event | Done |
 | FR8 | Publishing updates the public site without code | 5.2, 5.7 | Project.status | Planned |
-| FR9 | Every public URL returns full HTML and metadata | 5.2, `seo.ts` | Project.metaDescription | Planned |
-| FR10 | Unknown URLs return a real 404 page | 5.2, not-found page | None | Planned |
+| FR9 | Every public URL returns full HTML and metadata | 5.2, `seo.ts` | Project.metaDescription | Done |
+| FR10 | Unknown URLs return a real 404 page | 5.2, not-found page | None | Done |
 | FR11 | Home leads with a one-screen summary, then a playable dungeon crawl | 5.8 | Project | Planned |
 | FR12 | Visitors pick a role, and encounters adapt their notes and links to it | 5.8 | GameSave | Planned |
 | FR13 | Visitors can skip, resume and jump floors; nothing is gated | 5.8 | GameSave | Planned |
 | FR14 | A privacy page explains data handling | `/privacy` | None | Planned |
 | NFR1 | Core Web Vitals rate good at the 75th percentile | 5.2, 5.3, 5.6 | Event | Planned |
-| NFR2 | Public pages stay under the JavaScript budget | Lazy admin and game bundles | None | Planned |
+| NFR2 | Public pages stay under the JavaScript budget | Lazy admin and game bundles, budget in CI | None | Done |
 | NFR3 | Site meets WCAG 2.2 AA | 6.4 | Media.alt | Partial |
 | NFR4 | Design addresses OWASP Top 10:2025 | 5.4, 5.5, 8.2 | User | Partial |
 | NFR5 | Public pages load while the API is down | 3.1, 5.2 | None | Planned |
@@ -554,10 +558,10 @@ Each best practice below has a measurable target and an automated check where po
 | Area | Target | How it is checked | Today |
 | --- | --- | --- | --- |
 | Speed | [LCP 2.5 s or less, INP 200 ms or less, CLS 0.1 or less](https://web.dev/articles/defining-core-web-vitals-thresholds), at the 75th percentile | `web_vital` events; Lighthouse CI on pull requests | Not yet measured |
-| Page weight | Public JavaScript at or under 100 KB gzipped per page | Bundle budget in CI | 138 KB, all in one file |
-| Accessibility | [WCAG 2.2](https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/) AA | axe in Playwright, plus manual keyboard and screen reader passes, since scanners catch only part of the issues | 25 failures on home |
-| Search | Unique title and description, one canonical, real links, sitemap, per [Google's guidance](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics) | Script asserts tags in the built HTML | One site-wide title in HTML; project titles set by JavaScript |
-| Sharing | OG title, description and image on every public page; `Person` JSON-LD on home | Built-HTML assertion | Missing |
+| Page weight | Public JavaScript at or under 100 KB gzipped per page | Bundle budget in CI | 98 KB, with the admin and game split off (#15) |
+| Accessibility | [WCAG 2.2](https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/) AA | axe in Playwright, plus manual keyboard and screen reader passes, since scanners catch only part of the issues | No axe failures on any public page, either theme, gated in CI (#15); manual passes not yet done |
+| Search | Unique title and description, one canonical, real links, sitemap, per [Google's guidance](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics) | Script asserts tags in the built HTML | Per-page tags, canonical and sitemap in the prerendered HTML (#33, #15) |
+| Sharing | OG title, description and image on every public page; `Person` JSON-LD on home | Built-HTML assertion | Done (#15) |
 | Security | [OWASP Top 10:2025](https://top10.owasp.org/2025/) coverage (8.2) | Route tests, header scan, dependency audit | Partial |
 | Resilience | Public pages load with the API off | Playwright against the static build | Home shows an error; project lists fail |
 | Privacy | No cookies for visitors; 13-month retention | TTL index test | 13 months (#31) |
@@ -567,7 +571,7 @@ Each best practice below has a measurable target and an automated check where po
 | OWASP 2025 risk | Current state | Design action |
 | --- | --- | --- |
 | A01 Broken Access Control | All writes require admin; drafts fail closed | Keep route tests; add `/auth/register` removal test |
-| A02 Security Misconfiguration | API uses Helmet and scoped CORS; the site has no CSP | Add site headers (5.2) |
+| A02 Security Misconfiguration | API uses Helmet and scoped CORS; the site sends a report-only CSP and the other headers in 5.2 (#15) | Enforce the CSP once reports are quiet |
 | A03 Software Supply Chain Failures | `flyctl-actions@master` and an unpinned Vercel CLI in deploys; [Node 20 is end-of-life](https://nodejs.org/en/about/eol) in Docker and CI | Pin both, move to the current LTS, enable Dependabot, remove unused packages |
 | A05 Injection | Zod on inputs, React escaping, escaped email HTML | Validate `/pageview` |
 | A07 Authentication Failures | Argon2id, generic login errors, but no limiter and a 7-day token | 5.4 |
@@ -619,7 +623,7 @@ A04, A06 and A08 raise no project-specific action beyond the items above, this d
 - [ ] Confirm which header carries the visitor IP through Vercel and Fly
 - [x] Confirm analytics retention: 13 months (#31)
 - [ ] Decide whether `development` stays, or pull requests go straight to `production`
-- [ ] Decide whether project backups run on a schedule; `backup:projects` is manual today
+- [x] Decide whether project backups run on a schedule: they stay manual (#15). Projects change only when Rowan edits them in the admin, so a scheduled job would mostly copy an unchanged collection, and the repository is public, so a GitHub Actions artifact would need encrypting first. Run `backup:projects` before any migration or restore, as `docs/CODEBASE.md` says
 - [ ] Rowan reviews the story text and role notes; family and health details stay out of all public text
 - [ ] Confirm the game's name; the working title is Late Game
 - [ ] Choose the art: Rowan's own, itch.io packs, or a mix
