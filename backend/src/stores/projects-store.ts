@@ -75,6 +75,9 @@ function toProject(doc: ProjectDoc): Project {
     title: doc.title,
     category: toCategories(doc.category),
     description: doc.description,
+    // A blanked one is stored as "" (that's how the admin clears it); on the
+    // wire it is simply absent, so the frontend has one "no override" case.
+    metaDescription: doc.metaDescription || undefined,
     image: doc.image,
     // The defaults live here, not just in the schema — this is the boundary
     // that makes the wire contract's "always an array" promise true.

@@ -194,6 +194,18 @@ export const projectFields = {
       `Description cannot exceed ${LIMITS.project.descriptionMax} characters`
     )
     .trim(),
+  // Optional: without one, the page describes itself with the case study's
+  // summary or the card blurb, clipped (frontend/src/seo.ts). An empty
+  // string is accepted on purpose, so the admin can clear one by blanking
+  // the box; the store reports it as absent.
+  metaDescription: z
+    .string()
+    .trim()
+    .max(
+      LIMITS.project.metaDescriptionMax,
+      `Search description cannot exceed ${LIMITS.project.metaDescriptionMax} characters`
+    )
+    .optional(),
   image: imageSrc("Image path"),
   links: z
     .array(linkSchema)

@@ -198,6 +198,11 @@ const projectSchema = new Schema<IProject>(
       trim: true,
       maxlength: [LIMITS.project.descriptionMax, `Description cannot exceed ${LIMITS.project.descriptionMax} characters`],
     },
+    metaDescription: {
+      type: String,
+      trim: true,
+      maxlength: [LIMITS.project.metaDescriptionMax, `Search description cannot exceed ${LIMITS.project.metaDescriptionMax} characters`],
+    },
     image: {
       type: String,
       required: [true, "Project image path is required"],

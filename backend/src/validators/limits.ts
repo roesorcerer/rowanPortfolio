@@ -25,6 +25,10 @@ export const LIMITS = {
     linksMax: 12,
     // Card blurb — one paragraph. The longest in the catalogue is ~1,350.
     descriptionMax: 4000,
+    // What a search result shows under the title. Engines cut at roughly
+    // 155-160 characters, so a longer one would be truncated mid-sentence by
+    // them rather than written to fit by Rowan.
+    metaDescriptionMax: 160,
     // A path ("/assets/x.png") or a URL. Deliberately far below what a
     // base64 `data:` URI needs: an image pasted inline would be stored in
     // Mongo and re-sent to every visitor on every project list, so it is

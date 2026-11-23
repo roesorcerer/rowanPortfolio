@@ -192,6 +192,22 @@ function ProjectForm({
             />
           </Field>
 
+          {/* The 160 matches LIMITS.project.metaDescriptionMax in the
+              backend, which rejects anything longer with a 400. */}
+          <Field label="Search description (optional)">
+            <textarea
+              rows={2}
+              maxLength={160}
+              value={form.metaDescription}
+              onChange={(e) => setField("metaDescription", e.target.value)}
+              className={inputCls}
+              placeholder="What a search result shows under the title. Blank uses the case study summary."
+            />
+            <p className="text-faint text-xs mt-1">
+              {form.metaDescription.length}/160
+            </p>
+          </Field>
+
           <Field label="Image path" required>
             <input
               required

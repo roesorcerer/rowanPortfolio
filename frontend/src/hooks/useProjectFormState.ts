@@ -96,6 +96,8 @@ export interface FormState {
    */
   category: string[];
   description: string;
+  /** Blank means "describe the page from its summary or blurb" (src/seo.ts). */
+  metaDescription: string;
   image: string;
   links: LinkFormState[];
   developmentTime: string;
@@ -129,6 +131,7 @@ export const EMPTY_FORM: FormState = {
   title: "",
   category: [],
   description: "",
+  metaDescription: "",
   image: "",
   links: [],
   developmentTime: "",
@@ -150,6 +153,7 @@ export function fromProject(project: Project): FormState {
     title: project.title,
     category: project.category ?? [],
     description: project.description,
+    metaDescription: project.metaDescription ?? "",
     image: project.image,
     links: (project.links ?? []).map((link) => ({
       kind: link.kind,
@@ -187,6 +191,10 @@ export function toPayload(form: FormState): ProjectPayload {
     title: form.title,
     category: normalizeTags(form.category),
     description: form.description,
+    // Sent even when blank, unlike the optional fields around it: an update
+    // only writes the fields it carries, so leaving it out would keep an old
+    // description the admin just erased. The backend reports "" as absent.
+    metaDescription: form.metaDescription.trim(),
     image: form.image,
     links: toLinksPayload(form.links),
     developmentTime: form.developmentTime || undefined,

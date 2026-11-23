@@ -406,6 +406,50 @@ describe("project case studies", () => {
   });
 });
 
+describe("project search descriptions", () => {
+  it("returns a written one on the permalink", async () => {
+    const token = await getAdminToken();
+    await createProject(token, {
+      title: "Food Forward",
+      metaDescription: "A shift handover app for a food pantry.",
+    });
+
+    const res = await request(app).get("/api/projects/food-forward");
+
+    expect(res.body.data.metaDescription).toBe(
+      "A shift handover app for a food pantry."
+    );
+  });
+
+  // The form clears the box by sending "", and the frontend's fallback
+  // only has to handle one "no override" case: absent.
+  it("omits one that was cleared with an empty string", async () => {
+    const token = await getAdminToken();
+    const project = await createProject(token, {
+      metaDescription: "Something to clear.",
+    });
+
+    const res = await request(app)
+      .put(`/api/projects/${project._id}`)
+      .set("Cookie", sessionCookie(token))
+      .send({ metaDescription: "" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).not.toHaveProperty("metaDescription");
+  });
+
+  it("rejects one past the search-result length", async () => {
+    const token = await getAdminToken();
+
+    const res = await request(app)
+      .post("/api/projects")
+      .set("Cookie", sessionCookie(token))
+      .send({ ...validProject, metaDescription: "x".repeat(161) });
+
+    expect(res.status).toBe(400);
+  });
+});
+
 describe("POST /api/projects", () => {
   it("creates a project as admin", async () => {
     const token = await getAdminToken();

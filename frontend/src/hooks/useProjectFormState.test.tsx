@@ -50,6 +50,14 @@ const project: Project = {
 };
 
 describe("fromProject / toPayload", () => {
+  // An update writes only the fields it carries, so an omitted search
+  // description would leave the erased one in place.
+  it("sends a blanked search description as an empty string", () => {
+    const form = fromProject({ ...project, metaDescription: "Old text." });
+    const payload = toPayload({ ...form, metaDescription: "   " });
+    expect(payload.metaDescription).toBe("");
+  });
+
   it("fromProject carries links across, blanking the absent label", () => {
     const form = fromProject(project);
     expect(form.links).toEqual([

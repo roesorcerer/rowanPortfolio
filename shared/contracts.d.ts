@@ -143,6 +143,12 @@ export interface Project {
    */
   category: string[];
   description: string;
+  /**
+   * The search-result description for the permalink, 160 characters at most.
+   * Absent unless written; the page then falls back to the case study's
+   * summary, then `description`, clipped to fit.
+   */
+  metaDescription?: string;
   image: string;
   /**
    * Always present on a response — the schema defaults it to `[]` — so this is
@@ -202,6 +208,8 @@ export interface ProjectPayload {
   title: string;
   category: string[];
   description: string;
+  /** Send "" to clear one; the response then omits it. */
+  metaDescription?: string;
   image: string;
   media?: ProjectMedia[];
   links?: ProjectLink[];
