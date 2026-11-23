@@ -1,5 +1,6 @@
 import type { ProjectCaseStudy, ProjectMedia } from "../types";
 import { cn } from "@/lib/utils";
+import Picture from "./Picture";
 
 /**
  * The process narrative on the `/projects/:slug` permalink, which is what a
@@ -154,10 +155,15 @@ function StepMedia({
                 className="w-full max-h-[420px] object-contain"
               />
             ) : (
-              <img
+              <Picture
                 src={item.src}
                 alt={item.alt?.trim() || caption || heading}
-                loading="lazy"
+                // One across the 900px column, or two side by side.
+                sizes={
+                  items.length > 1
+                    ? "(min-width: 640px) 430px, 100vw"
+                    : "(min-width: 900px) 860px, 100vw"
+                }
                 className={cn(
                   "w-full object-contain",
                   items.length > 1 ? "max-h-[300px]" : "max-h-[420px]"

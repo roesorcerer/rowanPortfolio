@@ -6,6 +6,7 @@ import { projectPath, usableLinks } from "../lib/projectLinks";
 import { researchStatusOf } from "../lib/projectFacts";
 import type { ProjectSummary, ProjectType } from "../types";
 import Sprite from "./Sprite";
+import Picture from "../components/Picture";
 
 type TabKey = "featured" | ProjectType;
 
@@ -52,7 +53,10 @@ function WorkCard({ project }: { project: ProjectSummary }) {
     <article className="work-card">
       <div className="thumb">
         {project.image ? (
-          <img src={project.image} alt="" loading="lazy" />
+          // Decorative: the title right below names the project. A card is
+          // 260px and up, and the thumb is 170px tall, so 320px of image
+          // covers it at 1x and the 960 copy at 2x.
+          <Picture src={project.image} alt="" sizes="320px" />
         ) : (
           <Sprite name={SPRITE_FOR[project.projectType]} className="card-sprite" />
         )}

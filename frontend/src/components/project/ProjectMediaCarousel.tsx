@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Project } from "../../types";
 import { mediaItemsOf } from "../../lib/projectFacts";
 import { cn } from "@/lib/utils";
+import Picture from "../Picture";
 
 /**
  * The image/video carousel, shared by the project modal and the project page.
@@ -55,10 +56,14 @@ function ProjectMediaCarousel({
             className="max-w-full max-h-full object-contain"
           />
         ) : (
-          <img
+          // The first slide is the top of the permalink and its largest
+          // image, so it loads first; later slides load as they're shown.
+          <Picture
             key={activeMedia.src}
             alt={activeMedia.alt ?? project.title}
             src={activeMedia.src}
+            sizes="(min-width: 900px) 860px, 100vw"
+            priority={activeIndex === 0}
             className="max-w-full max-h-full object-contain"
           />
         )}

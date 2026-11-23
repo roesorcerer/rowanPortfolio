@@ -6,14 +6,15 @@
   "license": "MIT",
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run images && tsc && vite build",
     "build:ssr": "vite build --ssr src/entry-server.tsx --outDir dist-ssr",
     "build:site": "npm run build && npm run build:ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "check-types": "tsc",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "og-image": "node scripts/og-image.mjs"
+    "og-image": "node scripts/og-image.mjs",
+    "images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

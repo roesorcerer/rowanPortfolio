@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The <picture> that src/components/Picture.tsx wraps an optimized image
+   in. No box of its own, so the <img> inside stays the flex item, grid item
+   or child that every existing image rule was written against. */
+picture.picture {
+  display: contents;
+}
+
 * {
   margin: 0;
   padding: 0;

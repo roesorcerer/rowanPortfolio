@@ -87,6 +87,17 @@ jobs:
       - name: Test
         run: npx vitest run
 
+      # The image copies scripts/optimize-images.mjs writes are slow to
+      # encode (most of a minute) and change only when an image or the
+      # script does, so they're kept between runs. The script skips any copy
+      # newer than its source, and a restored cache is, so a hit encodes
+      # nothing.
+      - name: Restore optimized images
+        uses: actions/cache@v4
+        with:
+          path: frontend/public/img
+          key: images-${{ hashFiles('frontend/public/assets/**', 'frontend/scripts/optimize-images.mjs') }}
+
       - name: Build
         run: npm run build
 

@@ -30,3 +30,7 @@ CONTEXT.md
 docs/
 .agents/
 skills-lock.json
+
+# Written by scripts/optimize-images.mjs at build time; see that file.
+public/img/
+src/generated/
