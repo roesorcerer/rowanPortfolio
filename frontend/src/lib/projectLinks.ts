@@ -65,7 +65,7 @@ export function hasCaseStudy(
  * comes from `CARD_COPY[projectType].demoLabel` and is passed in.
  */
 export const LINK_KIND_LABELS: Record<string, string> = {
-  github: "View source",
+  source: "View source",
   research: "Related research",
 };
 
@@ -87,9 +87,24 @@ export function linkLabel(link: ProjectLink, demoLabel: string): string {
   return LINK_KIND_LABELS[link.kind] ?? humanizeKind(link.kind);
 }
 
-/** Links with a usable URL, in authored order. */
+/**
+ * Links with a usable URL, in authored order, with the old "github" kind
+ * read as "source".
+ *
+ * The kind was renamed because it named a host, not a role, and
+ * `npm run migrate:link-kinds` (backend) rewrites stored projects. Until it
+ * has run, a project still carries "github", and without this the card
+ * would lose its source link and the page would label it "Github". Every
+ * reader goes through here, so labels, the card and the analytics verb all
+ * see "source" either way. Safe to delete once the migration has run in
+ * production.
+ */
 export function usableLinks(project: Pick<Project, "links">): ProjectLink[] {
-  return (project.links ?? []).filter((link) => link.url?.trim());
+  return (project.links ?? [])
+    .filter((link) => link.url?.trim())
+    .map((link) =>
+      link.kind === "github" ? { ...link, kind: "source" } : link
+    );
 }
 
 /** The first link of a kind — the card shows the demo and the source only. */

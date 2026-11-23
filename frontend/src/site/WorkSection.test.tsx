@@ -28,7 +28,7 @@ const PROJECTS = [
     featured: true,
     category: ["TypeScript"],
     hasCaseStudy: true,
-    links: [{ kind: "github", url: "https://github.com/roesorcerer/thearchive" }],
+    links: [{ kind: "source", url: "https://github.com/roesorcerer/thearchive" }],
   }),
   project("Forward", { category: ["TypeScript"] }),
   project("Cup", { projectType: "gameDev", category: ["Godot"] }),

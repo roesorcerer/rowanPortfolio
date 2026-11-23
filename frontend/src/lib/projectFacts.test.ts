@@ -98,7 +98,7 @@ describe("hasExternalLinks", () => {
 
   it("is true as soon as one link carries a URL", () => {
     expect(
-      hasExternalLinks(makeProject({ links: [{ kind: "github", url: "https://x" }] }))
+      hasExternalLinks(makeProject({ links: [{ kind: "source", url: "https://x" }] }))
     ).toBe(true);
     expect(
       hasExternalLinks(makeProject({ links: [{ kind: "itch", url: "https://x" }] }))

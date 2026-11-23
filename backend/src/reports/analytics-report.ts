@@ -179,6 +179,15 @@ export async function summary(now: Date = new Date()): Promise<SummaryDTO> {
   };
 }
 
+// Source-link clicks, under the kind's current name and its old one.
+// "github" was renamed "source" (it named a host, not a role), and
+// `npm run migrate:link-kinds` rewrites stored events. Until that has run,
+// clicks recorded under the old name still count here, so the deploy and
+// the migration can happen in either order. Kept on purpose after the
+// migration: it costs nothing, and an event restored from a backup taken
+// before it would otherwise vanish from the column.
+const SOURCE_LINK_TYPES = new Set(["source", "github"]);
+
 export async function engagement(): Promise<EngagementDTO> {
   const [projectViews, linkClicks, totalPageViews, totalMessages] = await Promise.all([
     EventModel.aggregate([
@@ -234,11 +243,11 @@ export async function engagement(): Promise<EngagementDTO> {
     ContactSubmissionModel.countDocuments(),
   ]);
 
-  const linkMap = new Map<string, { demo: number; github: number }>();
+  const linkMap = new Map<string, { demo: number; source: number }>();
   for (const lc of linkClicks) {
-    const entry = linkMap.get(lc.projectId) ?? { demo: 0, github: 0 };
+    const entry = linkMap.get(lc.projectId) ?? { demo: 0, source: 0 };
     if (lc.linkType === "demo") entry.demo += lc.count;
-    if (lc.linkType === "github") entry.github += lc.count;
+    if (SOURCE_LINK_TYPES.has(lc.linkType)) entry.source += lc.count;
     linkMap.set(lc.projectId, entry);
   }
 
@@ -248,7 +257,7 @@ export async function engagement(): Promise<EngagementDTO> {
     projectType: pv.projectType,
     views: pv.count,
     demoClicks: linkMap.get(pv.projectId)?.demo ?? 0,
-    githubClicks: linkMap.get(pv.projectId)?.github ?? 0,
+    sourceClicks: linkMap.get(pv.projectId)?.source ?? 0,
   }));
 
   const conversionRate =

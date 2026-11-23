@@ -23,7 +23,7 @@ const project: Project = {
   category: ["TypeScript", "React Native"],
   description: "Scheduling for a meal delivery nonprofit.",
   image: "/assets/ff9.png",
-  links: [{ kind: "github", url: "https://github.com/roesorcerer/ff" }],
+  links: [{ kind: "source", url: "https://github.com/roesorcerer/ff" }],
   media: [],
   collaborators: [],
   details: [],

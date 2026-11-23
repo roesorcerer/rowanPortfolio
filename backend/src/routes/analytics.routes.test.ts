@@ -3,6 +3,7 @@ import app from "../app";
 import { connectTestDb, disconnectTestDb, clearDatabase } from "../test/setup";
 import { PageViewModel } from "../models/page-view.model";
 import { EventModel } from "../models/event.model";
+import { LIMITS } from "../validators/limits";
 
 beforeAll(async () => {
   await connectTestDb();
@@ -153,6 +154,47 @@ describe("POST /api/analytics/event", () => {
       projectId: "p1",
       linkType: "demo",
     });
+  });
+
+  // A typo or a scripted post used to be stored, then silently ignored by
+  // the engagement report.
+  it("rejects an event type outside the declared set", async () => {
+    const res = await asBrowser("/api/analytics/event", {
+      eventType: "project_veiw",
+      projectId: "p1",
+    });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toContain("project_view, link_click");
+    expect(await EventModel.countDocuments()).toBe(0);
+  });
+
+  it("still stores both declared event types", async () => {
+    for (const eventType of ["project_view", "link_click"]) {
+      const res = await asBrowser("/api/analytics/event", {
+        eventType,
+        projectId: "p1",
+      });
+      expect(res.status).toBe(204);
+    }
+
+    const stored = await EventModel.find().sort({ eventType: 1 }).lean();
+    expect(stored.map((e) => e.eventType)).toEqual([
+      "link_click",
+      "project_view",
+    ]);
+  });
+
+  it("clips an over-long project title instead of rejecting the event", async () => {
+    const res = await asBrowser("/api/analytics/event", {
+      eventType: "project_view",
+      projectId: "p1",
+      projectTitle: "x".repeat(1000),
+    });
+
+    expect(res.status).toBe(204);
+    const saved = await EventModel.findOne().lean();
+    expect(saved?.projectTitle).toHaveLength(LIMITS.event.projectTitleMax);
   });
 
   it("rejects an event with no type", async () => {

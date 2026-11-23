@@ -3,6 +3,7 @@
 // imports like `import { Project } from "../types"` keep working.
 
 export type {
+  AnalyticsEventType,
   ApiResponse,
   Project,
   ProjectCaseStudy,

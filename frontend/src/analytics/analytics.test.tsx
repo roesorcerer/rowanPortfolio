@@ -93,13 +93,13 @@ describe("analytics", () => {
       let captured!: ReturnType<typeof useAnalytics>;
       mount(adapter, "/", (a) => (captured = a));
       adapter.events.length = 0;
-      act(() => captured.linkClick(project, "github"));
+      act(() => captured.linkClick(project, "source"));
       expect(adapter.events).toEqual([
         expect.objectContaining({
           type: "link_click",
           path: "/",
           projectId: "p1",
-          linkType: "github",
+          linkType: "source",
         }),
       ]);
     });

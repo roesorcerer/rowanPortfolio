@@ -19,7 +19,7 @@ interface LinksFieldsProps {
   onChange: (next: LinkFormState[]) => void;
 }
 
-const KNOWN_KINDS = ["demo", "github", "research"] as const;
+const KNOWN_KINDS = ["demo", "source", "research"] as const;
 
 function LinksFields({ value, projectType, onChange }: LinksFieldsProps) {
   const { demoLabel } = CARD_COPY[projectType];
@@ -84,7 +84,7 @@ function LinksFields({ value, projectType, onChange }: LinksFieldsProps) {
                   className={inputCls}
                 >
                   <option value="demo">Demo — {demoLabel}</option>
-                  <option value="github">GitHub — View source</option>
+                  <option value="source">Source — View source</option>
                   <option value="research">Research — Related research</option>
                   <option value="custom">Custom…</option>
                 </select>

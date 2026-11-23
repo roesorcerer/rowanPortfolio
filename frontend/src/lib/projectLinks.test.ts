@@ -1,4 +1,10 @@
-import { hasCaseStudy, projectPath, projectUrl } from "./projectLinks";
+import {
+  hasCaseStudy,
+  linkLabel,
+  projectPath,
+  projectUrl,
+  usableLinks,
+} from "./projectLinks";
 
 const project = { _id: "68c0f1", slug: "food-forward" };
 
@@ -49,5 +55,24 @@ describe("hasCaseStudy", () => {
         lessons: [],
       })
     ).toBe(true);
+  });
+});
+
+describe("usableLinks", () => {
+  // Until `migrate:link-kinds` has run, stored projects still carry the old
+  // kind; every reader should already see the new one.
+  it("reads the old github kind as source", () => {
+    const links = usableLinks({
+      links: [
+        { kind: "github", url: "https://github.com/x/y" },
+        { kind: "demo", url: "https://x.example" },
+      ],
+    });
+    expect(links.map((link) => link.kind)).toEqual(["source", "demo"]);
+    expect(linkLabel(links[0]!, "Live demo")).toBe("View source");
+  });
+
+  it("drops links with no URL", () => {
+    expect(usableLinks({ links: [{ kind: "source", url: "  " }] })).toEqual([]);
   });
 });

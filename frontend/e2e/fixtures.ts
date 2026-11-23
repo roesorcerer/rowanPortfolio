@@ -13,7 +13,7 @@ export const caseStudyProject: Project = {
   description: "Scheduling for a meal delivery nonprofit.",
   image: "/assets/ff9.png",
   links: [
-    { kind: "github", url: "https://github.com/roesorcerer/ff" },
+    { kind: "source", url: "https://github.com/roesorcerer/ff" },
     { kind: "demo", url: "https://example.com/demo" },
   ],
   media: [
