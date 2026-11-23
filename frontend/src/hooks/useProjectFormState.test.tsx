@@ -58,6 +58,14 @@ describe("fromProject / toPayload", () => {
     expect(payload.metaDescription).toBe("");
   });
 
+  it("fromProject shows an unmigrated github link as source", () => {
+    const form = fromProject({
+      ...project,
+      links: [{ kind: "github", url: "https://github.com/x/y" }],
+    });
+    expect(form.links[0]?.kind).toBe("source");
+  });
+
   it("fromProject carries links across, blanking the absent label", () => {
     const form = fromProject(project);
     expect(form.links).toEqual([

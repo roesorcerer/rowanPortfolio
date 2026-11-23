@@ -181,9 +181,9 @@ export async function summary(now: Date = new Date()): Promise<SummaryDTO> {
 
 // Source-link clicks, under the kind's current name and its old one.
 // "github" was renamed "source" (it named a host, not a role), and
-// `npm run migrate:link-kinds` rewrites stored events. Until that has run,
-// clicks recorded under the old name still count here, so the deploy and
-// the migration can happen in either order. Kept on purpose after the
+// `npm run migrate:link-kinds` rewrites stored events, after this is
+// deployed. Until it has run, clicks recorded under the old name still
+// count here, so nothing drops out in between. Kept on purpose after the
 // migration: it costs nothing, and an event restored from a backup taken
 // before it would otherwise vanish from the column.
 const SOURCE_LINK_TYPES = new Set(["source", "github"]);

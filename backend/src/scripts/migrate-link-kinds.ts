@@ -7,10 +7,14 @@
  * "github" named a host, not a role: a GitLab or itch.io source link had to
  * be filed under it or drop out of the engagement report's source column.
  *
- * Deploy and migration can happen in either order. Until this runs, the
- * frontend reads a stored "github" link as "source" (usableLinks in
- * frontend/src/lib/projectLinks.ts) and the engagement report counts both
- * names (analytics-report.ts).
+ * Deploy first, then run this. The code that understands "source" has to
+ * be live before the data says it: code from before the rename only knows
+ * "github", so migrating ahead of the deploy would drop source links from
+ * the cards and from the engagement report until the deploy caught up.
+ * The other way round is safe: until this runs, the new code reads a
+ * stored "github" link as "source" (usableLinks in
+ * frontend/src/lib/projectLinks.ts, fromProject in the admin form) and
+ * the engagement report counts both names (analytics-report.ts).
  *
  * Writes through the driver, not the models, so the documents change only
  * where named: Mongoose would also bump each project's `updatedAt`, which
@@ -53,17 +57,25 @@ export async function renameLinkKinds(
   const projects = db.collection("projects");
   const events = db.collection("events");
   const hasOld = { "links.kind": OLD_KIND };
+  // Only clicks carry a link kind; another event that somehow has one
+  // isn't this script's to change.
+  const oldClicks = { eventType: "link_click", linkType: OLD_KIND };
 
   const [linkCount] = await projects
     .aggregate<{
       n: number;
-    }>([{ $match: hasOld }, { $unwind: "$links" }, { $match: hasOld }, { $count: "n" }])
+    }>([
+      { $match: hasOld },
+      { $unwind: "$links" },
+      { $match: hasOld },
+      { $count: "n" },
+    ])
     .toArray();
 
   const report: LinkKindReport = {
     projects: await projects.countDocuments(hasOld),
     links: linkCount?.n ?? 0,
-    events: await events.countDocuments({ linkType: OLD_KIND }),
+    events: await events.countDocuments(oldClicks),
   };
 
   if (!opts.dryRun) {
@@ -75,10 +87,7 @@ export async function renameLinkKinds(
       { $set: { "links.$[link].kind": NEW_KIND } },
       { arrayFilters: [{ "link.kind": OLD_KIND }] }
     );
-    await events.updateMany(
-      { linkType: OLD_KIND },
-      { $set: { linkType: NEW_KIND } }
-    );
+    await events.updateMany(oldClicks, { $set: { linkType: NEW_KIND } });
   }
 
   return report;

@@ -62,6 +62,8 @@ async function seedProductionShape() {
       { eventType: "link_click", projectId: "a", linkType: "github" },
       { eventType: "link_click", projectId: "a", linkType: "demo" },
       { eventType: "project_view", projectId: "a", linkType: "" },
+      // Not a click: not the migration's to touch, even with the old kind.
+      { eventType: "project_view", projectId: "a", linkType: "github" },
     ]);
 }
 
@@ -97,7 +99,13 @@ describe("renameLinkKinds", () => {
       ["github", "itch"],
       [],
     ]);
-    expect(await linkTypes()).toEqual(["github", "github", "demo", ""]);
+    expect(await linkTypes()).toEqual([
+      "github",
+      "github",
+      "demo",
+      "",
+      "github",
+    ]);
   });
 
   it("renames every github link and click to source, and nothing else", async () => {
@@ -108,7 +116,13 @@ describe("renameLinkKinds", () => {
       ["source", "itch"],
       [],
     ]);
-    expect(await linkTypes()).toEqual(["source", "source", "demo", ""]);
+    expect(await linkTypes()).toEqual([
+      "source",
+      "source",
+      "demo",
+      "",
+      "github",
+    ]);
   });
 
   // The sitemap publishes updatedAt as each page's last edit, and a renamed
