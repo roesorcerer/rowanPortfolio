@@ -1,11 +1,13 @@
 name: CI
 
-# Run checks on development branch pushes and PRs to both branches
+# Run checks on every pull request into production. Work happens on short
+# feature branches that merge straight into production; there is no
+# development branch (it was dropped in November 2026, design doc 8.6).
+# A push to production runs these checks again in deploy.yml before it
+# deploys.
 on:
-  push:
-    branches: [development]
   pull_request:
-    branches: [development, production]
+    branches: [production]
 
 jobs:
   # ---- Backend checks ----

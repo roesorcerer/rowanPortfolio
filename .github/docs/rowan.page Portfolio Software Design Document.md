@@ -622,7 +622,7 @@ A04, A06 and A08 raise no project-specific action beyond the items above, this d
 - [ ] Approve the session cookie (D4)
 - [ ] Confirm which header carries the visitor IP through Vercel and Fly
 - [x] Confirm analytics retention: 13 months (#31)
-- [ ] Decide whether `development` stays, or pull requests go straight to `production`
+- [x] Decide whether `development` stays, or pull requests go straight to `production`: pull requests go straight to `production` from short feature branches, and `development` is deleted (#15). It had not moved since April, CI checks every pull request, and the deploy re-runs the checks
 - [x] Decide whether project backups run on a schedule: they stay manual (#15). Projects change only when Rowan edits them in the admin, so a scheduled job would mostly copy an unchanged collection, and the repository is public, so a GitHub Actions artifact would need encrypting first. Run `backup:projects` before any migration or restore, as `docs/CODEBASE.md` says
 - [ ] Rowan reviews the story text and role notes; family and health details stay out of all public text
 - [ ] Confirm the game's name; the working title is Late Game
