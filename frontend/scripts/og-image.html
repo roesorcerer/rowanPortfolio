@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!--
+  The default link-preview card (public/og.png), for pages with no image of
+  their own: home, resume, and any project without a cover. Rendered to PNG
+  by scripts/og-image.mjs (npm run og-image); edit this file, re-run that,
+  commit both.
+
+  Dark theme on purpose: previews sit inside Slack, LinkedIn and iMessage,
+  which are mostly light, and the phosphor-on-black reads as this site at a
+  glance. Colors are the dark-theme tokens in src/site/site.css; the fonts
+  are the self-hosted ones the site serves, loaded from node_modules so the
+  render doesn't depend on what the machine has installed.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: "VT323";
+        src: url("../node_modules/@fontsource/vt323/files/vt323-latin-400-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "IBM Plex Mono";
+        font-weight: 400;
+        src: url("../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "IBM Plex Mono";
+        font-weight: 600;
+        src: url("../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-600-normal.woff2") format("woff2");
+      }
+      html, body { margin: 0; }
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #030503;
+        color: #cdf2db;
+        font-family: "IBM Plex Mono", monospace;
+        position: relative;
+      }
+      .corridor {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 560px;
+        height: 630px;
+      }
+      .text {
+        position: absolute;
+        left: 80px;
+        top: 0;
+        bottom: 0;
+        width: 540px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .prompt {
+        color: #ffc24b;
+        font-weight: 600;
+        font-size: 28px;
+        letter-spacing: 0.04em;
+        margin: 0 0 28px;
+      }
+      h1 {
+        font-family: "VT323", monospace;
+        font-weight: 400;
+        font-size: 128px;
+        line-height: 0.92;
+        color: #4bff8a;
+        text-shadow: 0 0 18px rgba(75, 255, 138, 0.5);
+        margin: 0 0 36px;
+      }
+      .role {
+        font-size: 28px;
+        line-height: 1.45;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- The landing page's corridor (src/site/corridor.ts), reduced to its
+         perspective: frames shrinking toward one vanishing point. -->
+    <svg class="corridor" viewBox="0 0 560 630" fill="none" stroke="#4bff8a" stroke-width="2">
+      <g opacity="0.85">
+        <rect x="40" y="40" width="480" height="550" />
+        <rect x="140" y="155" width="280" height="320" opacity="0.75" />
+        <rect x="210" y="235" width="140" height="160" opacity="0.55" />
+        <rect x="250" y="281" width="60" height="68" opacity="0.4" />
+        <path d="M40 40 L250 281 M520 40 L310 281 M40 590 L250 349 M520 590 L310 349" opacity="0.6" />
+      </g>
+      <rect x="268" y="300" width="24" height="30" fill="#ffc24b" stroke="none" />
+    </svg>
+    <div class="text">
+      <p class="prompt">&gt; rowan.page</p>
+      <h1>Rowan<br />Stratton</h1>
+      <p class="role">Software engineer, game developer and HCI researcher</p>
+    </div>
+  </body>
+</html>

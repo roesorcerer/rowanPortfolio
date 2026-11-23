@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "check-types": "tsc",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "og-image": "node scripts/og-image.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -40,6 +41,8 @@
     "vite-plugin-svgr": "^4.2.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.0",
     "@tanstack/eslint-plugin-query": "^5.51.15",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
@@ -56,6 +59,7 @@
     "jsdom": "^24.0.0",
     "postcss": "^8.4.35",
     "prettier": "3.2.5",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.4.2",
     "vite": "^5.4.21",
