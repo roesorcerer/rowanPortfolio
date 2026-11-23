@@ -4,6 +4,7 @@ import projectRoutes from "./project.routes";
 import authRoutes from "./auth.routes";
 import contactRoutes from "./contact.routes";
 import analyticsRoutes from "./analytics.routes";
+import cspReportRoutes from "./csp-report.routes";
 
 const router = Router();
 
@@ -13,5 +14,6 @@ router.use("/auth", authRoutes);           // POST /api/auth/login, GET /api/aut
 router.use("/projects", projectRoutes);    // GET /api/projects, GET /api/projects/:id, POST/PUT/DELETE (auth required)
 router.use("/contact", contactRoutes);     // POST /api/contact, GET /api/contact/submissions (admin)
 router.use("/analytics", analyticsRoutes); // POST /api/analytics/pageview, GET /api/analytics/summary (admin)
+router.use("/csp-report", cspReportRoutes); // POST /api/csp-report, from browsers (vercel.json)
 
 export default router;

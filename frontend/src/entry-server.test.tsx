@@ -159,6 +159,17 @@ describe("prerendered pages hydrate without a mismatch", () => {
     }
   });
 
+  // The content security policy allows one inline script, the theme script
+  // in index.html, by its hash (vercel.json). If React's streaming renderer
+  // ever wrote one of its own (it does when a Suspense boundary resolves
+  // after the shell), that page would break once the policy is enforced.
+  it("no page's HTML carries a script for the policy to block", async () => {
+    for (const url of ["/", "/resume", "/404", "/projects/food-forward"]) {
+      const { html } = await render({ url, projects: [summary], project });
+      expect(html, url).not.toMatch(/<script\b/i);
+    }
+  });
+
   it("the 404 page, adopted at whatever address was missed", async () => {
     const { html } = await render({ url: "/404", projects: [summary] });
     expect(html).toContain("There is no page at this address.");
